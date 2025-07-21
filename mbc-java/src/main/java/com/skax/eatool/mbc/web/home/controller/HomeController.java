@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,38 +19,28 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * SKAX-EATOOL 홈화면 컨트롤러
+ * 웹 홈 컨트롤러
  * 
- * 프로그램명: HomeController.java
- * 설명: SKAX-EATOOL 시스템의 메인 홈화면을 제공하는 UI 컨트롤러
- * 작성일: 2024-01-01
- * 작성자: SKAX Project Team
- * 
- * 주요 기능:
- * - SKAX-EATOOL 홈화면 표시
- * - 시스템 통계 정보 제공
- * - 업무별 네비게이션 제공
- * 
+ * @author SKAX Project Team
  * @version 1.0
  */
 @Controller
-@RequestMapping("/mbc/as")
+@RequestMapping("/web")
 public class HomeController {
-
-    private final NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    
+    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+    private final NewIKesaLogger kesaLogger = NewKesaLogHelper.getBiz();
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     /**
-     * SKAX-EATOOL 홈화면 표시
-     * 
-     * @param model 모델
-     * @return 뷰 이름
+     * 웹 홈화면 표시
      */
     @GetMapping("/home")
-    public String showSkaxHome(Model model) {
-        logger.info("SKAX-EATOOL 홈화면 요청", "HomeController");
+    public String showWebHome(Model model) {
+        logger.info("=== HomeController.showWebHome START ===");
+        kesaLogger.info("웹 홈화면 요청", "HomeController");
 
         try {
             // 현재 시간
@@ -72,14 +64,15 @@ public class HomeController {
             List<Map<String, Object>> navigationMenus = getNavigationMenus();
             model.addAttribute("navigationMenus", navigationMenus);
 
-            logger.info("SKAX-EATOOL 홈화면 데이터 로드 완료", "HomeController");
+            kesaLogger.info("웹 홈화면 데이터 로드 완료", "HomeController");
 
         } catch (Exception e) {
-            logger.error("SKAX-EATOOL 홈화면 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+            kesaLogger.error("웹 홈화면 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
             // 기본값 설정
             setDefaultValues(model);
         }
 
+        logger.info("=== HomeController.showWebHome END ===");
         return "web/home";
     }
 
@@ -87,6 +80,7 @@ public class HomeController {
      * 시스템 정보 조회
      */
     private Map<String, Object> getSystemInfo() {
+        logger.info("=== HomeController.getSystemInfo START ===");
         Map<String, Object> systemInfo = new HashMap<>();
 
         try {
@@ -106,13 +100,14 @@ public class HomeController {
             }
 
         } catch (Exception e) {
-            logger.warn("시스템 정보 조회 실패: " + e.getMessage(), "HomeController");
+            kesaLogger.warn("시스템 정보 조회 실패: " + e.getMessage(), "HomeController");
             systemInfo.put("systemName", "SKAX-EATOOL");
             systemInfo.put("version", "2.0.0");
             systemInfo.put("environment", "개발환경");
             systemInfo.put("databaseStatus", "확인 불가");
         }
 
+        logger.info("=== HomeController.getSystemInfo END ===");
         return systemInfo;
     }
 
@@ -120,6 +115,7 @@ public class HomeController {
      * 업무별 통계 조회
      */
     private Map<String, Object> getBusinessStats() {
+        logger.info("=== HomeController.getBusinessStats START ===");
         Map<String, Object> stats = new HashMap<>();
 
         try {
@@ -131,19 +127,19 @@ public class HomeController {
             try {
                 totalAccounts = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM ACCOUNT", Integer.class);
             } catch (Exception e) {
-                logger.warn("계정 통계 조회 실패: " + e.getMessage(), "HomeController");
+                kesaLogger.warn("계정 통계 조회 실패: " + e.getMessage(), "HomeController");
             }
 
             try {
                 totalUsers = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER_INFO", Integer.class);
             } catch (Exception e) {
-                logger.warn("사용자 통계 조회 실패: " + e.getMessage(), "HomeController");
+                kesaLogger.warn("사용자 통계 조회 실패: " + e.getMessage(), "HomeController");
             }
 
             try {
                 totalTransactions = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM TRANSACTION", Integer.class);
             } catch (Exception e) {
-                logger.warn("거래 통계 조회 실패: " + e.getMessage(), "HomeController");
+                kesaLogger.warn("거래 통계 조회 실패: " + e.getMessage(), "HomeController");
             }
 
             stats.put("totalAccounts", totalAccounts);
@@ -152,13 +148,14 @@ public class HomeController {
             stats.put("activeSessions", 5); // 임시 값
 
         } catch (Exception e) {
-            logger.warn("업무 통계 조회 실패: " + e.getMessage(), "HomeController");
+            kesaLogger.warn("업무 통계 조회 실패: " + e.getMessage(), "HomeController");
             stats.put("totalAccounts", 0);
             stats.put("totalUsers", 0);
             stats.put("totalTransactions", 0);
             stats.put("activeSessions", 0);
         }
 
+        logger.info("=== HomeController.getBusinessStats END ===");
         return stats;
     }
 
@@ -166,6 +163,7 @@ public class HomeController {
      * 최근 활동 조회
      */
     private List<Map<String, Object>> getRecentActivities() {
+        logger.info("=== HomeController.getRecentActivities START ===");
         List<Map<String, Object>> activities = new ArrayList<>();
 
         try {
@@ -179,10 +177,11 @@ public class HomeController {
             }
 
         } catch (Exception e) {
-            logger.warn("최근 활동 조회 실패: " + e.getMessage(), "HomeController");
+            kesaLogger.warn("최근 활동 조회 실패: " + e.getMessage(), "HomeController");
             activities = getDefaultActivities();
         }
 
+        logger.info("=== HomeController.getRecentActivities END ===");
         return activities;
     }
 
@@ -190,6 +189,7 @@ public class HomeController {
      * 기본 활동 데이터
      */
     private List<Map<String, Object>> getDefaultActivities() {
+        logger.info("=== HomeController.getDefaultActivities START ===");
         List<Map<String, Object>> activities = new ArrayList<>();
 
         Map<String, Object> activity1 = new HashMap<>();
@@ -210,6 +210,7 @@ public class HomeController {
         activity3.put("date", "2024-01-15 12:00:00");
         activities.add(activity3);
 
+        logger.info("=== HomeController.getDefaultActivities END ===");
         return activities;
     }
 
@@ -217,6 +218,7 @@ public class HomeController {
      * 네비게이션 메뉴 구성
      */
     private List<Map<String, Object>> getNavigationMenus() {
+        logger.info("=== HomeController.getNavigationMenus START ===");
         List<Map<String, Object>> menus = new ArrayList<>();
 
         // 계정 관리 메뉴
@@ -325,6 +327,7 @@ public class HomeController {
         reportMenu.put("subMenus", reportSubMenus);
         menus.add(reportMenu);
 
+        logger.info("=== HomeController.getNavigationMenus END ===");
         return menus;
     }
 
@@ -332,6 +335,7 @@ public class HomeController {
      * 기본값 설정
      */
     private void setDefaultValues(Model model) {
+        logger.info("=== HomeController.setDefaultValues START ===");
         model.addAttribute("currentTime", LocalDateTime.now().format(
                 DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss")));
 
@@ -351,5 +355,6 @@ public class HomeController {
 
         model.addAttribute("recentActivities", getDefaultActivities());
         model.addAttribute("navigationMenus", getNavigationMenus());
+        logger.info("=== HomeController.setDefaultValues END ===");
     }
 }

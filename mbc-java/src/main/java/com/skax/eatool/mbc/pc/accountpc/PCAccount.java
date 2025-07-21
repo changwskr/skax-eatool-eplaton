@@ -17,6 +17,8 @@ import com.skax.eatool.ksa.util.NewObjectUtil;
 import com.skax.eatool.mbc.dc.accountdc.DCAccount;
 import com.skax.eatool.mbc.dc.accountdc.dto.AccountDDTO;
 import com.skax.eatool.mbc.pc.dto.AccountPDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PC Component for Account Management
@@ -31,7 +33,7 @@ import com.skax.eatool.mbc.pc.dto.AccountPDTO;
  */
 public class PCAccount implements NewIProcessComponent {
 
-	NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+	private static final Logger logger = LoggerFactory.getLogger(PCAccount.class);
 
 	/**
 	 * Method Name: getAccount
@@ -109,6 +111,12 @@ public class PCAccount implements NewIProcessComponent {
 	 * @return void
 	 */
 	public void createAccount(AccountPDTO accountPDTO) throws NewBusinessException {
+		logger.info("=== PCAccount.createAccount START ===");
+		
+		// TODO: Implement account creation logic
+		logger.info("Creating account with ID: " + accountPDTO.getAccountId());
+		
+		logger.info("=== PCAccount.createAccount END ===");
 		new DCAccount().createAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
 	}
 

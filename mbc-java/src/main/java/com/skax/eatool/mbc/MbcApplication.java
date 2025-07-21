@@ -9,6 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * MBC (Management Business Control) Spring Boot Application
@@ -43,7 +45,7 @@ import com.skax.eatool.ksa.logger.NewKesaLoggerFactory;
 })
 public class MbcApplication {
 
-    private static final NewIKesaLogger logger = NewKesaLoggerFactory.getLogger("MbcApplication");
+    private static final Logger logger = LoggerFactory.getLogger(MbcApplication.class);
 
     /**
      * 애플리케이션 메인 진입점
@@ -51,6 +53,7 @@ public class MbcApplication {
      * @param args 명령행 인수
      */
     public static void main(String[] args) {
+        logger.info("=== MbcApplication START ===");
         try {
             logger.info("=== MBC 애플리케이션 시작 ===", "MbcApplication");
 
@@ -71,6 +74,7 @@ public class MbcApplication {
             e.printStackTrace();
             System.exit(1);
         }
+        logger.info("=== MbcApplication END ===");
     }
 
     /**

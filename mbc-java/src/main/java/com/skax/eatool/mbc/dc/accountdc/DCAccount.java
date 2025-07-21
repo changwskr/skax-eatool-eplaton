@@ -20,6 +20,8 @@ import com.skax.eatool.ksa.oltp.biz.NewIDomainComponent;
 import com.skax.eatool.ksa.util.NewObjectUtil;
 import com.skax.eatool.mbc.dc.accountdc.dto.AccountDDTO;
 import com.skax.eatool.mbc.dc.accountdc.mapper.AccountMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <br>
@@ -37,7 +39,7 @@ import com.skax.eatool.mbc.dc.accountdc.mapper.AccountMapper;
  */
 @Repository
 public class DCAccount implements NewIDomainComponent {
-	NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+	private static final Logger logger = LoggerFactory.getLogger(DCAccount.class);
 
 	@Autowired
 	private AccountMapper accountMapper;
@@ -66,6 +68,7 @@ public class DCAccount implements NewIDomainComponent {
 	 *         </ul>
 	 */
 	public AccountDDTO getAccount(AccountDDTO accountDDTO) throws NewBusinessException {
+		logger.info("=== DCAccount.getAccount START ===");
 		try {
 			Optional<Account> accountOpt = accountMapper.findByAccountNumber(accountDDTO.getAccountNumber());
 			if (accountOpt.isPresent()) {
@@ -75,6 +78,8 @@ public class DCAccount implements NewIDomainComponent {
 			return null;
 		} catch (Exception e) {
 			throw new NewBusinessException("B0100001", "processCode", e);
+		} finally {
+			logger.info("=== DCAccount.getAccount END ===");
 		}
 	}
 
@@ -99,6 +104,7 @@ public class DCAccount implements NewIDomainComponent {
 	 * @return void
 	 */
 	public void updateAccount(AccountDDTO accountDDTO) throws NewBusinessException {
+		logger.info("=== DCAccount.updateAccount START ===");
 		try {
 			Optional<Account> accountOpt = accountMapper.findByAccountNumber(accountDDTO.getAccountNumber());
 			if (accountOpt.isPresent()) {
@@ -117,6 +123,8 @@ public class DCAccount implements NewIDomainComponent {
 			}
 		} catch (Exception e) {
 			throw new NewBusinessException("B0000002", "processCode", e);
+		} finally {
+			logger.info("=== DCAccount.updateAccount END ===");
 		}
 	}
 
@@ -135,6 +143,7 @@ public class DCAccount implements NewIDomainComponent {
 	 * @return void
 	 */
 	public void deleteAccount(AccountDDTO accountDDTO) throws NewBusinessException {
+		logger.info("=== DCAccount.deleteAccount START ===");
 		try {
 			Optional<Account> accountOpt = accountMapper.findByAccountNumber(accountDDTO.getAccountNumber());
 			if (accountOpt.isPresent()) {
@@ -144,6 +153,8 @@ public class DCAccount implements NewIDomainComponent {
 			}
 		} catch (Exception e) {
 			throw new NewBusinessException("B0000002", "processCode", e);
+		} finally {
+			logger.info("=== DCAccount.deleteAccount END ===");
 		}
 	}
 
@@ -168,20 +179,26 @@ public class DCAccount implements NewIDomainComponent {
 	 * @return void
 	 */
 	public void createAccount(AccountDDTO accountDDTO) throws NewBusinessException {
+		logger.info("=== DCAccount.createAccount START ===");
 		try {
 			Account account = NewObjectUtil.copyForClass(Account.class, accountDDTO);
 			accountMapper.save(account);
 		} catch (Exception e) {
 			throw new NewBusinessException("B0000002", "processCode", e);
+		} finally {
+			logger.info("=== DCAccount.createAccount END ===");
 		}
 	}
 
 	public List<AccountDDTO> getListAccount(AccountDDTO accountDDTO) throws NewBusinessException {
+		logger.info("=== DCAccount.getListAccount START ===");
 		try {
 			List<Account> accountList = accountMapper.findAll();
 			return NewObjectUtil.copyForList(AccountDDTO.class, accountList);
 		} catch (Exception e) {
 			throw new NewBusinessException("B0000002", "processCode", e);
+		} finally {
+			logger.info("=== DCAccount.getListAccount END ===");
 		}
 	}
 

@@ -6,6 +6,15 @@ spring:
   profiles:
     active: dev # 기본값: dev, prod로 변경 가능
 
+  # Security Configuration
+  security:
+    user:
+      name: admin
+      password: admin
+      roles: ADMIN
+    filter:
+      order: 10
+
   # Database Configuration
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;INIT=CREATE SCHEMA IF NOT EXISTS PUBLIC\\;SET SCHEMA PUBLIC\\;SET MODE MySQL\\;SET DB_CLOSE_DELAY -1\\;SET DB_CLOSE_ON_EXIT FALSE
@@ -18,12 +27,14 @@ spring:
     console:
       enabled: true
       path: /h2-console
+      settings:
+        web-allow-others: true
 
   # Jackson Configuration
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Seoul
-    default-property-inclusion: non_null
+    default-property-inclusion: NON_NULL
     serialization:
       write-dates-as-timestamps: false
     deserialization:
@@ -44,13 +55,6 @@ spring:
     resources:
       static-locations: classpath:/static/
       add-mappings: false
-
-  # HTTP Encoding Configuration
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
 
   # DevTools Configuration (비활성화)
   devtools:
@@ -79,6 +83,7 @@ logging:
   level:
     com.skax.eatool.mbc: DEBUG
     org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
