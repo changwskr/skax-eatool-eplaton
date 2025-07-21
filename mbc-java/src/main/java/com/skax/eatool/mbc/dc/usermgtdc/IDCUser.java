@@ -3,7 +3,7 @@ package com.skax.eatool.mbc.dc.usermgtdc;
 import java.util.HashMap;
 import java.util.List;
 import com.skax.eatool.ksa.exception.NewBusinessException;
-import com.skax.eatool.mbc.bzcrudbus.transfer.ICommonDTO;
+import com.skax.eatool.mbc.as.bzcrudbus.transfer.ICommonDTO;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.UserDDTO;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.PageDDTO;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.TreeDDTO;

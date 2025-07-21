@@ -1,15 +1,14 @@
 package com.skax.eatool.mbc.web.commonas.controller;
 
-import com.skax.eatool.mbc.config.EnvironmentConfig;
-import com.skax.eatool.mbc.config.ConfigurationManager;
-import com.skax.eatool.mbc.dto.EnvironmentInfo;
+import com.skax.eatool.mbc.dc.config.EnvironmentConfig;
+import com.skax.eatool.mbc.dc.config.ConfigurationManager;
+import com.skax.eatool.mbc.dc.config.EnvironmentInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,9 +70,9 @@ public class EnvironmentController {
         logger.info("=== EnvironmentController.getActiveProfiles START ===");
         Map<String, Object> response = new HashMap<>();
         response.put("activeProfiles", environmentConfig.getActiveProfiles());
-        response.put("defaultProfiles", environmentConfig.getDefaultProfiles());
-        response.put("isDev", environmentConfig.isDev());
-        response.put("isProd", environmentConfig.isProd());
+        response.put("defaultProfiles", environment.getDefaultProfiles());
+        response.put("isDev", environmentConfig.isDevelopment());
+        response.put("isProd", environmentConfig.isProduction());
         response.put("isTest", environmentConfig.isTest());
         response.put("isLocal", environmentConfig.isLocal());
         logger.info("=== EnvironmentController.getActiveProfiles END ===");

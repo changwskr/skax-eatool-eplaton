@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.bzcrudbus.business.as;
+package com.skax.eatool.mbc.as.bzcrudbus.business.as;
 
 import com.skax.eatool.ksa.exception.NewBusinessException;
 import com.skax.eatool.ksa.infra.po.NewKBData;

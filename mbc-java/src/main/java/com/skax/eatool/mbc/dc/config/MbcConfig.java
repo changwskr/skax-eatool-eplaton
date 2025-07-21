@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.config;
+package com.skax.eatool.mbc.dc.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;

@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.bzcrudbus.report;
+package com.skax.eatool.mbc.as.bzcrudbus.report;
 
 import java.util.List;
 import com.skax.eatool.ksa.das.ibatis.NewSqlMapClient;

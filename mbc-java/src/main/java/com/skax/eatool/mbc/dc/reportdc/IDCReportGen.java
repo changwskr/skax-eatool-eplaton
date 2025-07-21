@@ -1,7 +1,7 @@
 package com.skax.eatool.mbc.dc.reportdc;
 
 import com.skax.eatool.ksa.exception.NewBusinessException;
-import com.skax.eatool.mbc.bzcrudbus.transfer.ICommonDTO;
+import com.skax.eatool.mbc.as.bzcrudbus.transfer.ICommonDTO;
 
 public interface IDCReportGen {
 

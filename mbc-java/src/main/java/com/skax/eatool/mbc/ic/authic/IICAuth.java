@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.authic;
+package com.skax.eatool.mbc.ic.authic;
 
 public interface IICAuth {
 

@@ -16,7 +16,7 @@ import com.skax.eatool.ksa.util.NewObjectUtil;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.PageDDTO;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.TreeDDTO;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.UserDDTO;
-import com.skax.eatool.mbc.bzcrudbus.transfer.ICommonDTO;
+import com.skax.eatool.mbc.as.bzcrudbus.transfer.ICommonDTO;
 
 /**
  * 사용자 관리 도메인 컴포넌트

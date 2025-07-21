@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.bzcrudbus.transfer;
+package com.skax.eatool.mbc.as.bzcrudbus.transfer;
 
 import java.util.Map;
 

@@ -8,7 +8,7 @@ import java.util.List;
 import com.skax.eatool.mbc.dc.usermgtdc.IDCUser;
 import com.skax.eatool.mbc.dc.usermgtdc.User;
 import com.skax.eatool.ksa.exception.NewBusinessException;
-import com.skax.eatool.mbc.bzcrudbus.transfer.ICommonDTO;
+import com.skax.eatool.mbc.as.bzcrudbus.transfer.ICommonDTO;
 
 /**
  * @author S001849

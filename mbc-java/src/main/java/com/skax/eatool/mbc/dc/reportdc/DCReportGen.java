@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.skax.eatool.ksa.das.ibatis.NewSqlMapper;
 import com.skax.eatool.ksa.exception.NewBusinessException;
-import com.skax.eatool.mbc.bzcrudbus.report.WordReportUtil;
-import com.skax.eatool.mbc.bzcrudbus.transfer.ICommonDTO;
+import com.skax.eatool.mbc.as.bzcrudbus.report.WordReportUtil;
+import com.skax.eatool.mbc.as.bzcrudbus.transfer.ICommonDTO;
 
 public class DCReportGen implements IDCReportGen {
 

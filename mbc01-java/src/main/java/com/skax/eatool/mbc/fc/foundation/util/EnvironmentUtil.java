@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.util;
+package com.skax.eatool.mbc.fc.foundation.util;
 
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLoggerFactory;
