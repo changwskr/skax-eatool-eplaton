@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Account JDBC DAO 클래스
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class AccountMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountMapper.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -48,8 +52,10 @@ public class AccountMapper {
      * @return 계정 정보
      */
     public Optional<Account> findByAccountNumber(String accountNumber) {
+        logger.info("=== AccountMapper.findByAccountNumber START ===");
         String sql = "SELECT * FROM ACCOUNT WHERE ACCOUNT_NUMBER = ?";
         List<Account> accounts = jdbcTemplate.query(sql, accountRowMapper, accountNumber);
+        logger.info("=== AccountMapper.findByAccountNumber END ===");
         return accounts.isEmpty() ? Optional.empty() : Optional.of(accounts.get(0));
     }
 
@@ -60,8 +66,10 @@ public class AccountMapper {
      * @return 존재 여부
      */
     public boolean existsByAccountNumber(String accountNumber) {
+        logger.info("=== AccountMapper.existsByAccountNumber START ===");
         String sql = "SELECT COUNT(*) FROM ACCOUNT WHERE ACCOUNT_NUMBER = ?";
         int count = jdbcTemplate.queryForObject(sql, Integer.class, accountNumber);
+        logger.info("=== AccountMapper.existsByAccountNumber END ===");
         return count > 0;
     }
 
@@ -72,8 +80,11 @@ public class AccountMapper {
      * @return 계정 목록
      */
     public List<Account> findByAccountType(String accountType) {
+        logger.info("=== AccountMapper.findByAccountType START ===");
         String sql = "SELECT * FROM ACCOUNT WHERE ACCOUNT_TYPE = ?";
-        return jdbcTemplate.query(sql, accountRowMapper, accountType);
+        List<Account> result = jdbcTemplate.query(sql, accountRowMapper, accountType);
+        logger.info("=== AccountMapper.findByAccountType END ===");
+        return result;
     }
 
     /**
@@ -83,8 +94,11 @@ public class AccountMapper {
      * @return 계정 목록
      */
     public List<Account> findByStatus(String status) {
+        logger.info("=== AccountMapper.findByStatus START ===");
         String sql = "SELECT * FROM ACCOUNT WHERE STATUS = ?";
-        return jdbcTemplate.query(sql, accountRowMapper, status);
+        List<Account> result = jdbcTemplate.query(sql, accountRowMapper, status);
+        logger.info("=== AccountMapper.findByStatus END ===");
+        return result;
     }
 
     /**
@@ -94,8 +108,11 @@ public class AccountMapper {
      * @return 계정 목록
      */
     public List<Account> findByCurrency(String currency) {
+        logger.info("=== AccountMapper.findByCurrency START ===");
         String sql = "SELECT * FROM ACCOUNT WHERE CURRENCY = ?";
-        return jdbcTemplate.query(sql, accountRowMapper, currency);
+        List<Account> result = jdbcTemplate.query(sql, accountRowMapper, currency);
+        logger.info("=== AccountMapper.findByCurrency END ===");
+        return result;
     }
 
     /**
@@ -106,8 +123,11 @@ public class AccountMapper {
      * @return 계정 목록
      */
     public List<Account> findByBalanceBetween(Double minBalance, Double maxBalance) {
+        logger.info("=== AccountMapper.findByBalanceBetween START ===");
         String sql = "SELECT * FROM ACCOUNT WHERE CAST(NET_AMOUNT AS DECIMAL) BETWEEN ? AND ?";
-        return jdbcTemplate.query(sql, accountRowMapper, minBalance, maxBalance);
+        List<Account> result = jdbcTemplate.query(sql, accountRowMapper, minBalance, maxBalance);
+        logger.info("=== AccountMapper.findByBalanceBetween END ===");
+        return result;
     }
 
     /**
@@ -117,8 +137,11 @@ public class AccountMapper {
      * @return 계정 목록
      */
     public List<Account> findByAccountNumberContaining(String accountNumber) {
+        logger.info("=== AccountMapper.findByAccountNumberContaining START ===");
         String sql = "SELECT * FROM ACCOUNT WHERE ACCOUNT_NUMBER LIKE ?";
-        return jdbcTemplate.query(sql, accountRowMapper, "%" + accountNumber + "%");
+        List<Account> result = jdbcTemplate.query(sql, accountRowMapper, "%" + accountNumber + "%");
+        logger.info("=== AccountMapper.findByAccountNumberContaining END ===");
+        return result;
     }
 
     /**
@@ -127,8 +150,11 @@ public class AccountMapper {
      * @return 계정 목록
      */
     public List<Account> findAll() {
+        logger.info("=== AccountMapper.findAll START ===");
         String sql = "SELECT * FROM ACCOUNT";
-        return jdbcTemplate.query(sql, accountRowMapper);
+        List<Account> result = jdbcTemplate.query(sql, accountRowMapper);
+        logger.info("=== AccountMapper.findAll END ===");
+        return result;
     }
 
     /**
@@ -137,11 +163,13 @@ public class AccountMapper {
      * @param account 계정 정보
      */
     public void save(Account account) {
+        logger.info("=== AccountMapper.save START ===");
         if (existsByAccountNumber(account.getAccountNumber())) {
             update(account);
         } else {
             insert(account);
         }
+        logger.info("=== AccountMapper.save END ===");
     }
 
     /**
@@ -150,6 +178,7 @@ public class AccountMapper {
      * @param account 계정 정보
      */
     public void insert(Account account) {
+        logger.info("=== AccountMapper.insert START ===");
         String sql = "INSERT INTO ACCOUNT (ACCOUNT_NUMBER, NAME, IDENTIFICATION_NUMBER, INTEREST_RATE, LAST_TRANSACTION, PASSWORD, NET_AMOUNT) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 account.getAccountNumber(),
@@ -159,6 +188,7 @@ public class AccountMapper {
                 account.getLastTransaction(),
                 account.getPassword(),
                 account.getNetAmount());
+        logger.info("=== AccountMapper.insert END ===");
     }
 
     /**
@@ -167,6 +197,7 @@ public class AccountMapper {
      * @param account 계정 정보
      */
     public void update(Account account) {
+        logger.info("=== AccountMapper.update START ===");
         String sql = "UPDATE ACCOUNT SET NAME = ?, IDENTIFICATION_NUMBER = ?, INTEREST_RATE = ?, LAST_TRANSACTION = ?, PASSWORD = ?, NET_AMOUNT = ? WHERE ACCOUNT_NUMBER = ?";
         jdbcTemplate.update(sql,
                 account.getName(),
@@ -176,6 +207,7 @@ public class AccountMapper {
                 account.getPassword(),
                 account.getNetAmount(),
                 account.getAccountNumber());
+        logger.info("=== AccountMapper.update END ===");
     }
 
     /**
@@ -184,7 +216,9 @@ public class AccountMapper {
      * @param account 계정 정보
      */
     public void delete(Account account) {
+        logger.info("=== AccountMapper.delete START ===");
         String sql = "DELETE FROM ACCOUNT WHERE ACCOUNT_NUMBER = ?";
         jdbcTemplate.update(sql, account.getAccountNumber());
+        logger.info("=== AccountMapper.delete END ===");
     }
 }

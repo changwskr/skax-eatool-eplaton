@@ -8,6 +8,7 @@
 package com.skax.eatool.mbc.pc.accountpc;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.skax.eatool.ksa.exception.NewBusinessException;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
@@ -55,8 +56,18 @@ public class PCAccount implements NewIProcessComponent {
 	 *         </ul>
 	 */
 	public AccountPDTO getAccount(AccountPDTO accountPDTO) throws NewBusinessException {
+		logger.info("=== PCAccount.getAccount START ===");
+		
+		// Null 체크 추가
+		if (accountPDTO == null) {
+			logger.warn("=== PCAccount.getAccount - accountPDTO is null ===");
+			logger.info("=== PCAccount.getAccount END ===");
+			return null;
+		}
+		
 		AccountDDTO accountDDTO = new DCAccount()
 				.getAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		logger.info("=== PCAccount.getAccount END ===");
 		return NewObjectUtil.copyForClass(AccountPDTO.class, accountDDTO);
 	}
 
@@ -77,7 +88,17 @@ public class PCAccount implements NewIProcessComponent {
 	 * @return void
 	 */
 	public void updateAccount(AccountPDTO accountPDTO) throws NewBusinessException {
+		logger.info("=== PCAccount.updateAccount START ===");
+		
+		// Null 체크 추가
+		if (accountPDTO == null) {
+			logger.warn("=== PCAccount.updateAccount - accountPDTO is null ===");
+			logger.info("=== PCAccount.updateAccount END ===");
+			return;
+		}
+		
 		new DCAccount().updateAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		logger.info("=== PCAccount.updateAccount END ===");
 	}
 
 	/**
@@ -91,7 +112,17 @@ public class PCAccount implements NewIProcessComponent {
 	 * @return void
 	 */
 	public void deleteAccount(AccountPDTO accountPDTO) throws NewBusinessException {
+		logger.info("=== PCAccount.deleteAccount START ===");
+		
+		// Null 체크 추가
+		if (accountPDTO == null) {
+			logger.warn("=== PCAccount.deleteAccount - accountPDTO is null ===");
+			logger.info("=== PCAccount.deleteAccount END ===");
+			return;
+		}
+		
 		new DCAccount().deleteAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		logger.info("=== PCAccount.deleteAccount END ===");
 	}
 
 	/**
@@ -113,8 +144,15 @@ public class PCAccount implements NewIProcessComponent {
 	public void createAccount(AccountPDTO accountPDTO) throws NewBusinessException {
 		logger.info("=== PCAccount.createAccount START ===");
 		
+		// Null 체크 추가
+		if (accountPDTO == null) {
+			logger.warn("=== PCAccount.createAccount - accountPDTO is null ===");
+			logger.info("=== PCAccount.createAccount END ===");
+			return;
+		}
+		
 		// TODO: Implement account creation logic
-		logger.info("Creating account with ID: " + accountPDTO.getAccountId());
+		logger.info("Creating account with ID: " + (accountPDTO.getAccountId() != null ? accountPDTO.getAccountId() : "null"));
 		
 		logger.info("=== PCAccount.createAccount END ===");
 		new DCAccount().createAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
@@ -141,9 +179,18 @@ public class PCAccount implements NewIProcessComponent {
 	 */
 
 	public List<AccountPDTO> getListAccount(AccountPDTO accountPDTO) throws NewBusinessException {
+		logger.info("=== PCAccount.getListAccount START ===");
+		
+		// Null 체크 추가
+		if (accountPDTO == null) {
+			logger.warn("=== PCAccount.getListAccount - accountPDTO is null ===");
+			logger.info("=== PCAccount.getListAccount END ===");
+			return new ArrayList<>();
+		}
+		
 		List<AccountDDTO> dDtoList = new DCAccount()
 				.getListAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
-
+		logger.info("=== PCAccount.getListAccount END ===");
 		return NewObjectUtil.copyForList(AccountPDTO.class, dDtoList);
 	}
 }

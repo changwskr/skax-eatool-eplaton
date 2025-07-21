@@ -81,11 +81,19 @@ server:
 # Logging Configuration
 logging:
   level:
-    com.skax.eatool.mbc: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    com.skax.eatool.mbc: INFO
+    com.skax.eatool.mbc.as: INFO
+    com.skax.eatool.mbc.pc: INFO
+    com.skax.eatool.mbc.dc: INFO
+    com.skax.eatool.mbc.web: INFO
+    com.skax.eatool.ksa: INFO
+    com.skax.eatool.ksa.logger: INFO
+    com.skax.eatool.ksa.oltp: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    root: INFO
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
     name: logs/mbc-application.log

@@ -169,7 +169,16 @@ public class HomeController {
         try {
             // 실제 데이터베이스에서 조회 시도
             String sql = "SELECT USER_NAME, ROLE, STATUS, CREATED_DATE FROM USER_INFO ORDER BY CREATED_DATE DESC LIMIT 5";
-            activities = jdbcTemplate.queryForList(sql);
+            List<Map<String, Object>> dbActivities = jdbcTemplate.queryForList(sql);
+
+            // 데이터베이스 결과를 템플릿 형식에 맞게 변환
+            for (Map<String, Object> dbActivity : dbActivities) {
+                Map<String, Object> activity = new HashMap<>();
+                activity.put("type", "USER");
+                activity.put("name", dbActivity.get("USER_NAME"));
+                activity.put("date", dbActivity.get("CREATED_DATE"));
+                activities.add(activity);
+            }
 
             // 데이터가 없으면 기본 데이터 제공
             if (activities.isEmpty()) {
@@ -209,6 +218,18 @@ public class HomeController {
         activity3.put("name", "시스템 업데이트");
         activity3.put("date", "2024-01-15 12:00:00");
         activities.add(activity3);
+
+        Map<String, Object> activity4 = new HashMap<>();
+        activity4.put("type", "USER");
+        activity4.put("name", "사용자 등록");
+        activity4.put("date", "2024-01-15 11:30:00");
+        activities.add(activity4);
+
+        Map<String, Object> activity5 = new HashMap<>();
+        activity5.put("type", "SYSTEM");
+        activity5.put("name", "데이터베이스 연결");
+        activity5.put("date", "2024-01-15 10:15:00");
+        activities.add(activity5);
 
         logger.info("=== HomeController.getDefaultActivities END ===");
         return activities;

@@ -15,6 +15,8 @@ import com.skax.eatool.ksa.infra.po.NewKBData;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
 import com.skax.eatool.ksa.oltp.biz.NewIApplicationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <br>
@@ -32,6 +34,7 @@ import com.skax.eatool.ksa.oltp.biz.NewIApplicationService;
 public class ASMBC72001 implements NewIApplicationService {
 
 	protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+	private static final Logger slf4jLogger = LoggerFactory.getLogger(ASMBC72001.class);
 
 	/**
 	 * <br>
@@ -58,12 +61,32 @@ public class ASMBC72001 implements NewIApplicationService {
 	 *         </ul>
 	 */
 	public NewKBData execute(NewKBData reqData) throws NewBusinessException {
+		logger.info("ASMBC72001", "=== ASMBC72001.execute START ===");
+		slf4jLogger.info("=== ASMBC72001.execute START (SLF4J) ===");
+
+		// Null 체크 추가
+		if (reqData == null) {
+			logger.warn("ASMBC72001", "=== ASMBC72001.execute - reqData is null ===");
+			slf4jLogger.warn("=== ASMBC72001.execute - reqData is null (SLF4J) ===");
+			logger.info("ASMBC72001", "=== ASMBC72001.execute END ===");
+			slf4jLogger.info("=== ASMBC72001.execute END (SLF4J) ===");
+			return null;
+		}
 
 		if (logger.isDebugEnabled())
 			logger.debug(this.getClass().getName() + ", log test입니다.");
 		// 1.AccountPDTO 생성
 		AccountPDTO accountPDTO = (AccountPDTO) reqData.getInputGenericDto()
 				.using(NewGenericDto.INDATA).get("AccountPDTO");
+
+		// AccountPDTO null 체크
+		if (accountPDTO == null) {
+			logger.warn("ASMBC72001", "=== ASMBC72001.execute - accountPDTO is null ===");
+			slf4jLogger.warn("=== ASMBC72001.execute - accountPDTO is null (SLF4J) ===");
+			logger.info("ASMBC72001", "=== ASMBC72001.execute END ===");
+			slf4jLogger.info("=== ASMBC72001.execute END (SLF4J) ===");
+			return reqData;
+		}
 
 		// 2.PC호출
 		AccountPDTO resAccountPDTO = new PCAccount().getAccount(accountPDTO);
@@ -72,6 +95,9 @@ public class ASMBC72001 implements NewIApplicationService {
 		java.util.List<AccountPDTO> resultList = new java.util.ArrayList<>();
 		resultList.add(resAccountPDTO);
 		reqData.getOutputGenericDto().using(NewGenericDto.OUTDATA).add(resultList);
+		
+		logger.info("ASMBC72001", "=== ASMBC72001.execute END ===");
+		slf4jLogger.info("=== ASMBC72001.execute END (SLF4J) ===");
 		return reqData;
 	}
 

@@ -43,7 +43,8 @@ public class AccountAsTestController {
                           @RequestParam String accountName,
                           @RequestParam String accountType,
                           Model model) {
-        logger.info("=== AccountAsTestController.runTest START ===");
+
+        logger.info("=== AccountAsTestController.runTest START ===", accountId, accountName, accountType);
         try {
             // Build AccountPDTO
             AccountPDTO dto = new AccountPDTO();
@@ -57,7 +58,11 @@ public class AccountAsTestController {
             inDto.using(NewGenericDto.INDATA).put("AccountPDTO", dto);
 
             // Execute service
+            logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             asmbc71001.execute(reqData);
+
+            logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + reqData.toString());
+
             model.addAttribute("result", "계정 생성 성공");
         } catch (Exception e) {
             model.addAttribute("result", "오류: " + e.getMessage());

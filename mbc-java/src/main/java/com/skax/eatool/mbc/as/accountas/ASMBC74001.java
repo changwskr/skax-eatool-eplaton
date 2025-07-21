@@ -48,13 +48,30 @@ public class ASMBC74001 implements NewIApplicationService {
 	 * @return KBData
 	 */
 	public NewKBData execute(NewKBData reqData) throws NewBusinessException {
+		logger.info("ASMBC74001", "=== ASMBC74001.execute START ===");
+
+		// Null 체크 추가
+		if (reqData == null) {
+			logger.warn("ASMBC74001", "=== ASMBC74001.execute - reqData is null ===");
+			logger.info("ASMBC74001", "=== ASMBC74001.execute END ===");
+			return null;
+		}
 
 		// 1.AccountPDTO 생성
 		AccountPDTO accountPDTO = (AccountPDTO) reqData.getInputGenericDto().using(NewGenericDto.INDATA)
 				.get("AccountPDTO");
 
+		// AccountPDTO null 체크
+		if (accountPDTO == null) {
+			logger.warn("ASMBC74001", "=== ASMBC74001.execute - accountPDTO is null ===");
+			logger.info("ASMBC74001", "=== ASMBC74001.execute END ===");
+			return reqData;
+		}
+
 		// 2.PC호출
 		new PCAccount().deleteAccount(accountPDTO);
+		
+		logger.info("ASMBC74001", "=== ASMBC74001.execute END ===");
 		return reqData;
 	}
 
