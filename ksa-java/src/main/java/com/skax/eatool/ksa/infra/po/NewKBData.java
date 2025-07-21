@@ -1,32 +1,39 @@
 package com.skax.eatool.ksa.infra.po;
 
 /**
- * Stub class for KBData
+ * NewKBData implementation
  */
 public class NewKBData {
 
+    private NewGenericDto inputGenericDto;
+    private NewGenericDto outputGenericDto;
+
     public NewKBData() {
-        // Stub constructor
+        this.inputGenericDto = new NewGenericDto();
+        this.outputGenericDto = new NewGenericDto();
     }
 
-    // Add stub methods as needed
     public String toString() {
-        return super.toString();
+        return "NewKBData{input=" + inputGenericDto + ", output=" + outputGenericDto + "}";
     }
 
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        NewKBData that = (NewKBData) obj;
+        return inputGenericDto.equals(that.inputGenericDto) && 
+               outputGenericDto.equals(that.outputGenericDto);
     }
 
     public int hashCode() {
-        return super.hashCode();
+        return inputGenericDto.hashCode() * 31 + outputGenericDto.hashCode();
     }
 
     public NewGenericDto getInputGenericDto() {
-        return new NewGenericDto();
+        return inputGenericDto;
     }
 
     public NewGenericDto getOutputGenericDto() {
-        return new NewGenericDto();
+        return outputGenericDto;
     }
 }

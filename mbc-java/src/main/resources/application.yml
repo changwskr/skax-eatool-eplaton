@@ -124,5 +124,5 @@ springdoc:
     tags-sorter: alpha
     doc-expansion: none
     disable-swagger-default-url: true
-  packages-to-scan: com.skax.eatool.mbc.ac
-  paths-to-match: /api/**
+  packages-to-scan: com.skax.eatool.mbc.web
+  paths-to-match: /api/**, /swagger/**, /database/**, /environment/**

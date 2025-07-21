@@ -41,7 +41,7 @@ public class Account extends NewAbstractDTO {
 
 	private String password; // 비밀번호
 
-	private String netAmount; // 잔액
+	private Double netAmount; // 잔액
 
 	public String getAccountNumber() {
 		return accountNumber;
@@ -83,11 +83,11 @@ public class Account extends NewAbstractDTO {
 		this.name = name;
 	}
 
-	public String getNetAmount() {
+	public Double getNetAmount() {
 		return netAmount;
 	}
 
-	public void setNetAmount(String netAmount) {
+	public void setNetAmount(Double netAmount) {
 		this.netAmount = netAmount;
 	}
 

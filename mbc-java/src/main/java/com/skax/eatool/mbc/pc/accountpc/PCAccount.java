@@ -7,38 +7,37 @@
 
 package com.skax.eatool.mbc.pc.accountpc;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.skax.eatool.ksa.exception.NewBusinessException;
-import com.skax.eatool.ksa.logger.NewIKesaLogger;
-import com.skax.eatool.ksa.logger.NewKesaLogHelper;
 import com.skax.eatool.ksa.oltp.biz.NewIProcessComponent;
 import com.skax.eatool.ksa.util.NewObjectUtil;
 import com.skax.eatool.mbc.dc.accountdc.DCAccount;
 import com.skax.eatool.mbc.dc.accountdc.dto.AccountDDTO;
 import com.skax.eatool.mbc.pc.dto.AccountPDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PC Component for Account Management
+ * Account Process Component
  * 
- * Program Name: PCAccount.java
- * Description: Process component for handling account information
- * 
- * Change History:
- * <ul>
- * <li>2008-08-26::Initial::First Creation
- * </ul>
+ * @author KBSTAR
+ * @version 1.0.0
  */
+@Component
 public class PCAccount implements NewIProcessComponent {
 
 	private static final Logger logger = LoggerFactory.getLogger(PCAccount.class);
+	
+	@Autowired
+	private DCAccount dcAccount;
 
 	/**
 	 * Method Name: getAccount
-	 * Description: Retrieve account information
+	 * Description: Get account information
 	 * 
 	 * @param AccountPDTO
 	 *                    <ul>
@@ -65,10 +64,9 @@ public class PCAccount implements NewIProcessComponent {
 			return null;
 		}
 		
-		AccountDDTO accountDDTO = new DCAccount()
-				.getAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		AccountDDTO dDto = dcAccount.getAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
 		logger.info("=== PCAccount.getAccount END ===");
-		return NewObjectUtil.copyForClass(AccountPDTO.class, accountDDTO);
+		return NewObjectUtil.copyForClass(AccountPDTO.class, dDto);
 	}
 
 	/**
@@ -97,7 +95,7 @@ public class PCAccount implements NewIProcessComponent {
 			return;
 		}
 		
-		new DCAccount().updateAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		dcAccount.updateAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
 		logger.info("=== PCAccount.updateAccount END ===");
 	}
 
@@ -121,7 +119,7 @@ public class PCAccount implements NewIProcessComponent {
 			return;
 		}
 		
-		new DCAccount().deleteAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		dcAccount.deleteAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
 		logger.info("=== PCAccount.deleteAccount END ===");
 	}
 
@@ -154,8 +152,17 @@ public class PCAccount implements NewIProcessComponent {
 		// TODO: Implement account creation logic
 		logger.info("Creating account with ID: " + (accountPDTO.getAccountId() != null ? accountPDTO.getAccountId() : "null"));
 		
+		// AccountPDTO를 AccountDDTO로 직접 매핑
+		AccountDDTO accountDDTO = new AccountDDTO();
+		accountDDTO.setAccountNumber(accountPDTO.getAccountId());
+		accountDDTO.setName(accountPDTO.getAccountName());
+		accountDDTO.setIdentificationNumber(""); // 기본값 설정
+		accountDDTO.setInterestRate(0.0f); // 기본값 설정
+		accountDDTO.setPassword(""); // 기본값 설정
+		accountDDTO.setNetAmount(0.0); // 기본값 설정
+		
 		logger.info("=== PCAccount.createAccount END ===");
-		new DCAccount().createAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		dcAccount.createAccount(accountDDTO);
 	}
 
 	/**
@@ -188,8 +195,7 @@ public class PCAccount implements NewIProcessComponent {
 			return new ArrayList<>();
 		}
 		
-		List<AccountDDTO> dDtoList = new DCAccount()
-				.getListAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		List<AccountDDTO> dDtoList = dcAccount.getListAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
 		logger.info("=== PCAccount.getListAccount END ===");
 		return NewObjectUtil.copyForList(AccountPDTO.class, dDtoList);
 	}

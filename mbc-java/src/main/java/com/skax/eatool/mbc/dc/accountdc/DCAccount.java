@@ -181,9 +181,23 @@ public class DCAccount implements NewIDomainComponent {
 	public void createAccount(AccountDDTO accountDDTO) throws NewBusinessException {
 		logger.info("=== DCAccount.createAccount START ===");
 		try {
-			Account account = NewObjectUtil.copyForClass(Account.class, accountDDTO);
+			// AccountDDTO를 Account로 직접 매핑
+			Account account = new Account();
+			account.setAccountNumber(accountDDTO.getAccountNumber());
+			account.setName(accountDDTO.getName());
+			account.setIdentificationNumber(accountDDTO.getIdentificationNumber());
+			account.setInterestRate(accountDDTO.getInterestRate());
+			account.setLastTransaction(accountDDTO.getLastTransaction());
+			account.setPassword(accountDDTO.getPassword());
+			account.setNetAmount(accountDDTO.getNetAmount());
+			
+			// 디버깅을 위한 로그 추가
+			logger.info("=== DCAccount.createAccount - Created Account: accountNumber={}, name={}, netAmount={} ===", 
+			           account.getAccountNumber(), account.getName(), account.getNetAmount());
+			
 			accountMapper.save(account);
 		} catch (Exception e) {
+			logger.error("=== DCAccount.createAccount - Error: {} ===", e.getMessage(), e);
 			throw new NewBusinessException("B0000002", "processCode", e);
 		} finally {
 			logger.info("=== DCAccount.createAccount END ===");

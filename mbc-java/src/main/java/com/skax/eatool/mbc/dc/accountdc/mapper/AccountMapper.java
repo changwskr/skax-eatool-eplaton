@@ -41,7 +41,7 @@ public class AccountMapper {
         account.setInterestRate(rs.getFloat("INTEREST_RATE"));
         account.setLastTransaction(rs.getTimestamp("LAST_TRANSACTION"));
         account.setPassword(rs.getString("PASSWORD"));
-        account.setNetAmount(rs.getString("NET_AMOUNT"));
+        account.setNetAmount(rs.getDouble("NET_AMOUNT"));
         return account;
     };
 
@@ -164,6 +164,16 @@ public class AccountMapper {
      */
     public void save(Account account) {
         logger.info("=== AccountMapper.save START ===");
+        
+        // Null 체크 추가
+        if (account == null) {
+            logger.error("=== AccountMapper.save - account is null ===");
+            throw new IllegalArgumentException("Account cannot be null");
+        }
+        
+        logger.info("=== AccountMapper.save - Processing account: accountNumber={}, name={} ===", 
+                   account.getAccountNumber(), account.getName());
+        
         if (existsByAccountNumber(account.getAccountNumber())) {
             update(account);
         } else {
@@ -179,6 +189,16 @@ public class AccountMapper {
      */
     public void insert(Account account) {
         logger.info("=== AccountMapper.insert START ===");
+        
+        // Null 체크 추가
+        if (account == null) {
+            logger.error("=== AccountMapper.insert - account is null ===");
+            throw new IllegalArgumentException("Account cannot be null");
+        }
+        
+        logger.info("=== AccountMapper.insert - Inserting account: accountNumber={}, name={}, netAmount={} ===", 
+                   account.getAccountNumber(), account.getName(), account.getNetAmount());
+        
         String sql = "INSERT INTO ACCOUNT (ACCOUNT_NUMBER, NAME, IDENTIFICATION_NUMBER, INTEREST_RATE, LAST_TRANSACTION, PASSWORD, NET_AMOUNT) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 account.getAccountNumber(),

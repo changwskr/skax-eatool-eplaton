@@ -36,6 +36,8 @@ public class SwaggerTestController {
             @Parameter(description = "이름", required = false, example = "홍길동") @RequestParam(value = "name", defaultValue = "World") String name) {
 
         logger.info("=== SwaggerTestController.hello START ===");
+        logger.info("=== SwaggerTestController.hello - name: {} ===", name);
+        
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Hello, " + name + "!");
         response.put("name", name);
@@ -54,6 +56,8 @@ public class SwaggerTestController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청 데이터", required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class), examples = @ExampleObject(name = "요청 예시", value = "{\"message\": \"Hello\", \"data\": \"test\"}"))) @RequestBody Map<String, Object> requestBody) {
 
         logger.info("=== SwaggerTestController.echo START ===");
+        logger.info("=== SwaggerTestController.echo - requestBody: {} ===", requestBody);
+        
         Map<String, Object> response = new HashMap<>();
         response.put("echo", requestBody);
         response.put("timestamp", System.currentTimeMillis());
@@ -73,6 +77,8 @@ public class SwaggerTestController {
             @RequestBody Map<String, Object> requestBody) {
 
         logger.info("=== SwaggerTestController.update START ===");
+        logger.info("=== SwaggerTestController.update - id: {}, requestBody: {} ===", id, requestBody);
+        
         Map<String, Object> response = new HashMap<>();
         response.put("id", id);
         response.put("updatedData", requestBody);
@@ -92,6 +98,8 @@ public class SwaggerTestController {
             @Parameter(description = "삭제할 ID", required = true, example = "123") @PathVariable String id) {
 
         logger.info("=== SwaggerTestController.delete START ===");
+        logger.info("=== SwaggerTestController.delete - id: {} ===", id);
+        
         Map<String, Object> response = new HashMap<>();
         response.put("id", id);
         response.put("message", "삭제되었습니다.");

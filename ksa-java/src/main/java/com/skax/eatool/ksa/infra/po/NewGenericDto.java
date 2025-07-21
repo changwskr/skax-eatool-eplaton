@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Stub class for GenericDto
+ * NewGenericDto implementation
  */
 public class NewGenericDto {
 
@@ -19,10 +19,9 @@ public class NewGenericDto {
     private Map<String, List<Object>> nodes = new HashMap<>();
 
     public NewGenericDto() {
-        // Stub constructor
+        // Constructor
     }
 
-    // Add stub methods as needed
     public void put(String key, Object value) {
         data.put(key, value);
     }
@@ -32,7 +31,7 @@ public class NewGenericDto {
     }
 
     public NewGenericDto using(String key) {
-        // Stub implementation
+        // For compatibility, return this instance
         return this;
     }
 
@@ -49,7 +48,7 @@ public class NewGenericDto {
     }
 
     public List<NewGenericDto> getGenericDtos(String key) {
-        // Stub implementation
+        // Return empty list for now, can be enhanced later
         return new ArrayList<>();
     }
 
@@ -57,6 +56,13 @@ public class NewGenericDto {
         Object value = data.get(key);
         if (value instanceof Integer) {
             return (Integer) value;
+        }
+        if (value instanceof String) {
+            try {
+                return Integer.parseInt((String) value);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
         }
         return 0;
     }
@@ -70,24 +76,34 @@ public class NewGenericDto {
         data.put(key, value);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T[] getArray(Class<T> clazz) {
-        // Stub implementation
+        // Return empty array for now, can be enhanced later
         return (T[]) new Object[0];
     }
 
     public void add(List<?> list) {
-        // Stub implementation
+        // Add to arrays map with a default key
+        arrays.put("default", new ArrayList<>(list));
     }
 
     public String toString() {
-        return super.toString();
+        return "NewGenericDto{data=" + data + ", attributes=" + attributes + 
+               ", arrays=" + arrays + ", nodes=" + nodes + "}";
     }
 
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        NewGenericDto that = (NewGenericDto) obj;
+        return data.equals(that.data) && 
+               attributes.equals(that.attributes) && 
+               arrays.equals(that.arrays) && 
+               nodes.equals(that.nodes);
     }
 
     public int hashCode() {
-        return super.hashCode();
+        return data.hashCode() * 31 + attributes.hashCode() * 17 + 
+               arrays.hashCode() * 13 + nodes.hashCode();
     }
 }

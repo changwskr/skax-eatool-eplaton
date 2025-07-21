@@ -44,7 +44,10 @@ public class AccountAsTestController {
                           @RequestParam String accountType,
                           Model model) {
 
-        logger.info("=== AccountAsTestController.runTest START ===", accountId, accountName, accountType);
+        logger.info("=== AccountAsTestController.runTest START ===");
+        logger.info("Received parameters - accountId: {}, accountName: {}, accountType: {}", 
+                   accountId, accountName, accountType);
+        
         try {
             // Build AccountPDTO
             AccountPDTO dto = new AccountPDTO();
@@ -52,10 +55,28 @@ public class AccountAsTestController {
             dto.setAccountName(accountName);
             dto.setAccountType(accountType);
 
+            logger.info("Created AccountPDTO - accountId: {}, accountName: {}, accountType: {}", 
+                       dto.getAccountId(), dto.getAccountName(), dto.getAccountType());
+
             // Build NewKBData with INDATA
             NewKBData reqData = new NewKBData();
             NewGenericDto inDto = reqData.getInputGenericDto();
-            inDto.using(NewGenericDto.INDATA).put("AccountPDTO", dto);
+            
+            // 직접 데이터를 넣는 방식으로 변경
+            inDto.put("AccountPDTO", dto);
+            
+            // 디버깅을 위한 로그 추가
+            logger.info("NewKBData created with AccountPDTO");
+            logger.info("Input DTO contains AccountPDTO: {}", inDto.get("AccountPDTO"));
+            
+            // AS에서 데이터를 가져올 수 있는지 테스트
+            AccountPDTO testDto = (AccountPDTO) inDto.get("AccountPDTO");
+            if (testDto != null) {
+                logger.info("Test - Retrieved AccountPDTO from input: accountId={}, accountName={}, accountType={}", 
+                           testDto.getAccountId(), testDto.getAccountName(), testDto.getAccountType());
+            } else {
+                logger.warn("Test - AccountPDTO is null in input DTO");
+            }
 
             // Execute service
             logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -65,6 +86,7 @@ public class AccountAsTestController {
 
             model.addAttribute("result", "계정 생성 성공");
         } catch (Exception e) {
+            logger.error("Error during account creation test: {}", e.getMessage(), e);
             model.addAttribute("result", "오류: " + e.getMessage());
         }
         logger.info("=== AccountAsTestController.runTest END ===");
