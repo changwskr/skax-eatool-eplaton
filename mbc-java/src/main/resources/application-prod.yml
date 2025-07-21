@@ -1,0 +1,182 @@
+# ========================================
+# MBC Application - Production Environment
+# ========================================
+
+server:
+  port: 8080
+  servlet:
+    context-path: /mbc
+
+spring:
+  application:
+    name: mbc-application-prod
+
+  # Database Configuration (Production Database)
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:mbc_prod}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME:mbc_user}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: false
+        use_sql_comments: false
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+    open-in-view: false
+
+  # Jackson Configuration
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Seoul
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+
+# MyBatis Configuration
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.skax.eatool.mbc.dc.dto
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    cache-enabled: true
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+
+# Logging Configuration
+logging:
+  level:
+    root: WARN
+    com.skax.eatool.mbc: INFO
+    com.skax.eatool.ksa: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    org.mybatis: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/mbc-application-prod.log
+    max-size: 100MB
+    max-history: 90
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      simple:
+        enabled: false
+
+# Swagger/OpenAPI Configuration (Production - Limited)
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: false
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: false
+
+# Security Configuration (Production - Strict)
+security:
+  user:
+    name: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:}
+    roles: ADMIN
+
+# Application Configuration
+app:
+  environment: production
+  debug: false
+  data-access:
+    type: mybatis
+    description: "운영 환경 - MyBatis 데이터 접근 방식"
+  
+  # Database Initialization
+  database:
+    initialize: false
+    schema-location: classpath:schema.sql
+    data-location: classpath:data.sql
+    
+  # API Configuration
+  api:
+    version: v1
+    base-path: /api/v1
+    cors:
+      allowed-origins: "${ALLOWED_ORIGINS:https://mbc.kbstar.com}"
+      allowed-methods: "GET,POST,PUT,DELETE"
+      allowed-headers: "Content-Type,Authorization"
+      
+  # Monitoring
+  monitoring:
+    enabled: true
+    health-check-interval: 60s
+    
+# MBC Specific Configuration
+mbc:
+  system:
+    name: "MBC Production System"
+    version: "1.0.0-PROD"
+    description: "Management Business Control - Production Environment"
+  
+  # Business Logic Configuration
+  business:
+    transaction-timeout: 60
+    max-retry-count: 2
+    audit-logging: true
+    
+  # Integration Configuration
+  integration:
+    external-api:
+      timeout: 10000
+      retry-count: 1
+    messaging:
+      enabled: true
+      
+  # Cache Configuration
+  cache:
+    enabled: true
+    ttl: 1800 # 30 minutes
+    max-size: 5000
+
+# Performance Configuration
+server:
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    connection-timeout: 20000
+    max-connections: 8192
+    accept-count: 100
+
+# Session Configuration
+session:
+  store-type: redis
+  redis:
+    namespace: mbc:session
+    timeout: 30m

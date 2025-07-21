@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    
+    <!-- 프로퍼티 정의 -->
+    <property name="LOG_PATH" value="./logs"/>
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <property name="LOG_PATTERN_DETAILED" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%file:%line] - %msg%n"/>
+    
+    <!-- 콘솔 출력 설정 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    
+    <!-- 파일 출력 설정 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/mbc-application.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/mbc-application.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- 에러 로그 파일 출력 설정 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/mbc-error.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN_DETAILED}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/mbc-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- SQL 로그 파일 출력 설정 -->
+    <appender name="SQL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/mbc-sql.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/mbc-sql.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- 성능 로그 파일 출력 설정 -->
+    <appender name="PERFORMANCE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/mbc-performance.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/mbc-performance.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- 개발 환경 로그 설정 -->
+    <springProfile name="dev">
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+        
+        <!-- MyBatis SQL 로그 -->
+        <logger name="com.skax.eatool.mbc.dc" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="SQL_FILE"/>
+        </logger>
+        
+        <!-- Spring Framework 로그 -->
+        <logger name="org.springframework" level="INFO"/>
+        
+        <!-- Hibernate 로그 -->
+        <logger name="org.hibernate" level="INFO"/>
+        
+        <!-- Tomcat 로그 -->
+        <logger name="org.apache.tomcat" level="INFO"/>
+        
+        <!-- MBC 애플리케이션 로그 -->
+        <logger name="com.skax.eatool.mbc" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
+    </springProfile>
+    
+    <!-- 로컬 환경 로그 설정 -->
+    <springProfile name="local">
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+        
+        <!-- MyBatis SQL 로그 -->
+        <logger name="com.skax.eatool.mbc.dc" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="SQL_FILE"/>
+        </logger>
+        
+        <!-- Spring Framework 로그 -->
+        <logger name="org.springframework" level="DEBUG"/>
+        
+        <!-- Hibernate 로그 -->
+        <logger name="org.hibernate" level="DEBUG"/>
+        
+        <!-- Tomcat 로그 -->
+        <logger name="org.apache.tomcat" level="INFO"/>
+        
+        <!-- MBC 애플리케이션 로그 -->
+        <logger name="com.skax.eatool.mbc" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
+    </springProfile>
+    
+    <!-- 테스트 환경 로그 설정 -->
+    <springProfile name="test">
+        <root level="INFO">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+        
+        <!-- MyBatis SQL 로그 -->
+        <logger name="com.skax.eatool.mbc.dc" level="INFO" additivity="false">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="SQL_FILE"/>
+        </logger>
+        
+        <!-- Spring Framework 로그 -->
+        <logger name="org.springframework" level="INFO"/>
+        
+        <!-- Hibernate 로그 -->
+        <logger name="org.hibernate" level="INFO"/>
+        
+        <!-- MBC 애플리케이션 로그 -->
+        <logger name="com.skax.eatool.mbc" level="INFO" additivity="false">
+            <appender-ref ref="FILE"/>
+        </logger>
+    </springProfile>
+    
+    <!-- 운영 환경 로그 설정 -->
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+        
+        <!-- MyBatis SQL 로그 -->
+        <logger name="com.skax.eatool.mbc.dc" level="WARN" additivity="false">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="SQL_FILE"/>
+        </logger>
+        
+        <!-- Spring Framework 로그 -->
+        <logger name="org.springframework" level="WARN"/>
+        
+        <!-- Hibernate 로그 -->
+        <logger name="org.hibernate" level="WARN"/>
+        
+        <!-- MBC 애플리케이션 로그 -->
+        <logger name="com.kbstar.mbc" level="INFO" additivity="false">
+            <appender-ref ref="FILE"/>
+        </logger>
+        
+        <!-- 성능 로그 -->
+        <logger name="com.kbstar.mbc.config.SqlPerformanceInterceptor" level="INFO" additivity="false">
+            <appender-ref ref="PERFORMANCE_FILE"/>
+        </logger>
+    </springProfile>
+    
+    <!-- 기본 로그 설정 (프로파일이 지정되지 않은 경우) -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+    
+    <!-- 특정 패키지별 로그 레벨 설정 -->
+    <logger name="com.kbstar.mbc.controller" level="DEBUG"/>
+    <logger name="com.kbstar.mbc.service" level="DEBUG"/>
+    <logger name="com.kbstar.mbc.repository" level="DEBUG"/>
+    <logger name="com.kbstar.mbc.config" level="INFO"/>
+    <logger name="com.kbstar.mbc.util" level="DEBUG"/>
+    
+    <!-- 외부 라이브러리 로그 레벨 설정 -->
+    <logger name="org.apache.ibatis" level="INFO"/>
+    <logger name="org.mybatis" level="INFO"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+    <logger name="org.apache.tomcat.jdbc.pool" level="INFO"/>
+    
+</configuration> 

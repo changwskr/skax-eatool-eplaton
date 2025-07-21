@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skax.eatool.mbc.dc.mapper.SystemCodeMapper">
+
+    <!-- 결과 맵 정의 -->
+    <resultMap id="SystemCodeResultMap" type="com.skax.eatool.mbc.dc.dto.SystemCodeDto">
+        <id column="CODE_ID" property="codeId" jdbcType="VARCHAR"/>
+        <result column="CODE_TYPE" property="codeType" jdbcType="VARCHAR"/>
+        <result column="CODE_VALUE" property="codeValue" jdbcType="VARCHAR"/>
+        <result column="CODE_NAME" property="codeName" jdbcType="VARCHAR"/>
+        <result column="CODE_DESC" property="codeDesc" jdbcType="VARCHAR"/>
+        <result column="SORT_ORDER" property="sortOrder" jdbcType="INTEGER"/>
+        <result column="USE_YN" property="useYn" jdbcType="VARCHAR"/>
+        <result column="CREATED_DATE" property="createdDate" jdbcType="TIMESTAMP"/>
+        <result column="UPDATED_DATE" property="updatedDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 시스템 코드 목록 조회 -->
+    <select id="selectSystemCodeList" resultMap="SystemCodeResultMap" parameterType="com.skax.eatool.mbc.dc.dto.SystemCodeSearchDto">
+        SELECT 
+            CODE_ID,
+            CODE_TYPE,
+            CODE_VALUE,
+            CODE_NAME,
+            CODE_DESC,
+            SORT_ORDER,
+            USE_YN,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM SYSTEM_CODE
+        <where>
+            <if test="codeType != null and codeType != ''">
+                AND CODE_TYPE = #{codeType}
+            </if>
+            <if test="codeValue != null and codeValue != ''">
+                AND CODE_VALUE LIKE CONCAT('%', #{codeValue}, '%')
+            </if>
+            <if test="codeName != null and codeName != ''">
+                AND CODE_NAME LIKE CONCAT('%', #{codeName}, '%')
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND USE_YN = #{useYn}
+            </if>
+        </where>
+        ORDER BY CODE_TYPE, SORT_ORDER, CODE_VALUE
+        <if test="pageSize > 0">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
+    </select>
+
+    <!-- 시스템 코드 총 개수 조회 -->
+    <select id="selectSystemCodeCount" resultType="int" parameterType="com.skax.eatool.mbc.dc.dto.SystemCodeSearchDto">
+        SELECT COUNT(*)
+        FROM SYSTEM_CODE
+        <where>
+            <if test="codeType != null and codeType != ''">
+                AND CODE_TYPE = #{codeType}
+            </if>
+            <if test="codeValue != null and codeValue != ''">
+                AND CODE_VALUE LIKE CONCAT('%', #{codeValue}, '%')
+            </if>
+            <if test="codeName != null and codeName != ''">
+                AND CODE_NAME LIKE CONCAT('%', #{codeName}, '%')
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND USE_YN = #{useYn}
+            </if>
+        </where>
+    </select>
+
+    <!-- 시스템 코드 상세 조회 -->
+    <select id="selectSystemCodeById" resultMap="SystemCodeResultMap" parameterType="string">
+        SELECT 
+            CODE_ID,
+            CODE_TYPE,
+            CODE_VALUE,
+            CODE_NAME,
+            CODE_DESC,
+            SORT_ORDER,
+            USE_YN,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM SYSTEM_CODE
+        WHERE CODE_ID = #{codeId}
+    </select>
+
+    <!-- 코드 타입별 시스템 코드 조회 -->
+    <select id="selectSystemCodesByType" resultMap="SystemCodeResultMap" parameterType="string">
+        SELECT 
+            CODE_ID,
+            CODE_TYPE,
+            CODE_VALUE,
+            CODE_NAME,
+            CODE_DESC,
+            SORT_ORDER,
+            USE_YN,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM SYSTEM_CODE
+        WHERE CODE_TYPE = #{codeType}
+        AND USE_YN = 'Y'
+        ORDER BY SORT_ORDER, CODE_VALUE
+    </select>
+
+    <!-- 시스템 코드 등록 -->
+    <insert id="insertSystemCode" parameterType="com.skax.eatool.mbc.dc.dto.SystemCodeDto">
+        INSERT INTO SYSTEM_CODE (
+            CODE_ID,
+            CODE_TYPE,
+            CODE_VALUE,
+            CODE_NAME,
+            CODE_DESC,
+            SORT_ORDER,
+            USE_YN,
+            CREATED_DATE,
+            UPDATED_DATE
+        ) VALUES (
+            #{codeId},
+            #{codeType},
+            #{codeValue},
+            #{codeName},
+            #{codeDesc},
+            #{sortOrder},
+            #{useYn},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- 시스템 코드 수정 -->
+    <update id="updateSystemCode" parameterType="com.kbstar.mbc.dc.dto.SystemCodeDto">
+        UPDATE SYSTEM_CODE
+        SET 
+            CODE_TYPE = #{codeType},
+            CODE_VALUE = #{codeValue},
+            CODE_NAME = #{codeName},
+            CODE_DESC = #{codeDesc},
+            SORT_ORDER = #{sortOrder},
+            USE_YN = #{useYn},
+            UPDATED_DATE = NOW()
+        WHERE CODE_ID = #{codeId}
+    </update>
+
+    <!-- 시스템 코드 삭제 -->
+    <delete id="deleteSystemCode" parameterType="string">
+        DELETE FROM SYSTEM_CODE
+        WHERE CODE_ID = #{codeId}
+    </delete>
+
+    <!-- 시스템 코드 사용 여부 변경 -->
+    <update id="updateSystemCodeUseYn" parameterType="map">
+        UPDATE SYSTEM_CODE
+        SET 
+            USE_YN = #{useYn},
+            UPDATED_DATE = NOW()
+        WHERE CODE_ID = #{codeId}
+    </update>
+
+    <!-- 코드 타입별 통계 -->
+    <select id="selectSystemCodeStatsByType" resultType="map">
+        SELECT 
+            CODE_TYPE,
+            COUNT(*) as totalCount,
+            SUM(CASE WHEN USE_YN = 'Y' THEN 1 ELSE 0 END) as activeCount,
+            SUM(CASE WHEN USE_YN = 'N' THEN 1 ELSE 0 END) as inactiveCount
+        FROM SYSTEM_CODE
+        GROUP BY CODE_TYPE
+        ORDER BY CODE_TYPE
+    </select>
+
+    <!-- 활성 시스템 코드 목록 조회 -->
+    <select id="selectActiveSystemCodes" resultMap="SystemCodeResultMap">
+        SELECT 
+            CODE_ID,
+            CODE_TYPE,
+            CODE_VALUE,
+            CODE_NAME,
+            CODE_DESC,
+            SORT_ORDER,
+            USE_YN,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM SYSTEM_CODE
+        WHERE USE_YN = 'Y'
+        ORDER BY CODE_TYPE, SORT_ORDER, CODE_VALUE
+    </select>
+
+    <!-- 코드 타입 목록 조회 -->
+    <select id="selectCodeTypes" resultType="string">
+        SELECT DISTINCT CODE_TYPE
+        FROM SYSTEM_CODE
+        WHERE USE_YN = 'Y'
+        ORDER BY CODE_TYPE
+    </select>
+
+    <!-- 코드 값으로 시스템 코드 조회 -->
+    <select id="selectSystemCodeByValue" resultMap="SystemCodeResultMap" parameterType="map">
+        SELECT 
+            CODE_ID,
+            CODE_TYPE,
+            CODE_VALUE,
+            CODE_NAME,
+            CODE_DESC,
+            SORT_ORDER,
+            USE_YN,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM SYSTEM_CODE
+        WHERE CODE_TYPE = #{codeType}
+        AND CODE_VALUE = #{codeValue}
+        AND USE_YN = 'Y'
+    </select>
+
+    <!-- 코드 이름으로 시스템 코드 조회 -->
+    <select id="selectSystemCodeByName" resultMap="SystemCodeResultMap" parameterType="map">
+        SELECT 
+            CODE_ID,
+            CODE_TYPE,
+            CODE_VALUE,
+            CODE_NAME,
+            CODE_DESC,
+            SORT_ORDER,
+            USE_YN,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM SYSTEM_CODE
+        WHERE CODE_TYPE = #{codeType}
+        AND CODE_NAME = #{codeName}
+        AND USE_YN = 'Y'
+    </select>
+
+    <!-- 정렬 순서 업데이트 -->
+    <update id="updateSortOrder" parameterType="map">
+        UPDATE SYSTEM_CODE
+        SET 
+            SORT_ORDER = #{sortOrder},
+            UPDATED_DATE = NOW()
+        WHERE CODE_ID = #{codeId}
+    </update>
+
+    <!-- 코드 타입별 최대 정렬 순서 조회 -->
+    <select id="selectMaxSortOrderByType" resultType="int" parameterType="string">
+        SELECT COALESCE(MAX(SORT_ORDER), 0)
+        FROM SYSTEM_CODE
+        WHERE CODE_TYPE = #{codeType}
+    </select>
+
+</mapper> 

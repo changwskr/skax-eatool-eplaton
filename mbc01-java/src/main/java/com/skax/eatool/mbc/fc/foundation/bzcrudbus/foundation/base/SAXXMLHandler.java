@@ -1,8 +1,9 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.foundation.base;
 
 import java.io.*;
-import org.jdom.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
+import org.jdom2.output.*;
 
 /**
  * SAX XML 핸들러 클래스
@@ -37,7 +38,7 @@ public class SAXXMLHandler extends XMLHandler {
    */
   protected Object createBuilder() {
     System.out.println("validate " + option.getValidate());
-    SAXBuilder builder = new SAXBuilder(option.getParserName(), option.getValidate());
+    SAXBuilder builder = new SAXBuilder();
     return builder;
   }
 
@@ -51,9 +52,7 @@ public class SAXXMLHandler extends XMLHandler {
     Document doc = null;
     try {
       doc = ((SAXBuilder) createBuilder()).build(xmlFile);
-    } catch (JDOMException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
+    } catch (JDOMException | IOException e) {
       e.printStackTrace();
     }
     return doc;
@@ -69,9 +68,7 @@ public class SAXXMLHandler extends XMLHandler {
     Document doc = null;
     try {
       doc = ((SAXBuilder) createBuilder()).build(xmlFileName);
-    } catch (JDOMException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
+    } catch (JDOMException | IOException e) {
       e.printStackTrace();
     }
     return doc;

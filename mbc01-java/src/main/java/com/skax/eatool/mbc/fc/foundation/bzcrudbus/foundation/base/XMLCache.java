@@ -1,7 +1,10 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.foundation.base;
 
+import java.io.*;
 import java.util.*;
-import org.jdom.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
+import org.jdom2.output.*;
 
 /**
  * XML 캐시 관리 클래스

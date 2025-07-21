@@ -1,51 +1,115 @@
-# MBC Application Configuration
-# MBC 메인 애플리케이션 설정
-
 spring:
   application:
-    name: mbc-java
+    name: mbc-application
+
+  # Profile Configuration
   profiles:
-    active: dev
+    active: dev # 기본값: dev, prod로 변경 가능
 
-# Logging Configuration
-logging:
-  level:
-    com.skax.eatool.mbc: DEBUG
-    org.springframework: INFO
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-# Server Configuration
-server:
-  port: 8080
-  servlet:
-    context-path: /mbc
-
-# Database Configuration (for development)
-spring:
+  # Database Configuration
   datasource:
-    url: jdbc:h2:mem:mbcdb
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;INIT=CREATE SCHEMA IF NOT EXISTS PUBLIC\\;SET SCHEMA PUBLIC\\;SET MODE MySQL\\;SET DB_CLOSE_DELAY -1\\;SET DB_CLOSE_ON_EXIT FALSE
     driver-class-name: org.h2.Driver
     username: sa
-    password: 
+    password:
+
+  # H2 Console (for development)
   h2:
     console:
       enabled: true
       path: /h2-console
 
-# MyBatis Configuration
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.skax.eatool.mbc.entity
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # Jackson Configuration
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Seoul
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
 
-# Application Properties
+  # Thymeleaf Configuration
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML
+    servlet:
+      content-type: text/html;charset=UTF-8
+
+  # Static Resources Configuration
+  web:
+    resources:
+      static-locations: classpath:/static/
+      add-mappings: false
+
+  # HTTP Encoding Configuration
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+  # DevTools Configuration (비활성화)
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    context-path: /
+  # 추가 인코딩 설정
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+# Logging Configuration
+logging:
+  level:
+    com.skax.eatool.mbc: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/mbc-application.log
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Application Configuration
 app:
-  mbc:
-    version: 1.0.0
-    description: MBC Main Application
-    author: SKAX EA Tool Team
-    mbc01-lib-path: ${mbc01.lib.dir} 
+  data-access:
+    type: jdbc # jdbc로 변경
+    description: "데이터 접근 방식 설정 (jdbc)"
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    doc-expansion: none
+    disable-swagger-default-url: true
+  packages-to-scan: com.skax.eatool.mbc.ac
+  paths-to-match: /api/**

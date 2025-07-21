@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    
+    <!-- MyBatis 설정 -->
+    <settings>
+        <!-- 캐시 사용 -->
+        <setting name="cacheEnabled" value="true"/>
+        
+        <!-- 지연 로딩 사용 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        
+        <!-- 자동 생성 키 사용 -->
+        <setting name="useGeneratedKeys" value="true"/>
+        
+        <!-- 컬럼명 자동 매핑 -->
+        <setting name="autoMappingBehavior" value="PARTIAL"/>
+        
+        <!-- NULL 값 처리 -->
+        <setting name="jdbcTypeForNull" value="VARCHAR"/>
+        
+        <!-- 기본 실행자 타입 -->
+        <setting name="defaultExecutorType" value="REUSE"/>
+        
+        <!-- 타임아웃 설정 -->
+        <setting name="defaultStatementTimeout" value="30"/>
+        
+        <!-- 로그 출력 -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+    
+    <!-- 타입 별칭 설정 -->
+    <typeAliases>
+        <!-- 기본 패키지 -->
+        <package name="com.skax.eatool.mbc.dc.usermgtdc.dto"/>
+        <package name="com.skax.eatool.mbc.dc.accountdc.dto"/>
+        <package name="com.skax.eatool.mbc.dc.dto"/>
+        
+        <!-- 개별 클래스 -->
+        <typeAlias alias="UserDto" type="com.skax.eatool.mbc.dc.usermgtdc.dto.UserDto"/>
+        <typeAlias alias="AccountDto" type="com.skax.eatool.mbc.dc.accountdc.dto.AccountDto"/>
+        <typeAlias alias="SystemCodeDto" type="com.skax.eatool.mbc.dc.dto.SystemCodeDto"/>
+        <typeAlias alias="Page" type="com.skax.eatool.mbc.dc.usermgtdc.Page"/>
+    </typeAliases>
+    
+    <!-- 타입 핸들러 설정 -->
+    <typeHandlers>
+        <!-- 날짜 타입 핸들러 -->
+        <typeHandler handler="org.apache.ibatis.type.LocalDateTimeTypeHandler" 
+                     javaType="java.time.LocalDateTime" jdbcType="TIMESTAMP"/>
+        <typeHandler handler="org.apache.ibatis.type.LocalDateTypeHandler" 
+                     javaType="java.time.LocalDate" jdbcType="DATE"/>
+        <typeHandler handler="org.apache.ibatis.type.LocalTimeTypeHandler" 
+                     javaType="java.time.LocalTime" jdbcType="TIME"/>
+        
+        <!-- Enum 타입 핸들러 -->
+        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" 
+                     javaType="java.lang.Enum"/>
+    </typeHandlers>
+    
+    <!-- 플러그인 설정 -->
+    <plugins>
+        <!-- 페이징 플러그인 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="helperDialect" value="mysql"/>
+            <property name="reasonable" value="true"/>
+            <property name="supportMethodsArguments" value="true"/>
+            <property name="params" value="count=countSql"/>
+        </plugin>
+        
+        <!-- SQL 성능 분석 플러그인 -->
+        <plugin interceptor="com.skax.eatool.mbc.config.SqlPerformanceInterceptor">
+            <property name="slowQueryThreshold" value="1000"/>
+        </plugin>
+    </plugins>
+    
+    <!-- 환경 설정 -->
+    <environments default="development">
+        <!-- 개발 환경 -->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+                <property name="poolMaximumActiveConnections" value="20"/>
+                <property name="poolMaximumIdleConnections" value="10"/>
+                <property name="poolMaximumCheckoutTime" value="20000"/>
+                <property name="poolTimeToWait" value="20000"/>
+                <property name="poolPingQuery" value="SELECT 1"/>
+                <property name="poolPingEnabled" value="true"/>
+                <property name="poolPingConnectionsNotUsedFor" value="3600000"/>
+            </dataSource>
+        </environment>
+        
+        <!-- 테스트 환경 -->
+        <environment id="test">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+                <property name="poolMaximumActiveConnections" value="10"/>
+                <property name="poolMaximumIdleConnections" value="5"/>
+                <property name="poolMaximumCheckoutTime" value="10000"/>
+                <property name="poolTimeToWait" value="10000"/>
+            </dataSource>
+        </environment>
+        
+        <!-- 운영 환경 -->
+        <environment id="production">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+                <property name="poolMaximumActiveConnections" value="50"/>
+                <property name="poolMaximumIdleConnections" value="20"/>
+                <property name="poolMaximumCheckoutTime" value="30000"/>
+                <property name="poolTimeToWait" value="30000"/>
+                <property name="poolPingQuery" value="SELECT 1"/>
+                <property name="poolPingEnabled" value="true"/>
+                <property name="poolPingConnectionsNotUsedFor" value="3600000"/>
+            </dataSource>
+        </environment>
+    </environments>
+    
+    <!-- 매퍼 설정 -->
+    <mappers>
+        <!-- 매퍼 XML 파일들 -->
+        <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/AccountMapper.xml"/>
+        <mapper resource="mapper/SystemCodeMapper.xml"/>
+        
+        <!-- 매퍼 패키지 -->
+        <package name="com.skax.eatool.mbc.dc.usermgtdc.mapper"/>
+        <package name="com.kbstar.mbc.dc.accountdc.mapper"/>
+        <package name="com.kbstar.mbc.dc.mapper"/>
+    </mappers>
+    
+</configuration> 

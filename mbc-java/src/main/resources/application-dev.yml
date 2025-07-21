@@ -1,0 +1,188 @@
+# ========================================
+# MBC Application - Development Environment
+# ========================================
+
+server:
+  port: 8080
+  # context-path 제거 - URL 중복 방지
+  # servlet:
+  #   context-path: /mbc
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+  # 추가 인코딩 설정
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+spring:
+  application:
+    name: mbc-application-dev
+
+  # Database Configuration (H2 In-Memory)
+  datasource:
+    url: jdbc:h2:mem:mbcdb_dev;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  # JPA Configuration - Disabled for MyBatis only
+  jpa:
+    enabled: false
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+
+  # H2 Console (Development Only)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+        trace: false
+
+  # Thymeleaf Configuration
+  thymeleaf:
+    encoding: UTF-8
+    cache: false
+    mode: HTML
+    servlet:
+      content-type: text/html;charset=UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+
+  # Jackson Configuration
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Seoul
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+# MyBatis Configuration
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.skax.eatool.mbc.dc.dto
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: false
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.skax.eatool.mbc: DEBUG
+    com.skax.eatool.ksa: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.mybatis: DEBUG
+    org.springframework.jdbc: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/mbc-application-dev.log
+    max-size: 10MB
+    max-history: 30
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,configprops
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      simple:
+        enabled: true
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+    doc-expansion: list
+    disable-swagger-default-url: true
+  packages-to-scan: com.skax.eatool.mbc.ac, com.skax.eatool.mbc.controller
+  paths-to-match: /api/**, /mbc/**
+
+# Security Configuration (Development - Relaxed)
+security:
+  user:
+    name: admin
+    password: admin123
+    roles: ADMIN,USER
+
+# Application Configuration
+app:
+  environment: development
+  debug: true
+  data-access:
+    type: mybatis
+    description: "개발 환경 - MyBatis 데이터 접근 방식"
+
+  # Database Initialization
+  database:
+    initialize: true
+    schema-location: classpath:schema.sql
+    data-location: classpath:data.sql
+
+  # API Configuration
+  api:
+    version: v1
+    base-path: /api/v1
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+
+  # Monitoring
+  monitoring:
+    enabled: true
+    health-check-interval: 30s
+
+# MBC Specific Configuration
+mbc:
+  system:
+    name: "MBC Development System"
+    version: "1.0.0-DEV"
+    description: "Management Business Control - Development Environment"
+
+  # Business Logic Configuration
+  business:
+    transaction-timeout: 30
+    max-retry-count: 3
+    audit-logging: true
+
+  # Integration Configuration
+  integration:
+    external-api:
+      timeout: 5000
+      retry-count: 2
+    messaging:
+      enabled: false
+
+  # Cache Configuration
+  cache:
+    enabled: true
+    ttl: 300 # 5 minutes
+    max-size: 1000

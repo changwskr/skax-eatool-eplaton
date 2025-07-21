@@ -2,11 +2,11 @@
 <SYSConfig>
 	
 	<SystemInfo id="ConfigFile">		
-		<MBA>/com/skax-eatool/mbc/fc/foundation/bzcrudbus/setting/mba/as-command-config.xml</MBA>
-		<MBB>/com/skax-eatool/mbc/fc/foundation/bzcrudbus/setting/mbb/as-command-config.xml</MBB>
-		<MBC>/com/skax-eatool/mbc/fc/foundation/bzcrudbus/setting/mbc/as-command-config.xml</MBC>
-		<HDD>/com/skax-eatool/mbc/fc/foundation/bzcrudbus/setting/hdd/as-command-config.xml</HDD>
-		<WAF>/com/skax-eatool/mbc/fc/foundation/bzcrudbus/setting/waf-command-config.xml</WAF>
+		<MBA>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/mba/as-command-config.xml</MBA>
+		<MBB>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/mbb/as-command-config.xml</MBB>
+		<MBC>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/mbc/as-command-config.xml</MBC>
+		<HDD>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/hdd/as-command-config.xml</HDD>
+		<WAF>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/waf-command-config.xml</WAF>
 		<LDR>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/class-loader.xml</LDR>
 		<DAO>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/sql-map-config.xml</DAO>
 	</SystemInfo>

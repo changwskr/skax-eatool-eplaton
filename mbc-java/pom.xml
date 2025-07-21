@@ -18,53 +18,31 @@
     <description>MBC Main Spring Boot Application</description>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <java.version>11</java.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
-        <!-- Project paths -->
-        <project.root.dir>${project.basedir}/..</project.root.dir>
-        <ksa.lib.dir>${project.root.dir}/ksa-lib/runtime</ksa.lib.dir>
-        <mbc01.lib.dir>${project.root.dir}/mbc01-lib/runtime</mbc01.lib.dir>
-        <kji.lib.dir>${project.root.dir}/kji-lib/runtime</kji.lib.dir>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Remove the lib directory properties as we'll use Maven repository -->
     </properties>
 
     <dependencies>
-        <!-- Internal dependencies -->
-        <dependency>
-            <groupId>com.skax.eatool</groupId>
-            <artifactId>ksa-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.skax.eatool</groupId>
-            <artifactId>mbc01-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.skax.eatool</groupId>
-            <artifactId>kji-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <!-- KSA Java JAR files from ksa-lib/runtime -->
+        <!-- Internal dependencies from local Maven repository -->
         <dependency>
             <groupId>com.skax.eatool</groupId>
             <artifactId>ksa-java</artifactId>
             <version>${project.version}</version>
-            <scope>system</scope>
-            <systemPath>${ksa.lib.dir}/ksa-java-${project.version}.jar</systemPath>
         </dependency>
-        
-        <!-- MBC01 Java JAR files from mbc01-lib/runtime -->
+
         <dependency>
             <groupId>com.skax.eatool</groupId>
             <artifactId>mbc01-java</artifactId>
             <version>${project.version}</version>
-            <scope>system</scope>
-            <systemPath>${mbc01.lib.dir}/mbc01-java-${project.version}.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.skax.eatool</groupId>
+            <artifactId>kji-java</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Spring Boot Starters -->

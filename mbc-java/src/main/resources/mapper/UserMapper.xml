@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skax.eatool.mbc.dc.usermgtdc.mapper.UserMapper">
+
+    <!-- 결과 맵 정의 -->
+    <resultMap id="UserResultMap" type="com.skax.eatool.mbc.dc.usermgtdc.dto.UserDto">
+        <id column="USER_ID" property="userId" jdbcType="VARCHAR"/>
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR"/>
+        <result column="EMAIL" property="email" jdbcType="VARCHAR"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR"/>
+        <result column="ROLE" property="role" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATED_DATE" property="createdDate" jdbcType="TIMESTAMP"/>
+        <result column="UPDATED_DATE" property="updatedDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 사용자 목록 조회 -->
+    <select id="selectUserList" resultMap="UserResultMap" parameterType="com.skax.eatool.mbc.dc.usermgtdc.Page">
+        SELECT 
+            USER_ID,
+            USER_NAME,
+            EMAIL,
+            PHONE,
+            ROLE,
+            STATUS,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM USER_INFO
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (USER_NAME LIKE CONCAT('%', #{searchKeyword}, '%')
+                OR EMAIL LIKE CONCAT('%', #{searchKeyword}, '%'))
+            </if>
+            <if test="role != null and role != ''">
+                AND ROLE = #{role}
+            </if>
+            <if test="status != null and status != ''">
+                AND STATUS = #{status}
+            </if>
+        </where>
+        ORDER BY CREATED_DATE DESC
+        <if test="pageSize > 0">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
+    </select>
+
+    <!-- 사용자 총 개수 조회 -->
+    <select id="selectUserCount" resultType="int" parameterType="com.skax.eatool.mbc.dc.usermgtdc.Page">
+        SELECT COUNT(*)
+        FROM USER_INFO
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (USER_NAME LIKE CONCAT('%', #{searchKeyword}, '%')
+                OR EMAIL LIKE CONCAT('%', #{searchKeyword}, '%'))
+            </if>
+            <if test="role != null and role != ''">
+                AND ROLE = #{role}
+            </if>
+            <if test="status != null and status != ''">
+                AND STATUS = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- 사용자 상세 조회 -->
+    <select id="selectUserById" resultMap="UserResultMap" parameterType="string">
+        SELECT 
+            USER_ID,
+            USER_NAME,
+            EMAIL,
+            PHONE,
+            ROLE,
+            STATUS,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM USER_INFO
+        WHERE USER_ID = #{userId}
+    </select>
+
+    <!-- 사용자 등록 -->
+    <insert id="insertUser" parameterType="com.skax.eatool.mbc.dc.usermgtdc.dto.UserDto">
+        INSERT INTO USER_INFO (
+            USER_ID,
+            USER_NAME,
+            EMAIL,
+            PHONE,
+            ROLE,
+            STATUS,
+            CREATED_DATE,
+            UPDATED_DATE
+        ) VALUES (
+            #{userId},
+            #{userName},
+            #{email},
+            #{phone},
+            #{role},
+            #{status},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- 사용자 수정 -->
+    <update id="updateUser" parameterType="com.skax.eatool.mbc.dc.usermgtdc.dto.UserDto">
+        UPDATE USER_INFO
+        SET 
+            USER_NAME = #{userName},
+            EMAIL = #{email},
+            PHONE = #{phone},
+            ROLE = #{role},
+            STATUS = #{status},
+            UPDATED_DATE = NOW()
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <!-- 사용자 삭제 -->
+    <delete id="deleteUser" parameterType="string">
+        DELETE FROM USER_INFO
+        WHERE USER_ID = #{userId}
+    </delete>
+
+    <!-- 사용자 상태 변경 -->
+    <update id="updateUserStatus" parameterType="map">
+        UPDATE USER_INFO
+        SET 
+            STATUS = #{status},
+            UPDATED_DATE = NOW()
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <!-- 역할별 사용자 조회 -->
+    <select id="selectUsersByRole" resultMap="UserResultMap" parameterType="string">
+        SELECT 
+            USER_ID,
+            USER_NAME,
+            EMAIL,
+            PHONE,
+            ROLE,
+            STATUS,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM USER_INFO
+        WHERE ROLE = #{role}
+        AND STATUS = 'ACTIVE'
+        ORDER BY USER_NAME
+    </select>
+
+    <!-- 이메일로 사용자 조회 -->
+    <select id="selectUserByEmail" resultMap="UserResultMap" parameterType="string">
+        SELECT 
+            USER_ID,
+            USER_NAME,
+            EMAIL,
+            PHONE,
+            ROLE,
+            STATUS,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM USER_INFO
+        WHERE EMAIL = #{email}
+    </select>
+
+    <!-- 활성 사용자 목록 조회 -->
+    <select id="selectActiveUsers" resultMap="UserResultMap">
+        SELECT 
+            USER_ID,
+            USER_NAME,
+            EMAIL,
+            PHONE,
+            ROLE,
+            STATUS,
+            CREATED_DATE,
+            UPDATED_DATE
+        FROM USER_INFO
+        WHERE STATUS = 'ACTIVE'
+        ORDER BY USER_NAME
+    </select>
+
+</mapper> 

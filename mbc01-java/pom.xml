@@ -21,27 +21,16 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
-        <!-- Project paths -->
-        <project.root.dir>${project.basedir}/..</project.root.dir>
-        <ksa.lib.dir>${project.root.dir}/ksa-lib/runtime</ksa.lib.dir>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring-boot.version>2.7.18</spring-boot.version>
     </properties>
 
     <dependencies>
-        <!-- Internal dependencies -->
-        <dependency>
-            <groupId>com.skax.eatool</groupId>
-            <artifactId>ksa-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <!-- KSA Java JAR files from ksa-lib/runtime -->
+        <!-- Internal dependencies from local Maven repository -->
         <dependency>
             <groupId>com.skax.eatool</groupId>
             <artifactId>ksa-java</artifactId>
             <version>${project.version}</version>
-            <scope>system</scope>
-            <systemPath>${ksa.lib.dir}/ksa-java-${project.version}.jar</systemPath>
         </dependency>
         
 
@@ -51,8 +40,8 @@
         <!-- JDOM for XML processing -->
         <dependency>
             <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>1.1.3</version>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.6</version>
         </dependency>
         
         <!-- Log4j for logging -->
@@ -133,14 +122,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>2.7.17</version>
+            <version>${spring-boot.version}</version>
         </dependency>
         
         <!-- Spring Boot Configuration Processor -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>2.7.17</version>
+            <version>${spring-boot.version}</version>
             <optional>true</optional>
         </dependency>
     </dependencies>
@@ -159,8 +148,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
@@ -171,26 +160,6 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>copy-jar-to-runtime</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.basedir}/../mbc01-lib/runtime</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.build.directory}</directory>
-                                    <includes>
-                                        <include>${project.build.finalName}.jar</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -1,8 +1,9 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.foundation.config;
 
+import org.jdom2.Document;
+import org.jdom2.Element;
+
 import com.skax.eatool.mbc.fc.foundation.bzcrudbus.foundation.base.XMLCache;
-import org.jdom.Document;
-import org.jdom.Element;
 
 /**
  * 설정 관리 클래스

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">계정 생성</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            padding: 2rem 0;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .api-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .loading {
+            display: none;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container main-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <!-- 페이지 헤더 -->
+                <div class="text-center mb-4">
+                    <h1 class="text-white mb-3">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        <span th:text="${pageTitle}">계정 생성</span>
+                    </h1>
+                    <p class="text-white-50">새로운 계정을 생성합니다</p>
+                </div>
+
+                <!-- API 정보 -->
+                <div class="api-info">
+                    <h6 class="mb-2">
+                        <i class="fas fa-info-circle me-2"></i>
+                        API 정보
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">컨트롤러:</small><br>
+                            <strong th:text="${controllerName}">ACMBC71001</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">엔드포인트:</small><br>
+                            <code th:text="${apiEndpoint}">/api/account/create</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 계정 생성 폼 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-plus me-2"></i>
+                            계정 정보 입력
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- 결과 메시지 -->
+                        <div id="resultMessage" class="alert" style="display: none;"></div>
+
+                        <form id="accountCreateForm">
+                            <div class="row">
+                                <!-- 계좌번호 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountId" class="form-label">
+                                        <i class="fas fa-id-card me-1"></i>
+                                        계좌번호 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="accountId" name="accountId" 
+                                           placeholder="예: ACC001" required>
+                                    <div class="form-text">고유한 계좌번호를 입력하세요</div>
+                                </div>
+
+                                <!-- 계정명 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountName" class="form-label">
+                                        <i class="fas fa-tag me-1"></i>
+                                        계정명 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="accountName" name="accountName" 
+                                           placeholder="예: 테스트 계정" required>
+                                    <div class="form-text">계정을 식별할 수 있는 이름을 입력하세요</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- 계정 타입 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountType" class="form-label">
+                                        <i class="fas fa-list me-1"></i>
+                                        계정 타입
+                                    </label>
+                                    <select class="form-select" id="accountType" name="accountType">
+                                        <option value="">선택하세요</option>
+                                        <option value="SAVINGS">예금</option>
+                                        <option value="CHECKING">당좌</option>
+                                        <option value="LOAN">대출</option>
+                                        <option value="INVESTMENT">투자</option>
+                                    </select>
+                                </div>
+
+                                <!-- 계정 상태 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountStatus" class="form-label">
+                                        <i class="fas fa-toggle-on me-1"></i>
+                                        계정 상태
+                                    </label>
+                                    <select class="form-select" id="accountStatus" name="accountStatus">
+                                        <option value="ACTIVE">활성</option>
+                                        <option value="INACTIVE">비활성</option>
+                                        <option value="SUSPENDED">정지</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- 계정 잔액 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountBalance" class="form-label">
+                                        <i class="fas fa-coins me-1"></i>
+                                        초기 잔액
+                                    </label>
+                                    <input type="number" class="form-control" id="accountBalance" name="accountBalance" 
+                                           placeholder="0" min="0" step="0.01">
+                                </div>
+
+                                <!-- 통화 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountCurrency" class="form-label">
+                                        <i class="fas fa-money-bill-wave me-1"></i>
+                                        통화
+                                    </label>
+                                    <select class="form-select" id="accountCurrency" name="accountCurrency">
+                                        <option value="KRW">원화 (KRW)</option>
+                                        <option value="USD">달러 (USD)</option>
+                                        <option value="EUR">유로 (EUR)</option>
+                                        <option value="JPY">엔화 (JPY)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- 계정 소유자 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountOwner" class="form-label">
+                                        <i class="fas fa-user me-1"></i>
+                                        계정 소유자
+                                    </label>
+                                    <input type="text" class="form-control" id="accountOwner" name="accountOwner" 
+                                           placeholder="소유자명">
+                                </div>
+
+                                <!-- 계정 관리자 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountManager" class="form-label">
+                                        <i class="fas fa-user-tie me-1"></i>
+                                        계정 관리자
+                                    </label>
+                                    <input type="text" class="form-control" id="accountManager" name="accountManager" 
+                                           placeholder="관리자명">
+                                </div>
+                            </div>
+
+                            <!-- 버튼 그룹 -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-secondary" onclick="goBack()">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    뒤로 가기
+                                </button>
+                                
+                                <div>
+                                    <button type="button" class="btn btn-outline-info me-2" onclick="resetForm()">
+                                        <i class="fas fa-undo me-2"></i>
+                                        초기화
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                                        <span class="loading">
+                                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                            처리 중...
+                                        </span>
+                                        <span class="normal">
+                                            <i class="fas fa-save me-2"></i>
+                                            계정 생성
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- API 테스트 섹션 -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-code me-2"></i>
+                            API 테스트
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>GET 방식 테스트</h6>
+                                <p class="text-muted small">URL 파라미터로 계정 생성</p>
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="testGetAPI()">
+                                    <i class="fas fa-play me-1"></i>
+                                    GET 테스트
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>POST 방식 테스트</h6>
+                                <p class="text-muted small">JSON 데이터로 계정 생성</p>
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="testPostAPI()">
+                                    <i class="fas fa-play me-1"></i>
+                                    POST 테스트
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script th:inline="javascript">
+        // Thymeleaf 변수를 JavaScript에서 사용
+        const apiEndpoint = /*[[${apiEndpoint}]]*/ '/api/account/create';
+        const controllerName = /*[[${controllerName}]]*/ 'ACMBC71001';
+
+        // 폼 제출 처리
+        document.getElementById('accountCreateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            createAccount();
+        });
+
+        // 계정 생성 함수
+        function createAccount() {
+            const formData = new FormData(document.getElementById('accountCreateForm'));
+            const accountData = {};
+            
+            // 폼 데이터를 객체로 변환
+            for (let [key, value] of formData.entries()) {
+                if (value.trim() !== '') {
+                    accountData[key] = value;
+                }
+            }
+
+            // 필수 필드 검증
+            if (!accountData.accountId || !accountData.accountName) {
+                showMessage('계좌번호와 계정명은 필수 입력 항목입니다.', 'danger');
+                return;
+            }
+
+            // 로딩 상태 표시
+            setLoading(true);
+
+            // API 호출
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(accountData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                setLoading(false);
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    resetForm();
+                } else {
+                    showMessage(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                setLoading(false);
+                showMessage('계정 생성 중 오류가 발생했습니다: ' + error.message, 'danger');
+                console.error('Error:', error);
+            });
+        }
+
+        // GET API 테스트
+        function testGetAPI() {
+            const accountId = document.getElementById('accountId').value || 'TEST001';
+            const accountName = document.getElementById('accountName').value || '테스트 계정';
+            
+            const url = `${apiEndpoint}?accountId=${encodeURIComponent(accountId)}&accountName=${encodeURIComponent(accountName)}`;
+            
+            setLoading(true);
+            
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                setLoading(false);
+                if (data.success) {
+                    showMessage('GET API 테스트 성공: ' + data.message, 'success');
+                } else {
+                    showMessage('GET API 테스트 실패: ' + data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                setLoading(false);
+                showMessage('GET API 테스트 오류: ' + error.message, 'danger');
+            });
+        }
+
+        // POST API 테스트
+        function testPostAPI() {
+            const testData = {
+                accountId: 'TEST002',
+                accountName: 'API 테스트 계정',
+                accountType: 'SAVINGS',
+                accountStatus: 'ACTIVE',
+                accountBalance: '1000000',
+                accountCurrency: 'KRW'
+            };
+
+            setLoading(true);
+
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                setLoading(false);
+                if (data.success) {
+                    showMessage('POST API 테스트 성공: ' + data.message, 'success');
+                } else {
+                    showMessage('POST API 테스트 실패: ' + data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                setLoading(false);
+                showMessage('POST API 테스트 오류: ' + error.message, 'danger');
+            });
+        }
+
+        // 메시지 표시
+        function showMessage(message, type) {
+            const alertDiv = document.getElementById('resultMessage');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                ${message}
+            `;
+            alertDiv.style.display = 'block';
+            
+            // 5초 후 자동 숨김
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // 로딩 상태 설정
+        function setLoading(loading) {
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSpan = submitBtn.querySelector('.loading');
+            const normalSpan = submitBtn.querySelector('.normal');
+            
+            if (loading) {
+                loadingSpan.style.display = 'inline';
+                normalSpan.style.display = 'none';
+                submitBtn.disabled = true;
+            } else {
+                loadingSpan.style.display = 'none';
+                normalSpan.style.display = 'inline';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // 폼 초기화
+        function resetForm() {
+            document.getElementById('accountCreateForm').reset();
+            document.getElementById('resultMessage').style.display = 'none';
+        }
+
+        // 뒤로 가기
+        function goBack() {
+            window.history.back();
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('ACMBC71001 계정 생성 페이지 로드됨');
+            console.log('API Endpoint:', apiEndpoint);
+            console.log('Controller:', controllerName);
+        });
+    </script>
+</body>
+</html> 

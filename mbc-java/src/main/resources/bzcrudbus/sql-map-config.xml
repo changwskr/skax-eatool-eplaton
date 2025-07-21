@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+    
+    <!-- 설정 -->
+    <settings>
+        <setting name="cacheModelsEnabled" value="true"/>
+        <setting name="enhancementEnabled" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="maxRequests" value="32"/>
+        <setting name="maxSessions" value="10"/>
+        <setting name="maxTransactions" value="5"/>
+        <setting name="useStatementNamespaces" value="true"/>
+    </settings>
+    
+    <!-- 타입 별칭 -->
+    <typeAlias alias="UserDto" type="com.skax.eatool.mbc.dc.usermgtdc.dto.UserDto"/>
+    <typeAlias alias="AccountDto" type="com.skax.eatool.mbc.dc.accountdc.dto.AccountDto"/>
+    <typeAlias alias="SystemCodeDto" type="com.skax.eatool.mbc.dc.dto.SystemCodeDto"/>
+    <typeAlias alias="Page" type="com.skax.eatool.mbc.dc.usermgtdc.Page"/>
+    <typeAlias alias="String" type="java.lang.String"/>
+    <typeAlias alias="Integer" type="java.lang.Integer"/>
+    <typeAlias alias="Long" type="java.lang.Long"/>
+    <typeAlias alias="Boolean" type="java.lang.Boolean"/>
+    <typeAlias alias="Date" type="java.util.Date"/>
+    <typeAlias alias="HashMap" type="java.util.HashMap"/>
+    
+    <!-- 트랜잭션 매니저 -->
+    <transactionManager type="JDBC">
+        <dataSource type="SIMPLE">
+            <property name="JDBC.Driver" value="${jdbc.driver}"/>
+            <property name="JDBC.ConnectionURL" value="${jdbc.url}"/>
+            <property name="JDBC.Username" value="${jdbc.username}"/>
+            <property name="JDBC.Password" value="${jdbc.password}"/>
+            <property name="Pool.MaximumActiveConnections" value="20"/>
+            <property name="Pool.MaximumIdleConnections" value="10"/>
+            <property name="Pool.MaximumCheckoutTime" value="20000"/>
+            <property name="Pool.TimeToWait" value="20000"/>
+            <property name="Pool.PingQuery" value="SELECT 1"/>
+            <property name="Pool.PingEnabled" value="true"/>
+            <property name="Pool.PingConnectionsNotUsedFor" value="3600000"/>
+        </dataSource>
+    </transactionManager>
+    
+    <!-- SQL 맵 파일들 -->
+    <sqlMap resource="mapper/UserMapper.xml"/>
+    <sqlMap resource="mapper/AccountMapper.xml"/>
+    <sqlMap resource="mapper/SystemCodeMapper.xml"/>
+    
+    <!-- 공통 SQL 맵 -->
+    <sqlMap resource="bzcrudbus/common.sqlmap.xml"/>
+    
+</sqlMapConfig> 

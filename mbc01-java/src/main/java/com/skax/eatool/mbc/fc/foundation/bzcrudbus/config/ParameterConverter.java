@@ -8,7 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jdom.Element;
+import org.apache.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  * TrustForm에서 받은 파라미터 데이터를 적절한 객체 타입으로 변환

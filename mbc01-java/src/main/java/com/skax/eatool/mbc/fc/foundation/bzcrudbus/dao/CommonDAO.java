@@ -3,9 +3,8 @@ package com.skax.eatool.mbc.fc.foundation.bzcrudbus.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
-
 import com.skax.eatool.mbc.fc.foundation.bzcrudbus.log.IIfrsLogger;
+import org.apache.ibatis.session.SqlSession;
 
 /**
  * 공통 데이터 액세스 객체 클래스

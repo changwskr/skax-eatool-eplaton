@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+MBC 모듈 BZCRUDBUS 명령어 설정
+생성일: 2024년
+설명: MBC 모듈의 비즈니스 로직 명령어 설정
+
+id: 호출할 id(화면id+eventid)
+key: 해당 Method 실행후 Return된 객체를 request.setAttribute 시킬때 키값, 결과 XML에서 결과 그룹으로 사용됨
+element: 결과 그룹의 자식(결과 데이터) Element 명, 없으면 디폴트 값
+name: 호출할 PC 모듈 class 명
+method: 해당 PC에서 호출할 Method 명
+seq: 호출될 순번
+sql_id: PC를 통해 호출할 경우 조회할 ibatis statement id
+
+type: singleSearch, search, init, save, operate, delete, savensearch
+-->
+
+<configuration>
+	<!-- 사용자 관리 명령어 -->
+	<command id="MBC75Z01R0" type="savensearch">
+		<service key="UserSave" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="User" method="saveGrid" seq="1" sql_id="user.User"/>
+	 	<service key="UserGridGroup" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="UserGrid" method="getUserList" seq="2" sql_id="user.getUserList"/>
+	</command>
+	
+	<command id="MBC75Z01S0" type="search">
+	 	<service key="UserGridGroup" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="UserGrid" method="getUserList" seq="1" sql_id="user.getUserList"/>
+	</command>
+	
+	<command id="MBC75Z02R0" type="savensearch">
+		<service key="UserSave" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="User" method="saveData" seq="1" sql_id="user.insertUser"/>
+	 	<service key="UserData" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="User" method="getUserById" seq="2" sql_id="user.getUserById"/>
+	</command>
+	
+	<command id="MBC75Z03R0" type="savensearch">
+		<service key="UserSave" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="User" method="saveData" seq="1" sql_id="user.updateUser"/>
+	 	<service key="UserData" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="User" method="getUserById" seq="2" sql_id="user.getUserById"/>
+	</command>
+	
+	<command id="MBC75Z04R0" type="savensearch">
+		<service key="UserSave" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="User" method="saveData" seq="1" sql_id="user.deleteUser"/>
+	 	<service key="UserData" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="User" method="getUserList" seq="2" sql_id="user.getUserList"/>
+	</command>
+	
+	<!-- 계정 관리 명령어 -->
+	<command id="MBC71001R0" type="savensearch">
+		<service key="AccountSave" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="Account" method="saveGrid" seq="1" sql_id="account.Account"/>
+	 	<service key="AccountGridGroup" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="AccountGrid" method="getAccountList" seq="2" sql_id="account.getAccountList"/>
+	</command>
+	
+	<command id="MBC71001S0" type="search">
+	 	<service key="AccountGridGroup" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="AccountGrid" method="getAccountList" seq="1" sql_id="account.getAccountList"/>
+	</command>
+	
+	<command id="MBC71002R0" type="savensearch">
+		<service key="AccountSave" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="Account" method="saveData" seq="1" sql_id="account.insertAccount"/>
+	 	<service key="AccountData" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="Account" method="getAccountById" seq="2" sql_id="account.getAccountById"/>
+	</command>
+	
+	<command id="MBC71003R0" type="savensearch">
+		<service key="AccountSave" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="Account" method="saveData" seq="1" sql_id="account.updateAccount"/>
+	 	<service key="AccountData" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="Account" method="getAccountById" seq="2" sql_id="account.getAccountById"/>
+	</command>
+	
+	<command id="MBC71004R0" type="savensearch">
+		<service key="AccountSave" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="Account" method="saveData" seq="1" sql_id="account.deleteAccount"/>
+	 	<service key="AccountData" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="Account" method="getAccountList" seq="2" sql_id="account.getAccountList"/>
+	</command>
+	
+	<!-- 시스템 코드 관리 명령어 -->
+	<command id="MBC72001R0" type="savensearch">
+		<service key="SystemCodeSave" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="SystemCode" method="saveGrid" seq="1" sql_id="systemcode.SystemCode"/>
+	 	<service key="SystemCodeGridGroup" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="SystemCodeGrid" method="getSystemCodeList" seq="2" sql_id="systemcode.getSystemCodeList"/>
+	</command>
+	
+	<command id="MBC72001S0" type="search">
+	 	<service key="SystemCodeGridGroup" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="SystemCodeGrid" method="getSystemCodeList" seq="1" sql_id="systemcode.getSystemCodeList"/>
+	</command>
+	
+	<!-- 환경 설정 관리 명령어 -->
+	<command id="MBC73001R0" type="search">
+		<service key="EnvironmentInfo" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="Environment" method="getEnvironmentInfo" seq="1" sql_id=""/>
+	</command>
+	
+	<command id="MBC73001S0" type="search">
+		<service key="EnvironmentSummary" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="Environment" method="getEnvironmentSummary" seq="1" sql_id=""/>
+	</command>
+	
+	<!-- 통합 조회 명령어 -->
+	<command id="MBC74001R0" type="search">
+		<service key="UserData" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="User" method="getUserList" seq="1" sql_id="user.getUserList"/>
+		<service key="AccountData" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="Account" method="getAccountList" seq="2" sql_id="account.getAccountList"/>
+		<service key="SystemCodeData" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="SystemCode" method="getSystemCodeList" seq="3" sql_id="systemcode.getSystemCodeList"/>
+	</command>
+	
+	<!-- 대시보드 명령어 -->
+	<command id="MBC75001R0" type="search">
+		<service key="DashboardData" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="Dashboard" method="getDashboardData" seq="1" sql_id=""/>
+		<service key="UserStats" name="com.skax.eatool.mbc.pc.userpc.PCUser" element="UserStats" method="getUserStats" seq="2" sql_id="user.getUserStats"/>
+		<service key="AccountStats" name="com.skax.eatool.mbc.pc.accountpc.PCAccount" element="AccountStats" method="getAccountStats" seq="3" sql_id="account.getAccountStats"/>
+	</command>
+	
+	<!-- 보고서 생성 명령어 -->
+	<command id="MBC75999R0" type="search">
+		<service key="ReportData" name="com.skax.eatool.mbc.pc.reportpc.PCReportGen" element="Report" method="generateReport" seq="1" sql_id=""/>
+	</command>
+	
+	<!-- 시스템 관리 명령어 -->
+	<command id="MBC759Z1R0" type="search">
+		<service key="SystemInfo" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="System" method="getSystemInfo" seq="1" sql_id=""/>
+		<service key="SystemLog" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="SystemLog" method="getSystemLog" seq="2" sql_id="system.getSystemLog"/>
+	</command>
+	
+</configuration> 

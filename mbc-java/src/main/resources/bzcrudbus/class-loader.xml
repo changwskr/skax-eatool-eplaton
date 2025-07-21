@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+BZCRUDBUS 클래스 로더 설정
+생성일: 2024년
+설명: BZCRUDBUS 프레임워크의 클래스 로더 설정
+-->
+
+<classLoader>
+    <!-- 기본 클래스 패스 -->
+    <classPath>
+        <path>com.skax.eatool.mbc.pc</path>
+        <path>com.skax.eatool.mbc.dc</path>
+        <path>com.skax.eatool.mbc.as</path>
+        <path>com.skax.eatool.mbc.config</path>
+        <path>com.skax.eatool.mbc.util</path>
+    </classPath>
+    
+    <!-- 동적 로딩 클래스 -->
+    <dynamicClasses>
+        <class name="com.skax.eatool.mbc.pc.userpc.PCUser" />
+        <class name="com.skax.eatool.mbc.pc.accountpc.PCAccount" />
+        <class name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" />
+        <class name="com.skax.eatool.mbc.pc.reportpc.PCReportGen" />
+        <class name="com.skax.eatool.mbc.pc.UserTest.PCUserTest" />
+    </dynamicClasses>
+    
+    <!-- 정적 로딩 클래스 -->
+    <staticClasses>
+        <class name="com.skax.eatool.mbc.dc.usermgtdc.mapper.UserMapper" />
+        <class name="com.skax.eatool.mbc.dc.accountdc.mapper.AccountMapper" />
+        <class name="com.skax.eatool.mbc.dc.mapper.SystemCodeMapper" />
+    </staticClasses>
+    
+    <!-- 설정 클래스 -->
+    <configClasses>
+        <class name="com.skax.eatool.mbc.config.EnvironmentConfig" />
+        <class name="com.skax.eatool.mbc.config.ConfigurationManager" />
+        <class name="com.skax.eatool.mbc.config.DataAccessConfig" />
+        <class name="com.skax.eatool.mbc.config.JpaConfig" />
+        <class name="com.skax.eatool.mbc.config.MbcConfig" />
+        <class name="com.skax.eatool.mbc.config.SwaggerConfig" />
+    </configClasses>
+    
+    <!-- 유틸리티 클래스 -->
+    <utilityClasses>
+        <class name="com.skax.eatool.mbc.util.EnvironmentUtil" />
+    </utilityClasses>
+    
+</classLoader> 

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="common">
+    
+    <!-- 공통 시퀀스 조회 -->
+    <select id="getSvrSeq" resultClass="string">
+        SELECT CONCAT('SEQ_', LPAD(COALESCE(MAX(SUBSTRING(SEQ_ID, 5)), 0) + 1, 6, '0'))
+        FROM SYSTEM_SEQUENCE
+        WHERE SEQ_TYPE = #seqType#
+    </select>
+    
+    <!-- 공통 시퀀스 생성 -->
+    <insert id="insertSvrSeq" parameterClass="map">
+        INSERT INTO SYSTEM_SEQUENCE (SEQ_ID, SEQ_TYPE, CREATED_DATE)
+        VALUES (#seqId#, #seqType#, NOW())
+    </insert>
+    
+    <!-- 공통 코드 조회 -->
+    <select id="getCommonCode" resultClass="map" parameterClass="string">
+        SELECT 
+            CODE_VALUE,
+            CODE_NAME,
+            CODE_DESC,
+            SORT_ORDER
+        FROM SYSTEM_CODE
+        WHERE CODE_TYPE = #codeType#
+        AND USE_YN = 'Y'
+        ORDER BY SORT_ORDER, CODE_VALUE
+    </select>
+    
+    <!-- 공통 코드 값으로 이름 조회 -->
+    <select id="getCodeName" resultClass="string" parameterClass="map">
+        SELECT CODE_NAME
+        FROM SYSTEM_CODE
+        WHERE CODE_TYPE = #codeType#
+        AND CODE_VALUE = #codeValue#
+        AND USE_YN = 'Y'
+    </select>
+    
+    <!-- 공통 코드 이름으로 값 조회 -->
+    <select id="getCodeValue" resultClass="string" parameterClass="map">
+        SELECT CODE_VALUE
+        FROM SYSTEM_CODE
+        WHERE CODE_TYPE = #codeType#
+        AND CODE_NAME = #codeName#
+        AND USE_YN = 'Y'
+    </select>
+    
+    <!-- 시스템 로그 등록 -->
+    <insert id="insertSystemLog" parameterClass="map">
+        INSERT INTO SYSTEM_LOG (
+            LOG_ID,
+            USER_ID,
+            LOG_TYPE,
+            LOG_LEVEL,
+            MESSAGE,
+            IP_ADDRESS,
+            USER_AGENT,
+            CREATED_DATE
+        ) VALUES (
+            #logId#,
+            #userId#,
+            #logType#,
+            #logLevel#,
+            #message#,
+            #ipAddress#,
+            #userAgent#,
+            NOW()
+        )
+    </insert>
+    
+    <!-- 시스템 설정 조회 -->
+    <select id="getSystemConfig" resultClass="map" parameterClass="string">
+        SELECT 
+            CONFIG_KEY,
+            CONFIG_VALUE,
+            CONFIG_DESC
+        FROM SYSTEM_CONFIG
+        WHERE CONFIG_KEY = #configKey#
+        AND USE_YN = 'Y'
+    </select>
+    
+    <!-- 시스템 설정 목록 조회 -->
+    <select id="getSystemConfigList" resultClass="map" parameterClass="string">
+        SELECT 
+            CONFIG_KEY,
+            CONFIG_VALUE,
+            CONFIG_DESC
+        FROM SYSTEM_CONFIG
+        WHERE CONFIG_KEY LIKE CONCAT(#configKeyPattern#, '%')
+        AND USE_YN = 'Y'
+        ORDER BY CONFIG_KEY
+    </select>
+    
+    <!-- 시스템 설정 등록 -->
+    <insert id="insertSystemConfig" parameterClass="map">
+        INSERT INTO SYSTEM_CONFIG (
+            CONFIG_ID,
+            CONFIG_KEY,
+            CONFIG_VALUE,
+            CONFIG_DESC,
+            USE_YN,
+            CREATED_DATE,
+            UPDATED_DATE
+        ) VALUES (
+            #configId#,
+            #configKey#,
+            #configValue#,
+            #configDesc#,
+            #useYn#,
+            NOW(),
+            NOW()
+        )
+    </insert>
+    
+    <!-- 시스템 설정 수정 -->
+    <update id="updateSystemConfig" parameterClass="map">
+        UPDATE SYSTEM_CONFIG
+        SET 
+            CONFIG_VALUE = #configValue#,
+            CONFIG_DESC = #configDesc#,
+            USE_YN = #useYn#,
+            UPDATED_DATE = NOW()
+        WHERE CONFIG_KEY = #configKey#
+    </update>
+    
+    <!-- 시스템 설정 삭제 -->
+    <delete id="deleteSystemConfig" parameterClass="string">
+        DELETE FROM SYSTEM_CONFIG
+        WHERE CONFIG_KEY = #configKey#
+    </delete>
+    
+    <!-- 사용자 권한 조회 -->
+    <select id="getUserPermissions" resultClass="map" parameterClass="string">
+        SELECT DISTINCT
+            m.MENU_ID,
+            m.MENU_NAME,
+            m.MENU_URL,
+            rm.PERMISSION_TYPE
+        FROM USER_INFO u
+        INNER JOIN USER_ROLE ur ON u.USER_ID = ur.USER_ID
+        INNER JOIN ROLE_MENU rm ON ur.ROLE_ID = rm.ROLE_ID
+        INNER JOIN MENU m ON rm.MENU_ID = m.MENU_ID
+        WHERE u.USER_ID = #userId#
+        AND u.STATUS = 'ACTIVE'
+        AND m.USE_YN = 'Y'
+        ORDER BY m.SORT_ORDER
+    </select>
+    
+    <!-- 메뉴 목록 조회 -->
+    <select id="getMenuList" resultClass="map" parameterClass="string">
+        SELECT 
+            MENU_ID,
+            MENU_NAME,
+            MENU_URL,
+            PARENT_MENU_ID,
+            SORT_ORDER
+        FROM MENU
+        WHERE USE_YN = 'Y'
+        <isNotEmpty property="parentMenuId">
+            AND PARENT_MENU_ID = #parentMenuId#
+        </isNotEmpty>
+        <isEmpty property="parentMenuId">
+            AND PARENT_MENU_ID IS NULL
+        </isEmpty>
+        ORDER BY SORT_ORDER
+    </select>
+    
+    <!-- 역할 목록 조회 -->
+    <select id="getRoleList" resultClass="map">
+        SELECT 
+            ROLE_ID,
+            ROLE_NAME,
+            ROLE_DESC
+        FROM ROLE
+        WHERE USE_YN = 'Y'
+        ORDER BY ROLE_NAME
+    </select>
+    
+    <!-- 사용자 역할 조회 -->
+    <select id="getUserRoles" resultClass="map" parameterClass="string">
+        SELECT 
+            r.ROLE_ID,
+            r.ROLE_NAME,
+            r.ROLE_DESC
+        FROM USER_INFO u
+        INNER JOIN USER_ROLE ur ON u.USER_ID = ur.USER_ID
+        INNER JOIN ROLE r ON ur.ROLE_ID = r.ROLE_ID
+        WHERE u.USER_ID = #userId#
+        AND u.STATUS = 'ACTIVE'
+        AND r.USE_YN = 'Y'
+        ORDER BY r.ROLE_NAME
+    </select>
+    
+    <!-- 파일 정보 등록 -->
+    <insert id="insertFileInfo" parameterClass="map">
+        INSERT INTO FILE_INFO (
+            FILE_ID,
+            FILE_NAME,
+            FILE_PATH,
+            FILE_SIZE,
+            FILE_TYPE,
+            UPLOAD_USER_ID,
+            CREATED_DATE
+        ) VALUES (
+            #fileId#,
+            #fileName#,
+            #filePath#,
+            #fileSize#,
+            #fileType#,
+            #uploadUserId#,
+            NOW()
+        )
+    </insert>
+    
+    <!-- 파일 정보 조회 -->
+    <select id="getFileInfo" resultClass="map" parameterClass="string">
+        SELECT 
+            FILE_ID,
+            FILE_NAME,
+            FILE_PATH,
+            FILE_SIZE,
+            FILE_TYPE,
+            UPLOAD_USER_ID,
+            CREATED_DATE
+        FROM FILE_INFO
+        WHERE FILE_ID = #fileId#
+    </select>
+    
+    <!-- 파일 정보 삭제 -->
+    <delete id="deleteFileInfo" parameterClass="string">
+        DELETE FROM FILE_INFO
+        WHERE FILE_ID = #fileId#
+    </delete>
+    
+</sqlMap> 

@@ -1,8 +1,9 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.foundation.base;
 
 import java.io.*;
-import org.jdom.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
+import org.jdom2.output.*;
 
 /**
  * DOM XML 핸들러 클래스

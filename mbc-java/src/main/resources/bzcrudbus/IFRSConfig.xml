@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SYSConfig>
+	
+	<SystemInfo id="ConfigFile">		
+		<MBA>/bzcrudbus/mba/as-command-config.xml</MBA>
+		<MBB>/bzcrudbus/mbb/as-command-config.xml</MBB>
+		<MBC>/bzcrudbus/mbc/as-command-config.xml</MBC>
+		<HDD>/bzcrudbus/hdd/as-command-config.xml</HDD>
+		<WAF>/bzcrudbus/waf-command-config.xml</WAF>
+		<LDR>/bzcrudbus/class-loader.xml</LDR>
+		<DAO>/bzcrudbus/sql-map-config.xml</DAO>
+	</SystemInfo>
+		
+	<SystemInfo id="ErrorCode">		
+		<CharList>E/B/S/D</CharList>
+	</SystemInfo>	
+		
+	<SystemInfo id="EnvironmentVariable">	
+		<ServiceCallAction.CALL_TYPE>KESA</ServiceCallAction.CALL_TYPE>
+		<KesaServiceDelegate.NGIANT_DEFAULT_HOST>http://localhost:8080</KesaServiceDelegate.NGIANT_DEFAULT_HOST>
+		<KesaServiceDelegate.NGIANT_SERVLET_URL>/ksa.web/nGiant</KesaServiceDelegate.NGIANT_SERVLET_URL>
+		<KesaServiceDelegate.NGIANT_PARAM_NAME>q</KesaServiceDelegate.NGIANT_PARAM_NAME>
+		<KesaServiceDelegate.HTTP_RESPONSE_ENCODING>UTF-8</KesaServiceDelegate.HTTP_RESPONSE_ENCODING>
+		<KesaDataSource.BIZDS_YN>N</KesaDataSource.BIZDS_YN>
+		<KesaXmlManager.HEADER_NAMES>commandId/danmalSeq/wafSeq/transactionNo/danmalInTime/danmalOutTime/errorCode/errorMsg/wafInTime/wafOutTime/asInTime/asOutTime/userId/sysDate/bizDate/gridName/metaData</KesaXmlManager.HEADER_NAMES>
+		<KesaXmlManager.HEADER_SVC_NAMES>hostServer/hostAs/hostPc/dtoName/sqlId</KesaXmlManager.HEADER_SVC_NAMES>
+		<KesaXmlManager.HEADER_SEPERATOR>/</KesaXmlManager.HEADER_SEPERATOR>
+		<KesaXmlVO.HOST_SERVER_PNAME>hostServer</KesaXmlVO.HOST_SERVER_PNAME>
+		<KesaXmlVO.HOST_AS_PNAME>hostAs</KesaXmlVO.HOST_AS_PNAME>
+		<TPMUtil.DANMAL_TYPE>I</TPMUtil.DANMAL_TYPE>
+		<GenericDtoUtil.DATA_ELEMENT_NAME>RowData</GenericDtoUtil.DATA_ELEMENT_NAME>
+		<IfrsCommonDAO.SEQ_SQL_ID>common.getSvrSeq</IfrsCommonDAO.SEQ_SQL_ID>
+		
+		<!-- MBC 시스템 추가 설정 -->
+		<MBC.SYSTEM_NAME>MBC System</MBC.SYSTEM_NAME>
+		<MBC.SYSTEM_VERSION>1.0.0</MBC.SYSTEM_VERSION>
+		<MBC.DEFAULT_LOCALE>ko_KR</MBC.DEFAULT_LOCALE>
+		<MBC.DEFAULT_TIMEZONE>Asia/Seoul</MBC.DEFAULT_TIMEZONE>
+		<MBC.DATA_ACCESS_TYPE>mybatis</MBC.DATA_ACCESS_TYPE>
+		<MBC.TRANSACTION_TIMEOUT>30</MBC.TRANSACTION_TIMEOUT>
+		<MBC.MAX_RETRY_COUNT>3</MBC.MAX_RETRY_COUNT>
+		<MBC.AUDIT_LOGGING>true</MBC.AUDIT_LOGGING>
+		<MBC.CACHE_ENABLED>true</MBC.CACHE_ENABLED>
+		<MBC.CACHE_TTL>300</MBC.CACHE_TTL>
+		<MBC.CACHE_MAX_SIZE>1000</MBC.CACHE_MAX_SIZE>
+	</SystemInfo>
+	
+	<!-- 환경별 설정 -->
+	<SystemInfo id="DevelopmentEnvironment">
+		<MBC.DATABASE_URL>jdbc:h2:mem:mbcdb_dev</MBC.DATABASE_URL>
+		<MBC.DATABASE_USERNAME>sa</MBC.DATABASE_USERNAME>
+		<MBC.DATABASE_PASSWORD></MBC.DATABASE_PASSWORD>
+		<MBC.LOGGING_LEVEL>DEBUG</MBC.LOGGING_LEVEL>
+		<MBC.SWAGGER_ENABLED>true</MBC.SWAGGER_ENABLED>
+		<MBC.H2_CONSOLE_ENABLED>true</MBC.H2_CONSOLE_ENABLED>
+	</SystemInfo>
+	
+	<SystemInfo id="LocalEnvironment">
+		<MBC.DATABASE_URL>jdbc:h2:mem:mbcdb_local;MODE=MySQL</MBC.DATABASE_URL>
+		<MBC.DATABASE_USERNAME>sa</MBC.DATABASE_USERNAME>
+		<MBC.DATABASE_PASSWORD></MBC.DATABASE_PASSWORD>
+		<MBC.LOGGING_LEVEL>DEBUG</MBC.LOGGING_LEVEL>
+		<MBC.SWAGGER_ENABLED>true</MBC.SWAGGER_ENABLED>
+		<MBC.H2_CONSOLE_ENABLED>true</MBC.H2_CONSOLE_ENABLED>
+		<MBC.DEVTOOLS_ENABLED>true</MBC.DEVTOOLS_ENABLED>
+	</SystemInfo>
+	
+	<SystemInfo id="TestEnvironment">
+		<MBC.DATABASE_URL>jdbc:h2:file:./data/mbcdb_test</MBC.DATABASE_URL>
+		<MBC.DATABASE_USERNAME>sa</MBC.DATABASE_USERNAME>
+		<MBC.DATABASE_PASSWORD></MBC.DATABASE_PASSWORD>
+		<MBC.LOGGING_LEVEL>INFO</MBC.LOGGING_LEVEL>
+		<MBC.SWAGGER_ENABLED>true</MBC.SWAGGER_ENABLED>
+		<MBC.H2_CONSOLE_ENABLED>true</MBC.H2_CONSOLE_ENABLED>
+		<MBC.CACHE_ENABLED>false</MBC.CACHE_ENABLED>
+	</SystemInfo>
+	
+	<SystemInfo id="ProductionEnvironment">
+		<MBC.DATABASE_URL>jdbc:mysql://localhost:3306/mbc_prod</MBC.DATABASE_URL>
+		<MBC.DATABASE_USERNAME>mbc_user</MBC.DATABASE_USERNAME>
+		<MBC.DATABASE_PASSWORD>mbc_password</MBC.DATABASE_PASSWORD>
+		<MBC.LOGGING_LEVEL>WARN</MBC.LOGGING_LEVEL>
+		<MBC.SWAGGER_ENABLED>false</MBC.SWAGGER_ENABLED>
+		<MBC.H2_CONSOLE_ENABLED>false</MBC.H2_CONSOLE_ENABLED>
+		<MBC.CACHE_ENABLED>true</MBC.CACHE_ENABLED>
+	</SystemInfo>
+	
+</SYSConfig> 

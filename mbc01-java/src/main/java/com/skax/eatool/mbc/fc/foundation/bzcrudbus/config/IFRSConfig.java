@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 /**
  * IFRS 설정 파일을 읽어서 해당 설정 정보를 Hashtable에 저장하고 관리한다.

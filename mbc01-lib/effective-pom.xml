@@ -6121,7 +6121,7 @@
     </pluginRepository>
   </pluginRepositories>
   <build>
-    <sourceDirectory>d:\Zdata-20240805\MyProject\skax/eatool-eplaton-master\mbc01-lib\src\main\java</sourceDirectory>
+    <sourceDirectory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\mbc01-lib\src\main\java</sourceDirectory>
     <scriptSourceDirectory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\mbc01-lib\src\main\scripts</scriptSourceDirectory>
     <testSourceDirectory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\mbc01-lib\src\test\java</testSourceDirectory>
     <outputDirectory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\mbc01-lib\target\classes</outputDirectory>

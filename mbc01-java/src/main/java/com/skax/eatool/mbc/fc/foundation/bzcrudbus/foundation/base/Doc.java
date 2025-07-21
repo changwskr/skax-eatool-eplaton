@@ -1,7 +1,9 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.foundation.base;
 
 import java.io.*;
-import org.jdom.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
+import org.jdom2.output.*;
 
 /**
  * XML 문서 관리 클래스

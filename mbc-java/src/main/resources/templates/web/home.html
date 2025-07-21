@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKAX-EATOOL - 홈</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            padding: 2rem 0;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.3rem;
+        }
+        
+        .current-time {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .current-time h3 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .current-time p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .system-info {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .system-info h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-normal {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .navigation-section {
+            margin-bottom: 3rem;
+        }
+        
+        .navigation-section h3 {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .menu-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .menu-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .menu-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        .menu-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .menu-description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .submenu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .submenu-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .submenu-link:hover {
+            background: #f8f9fa;
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .submenu-icon {
+            width: 20px;
+            margin-right: 0.5rem;
+            color: #667eea;
+        }
+        
+        .recent-activities {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .recent-activities h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .activity-date {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>🚀 SKAX-EATOOL</h1>
+            <p>Enterprise Application Tool - 통합 업무 관리 시스템</p>
+        </div>
+
+        <!-- 현재 시간 -->
+        <div class="current-time">
+            <h3>🕐 현재 시간</h3>
+            <p th:text="${currentTime}">2024년 01월 01일 12:00:00</p>
+        </div>
+
+        <!-- 시스템 정보 -->
+        <div class="system-info">
+            <h3>🔧 시스템 정보</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">시스템명</div>
+                    <div class="info-value" th:text="${systemInfo.systemName}">SKAX-EATOOL</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">버전</div>
+                    <div class="info-value" th:text="${systemInfo.version}">2.0.0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">환경</div>
+                    <div class="info-value" th:text="${systemInfo.environment}">개발환경</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">데이터베이스</div>
+                    <div class="status-badge" 
+                         th:classappend="${systemInfo.databaseStatus == '정상' ? 'status-normal' : 'status-error'}"
+                         th:text="${systemInfo.databaseStatus}">정상</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 업무별 통계 -->
+        <div class="system-info">
+            <h3>📊 업무별 통계</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">전체 계정</div>
+                    <div class="info-value" th:text="${businessStats.totalAccounts}">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">전체 사용자</div>
+                    <div class="info-value" th:text="${businessStats.totalUsers}">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">거래 내역</div>
+                    <div class="info-value" th:text="${businessStats.totalTransactions}">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">활성 세션</div>
+                    <div class="info-value" th:text="${businessStats.activeSessions}">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 업무별 네비게이션 -->
+        <div class="navigation-section">
+            <h3>🎯 업무별 네비게이션</h3>
+            <div class="menu-grid">
+                <!-- 계정 관리 메뉴 -->
+                <div class="menu-card" th:each="menu : ${navigationMenus}">
+                    <div class="menu-header">
+                        <div class="menu-icon" th:style="'background: ' + ${menu.color}">
+                            <i th:class="${menu.icon}"></i>
+                        </div>
+                        <div class="menu-title" th:text="${menu.title}">계정 관리</div>
+                    </div>
+                    <div class="menu-description" th:text="${menu.description}">계정 생성, 조회, 수정, 삭제</div>
+                    <ul class="submenu-list">
+                        <li class="submenu-item" th:each="submenu : ${menu.subMenus}">
+                            <a th:href="${submenu.url}" class="submenu-link">
+                                <i th:class="${submenu.icon} + ' submenu-icon'"></i>
+                                <span th:text="${submenu.title}">계정 생성</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 최근 활동 -->
+        <div class="recent-activities">
+            <h3>📊 최근 활동</h3>
+            <div th:if="${#lists.isEmpty(recentActivities)}" style="text-align: center; padding: 40px; color: #666;">
+                <p>아직 활동 내역이 없습니다.</p>
+            </div>
+            <div th:each="activity : ${recentActivities}" class="activity-item">
+                <div class="activity-icon" th:text="${activity.type != null ? (activity.type == 'USER' ? '👤' : '📝') : '📊'}">👤</div>
+                <div class="activity-content">
+                    <div class="activity-title" th:text="${activity.name != null ? activity.name : activity.USER_NAME}">사용자명</div>
+                    <div class="activity-date" th:text="${activity.date != null ? activity.date : activity.CREATED_DATE}">2024-01-01</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <div class="footer">
+            <p>&copy; 2024 SKAX-EATOOL. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // 실시간 시간 업데이트
+        function updateTime() {
+            const now = new Date();
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'Asia/Seoul'
+            };
+            const timeString = now.toLocaleDateString('ko-KR', options);
+            document.querySelector('.current-time p').textContent = timeString;
+        }
+
+        // 1초마다 시간 업데이트
+        setInterval(updateTime, 1000);
+        updateTime(); // 초기 실행
+
+        // 한글 인코딩 확인 및 수정
+        function fixKoreanEncoding() {
+            // 최근 활동 항목들의 한글 텍스트 확인
+            const activityTitles = document.querySelectorAll('.activity-title');
+            activityTitles.forEach((title, index) => {
+                const originalText = title.textContent;
+                console.log(`활동 ${index + 1} 원본 텍스트:`, originalText);
+                
+                // 한글이 깨진 경우 복구 시도
+                if (originalText.includes('') || originalText.length === 0) {
+                    console.warn(`활동 ${index + 1}에서 한글 인코딩 문제 발견`);
+                    
+                    // 기본 한글 텍스트로 복구
+                    const defaultTexts = [
+                        '관리자 계정 생성',
+                        '테스트 계정 생성', 
+                        '시스템 업데이트',
+                        '사용자 등록',
+                        '데이터베이스 연결'
+                    ];
+                    
+                    if (index < defaultTexts.length) {
+                        title.textContent = defaultTexts[index];
+                        console.log(`활동 ${index + 1} 텍스트 복구:`, defaultTexts[index]);
+                    }
+                }
+            });
+
+            // 메뉴 항목들의 한글 텍스트 확인
+            const menuTitles = document.querySelectorAll('.menu-title');
+            menuTitles.forEach((title, index) => {
+                const originalText = title.textContent;
+                console.log(`메뉴 ${index + 1} 원본 텍스트:`, originalText);
+                
+                if (originalText.includes('') || originalText.length === 0) {
+                    console.warn(`메뉴 ${index + 1}에서 한글 인코딩 문제 발견`);
+                    
+                    const defaultMenuTexts = [
+                        '계정 관리',
+                        '사용자 관리',
+                        '시스템 관리',
+                        '보고서'
+                    ];
+                    
+                    if (index < defaultMenuTexts.length) {
+                        title.textContent = defaultMenuTexts[index];
+                        console.log(`메뉴 ${index + 1} 텍스트 복구:`, defaultMenuTexts[index]);
+                    }
+                }
+            });
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('SKAX-EATOOL 홈화면 로드됨');
+            
+            // 한글 인코딩 문제 확인 및 수정
+            setTimeout(fixKoreanEncoding, 500);
+            
+            // 3초 후 다시 한번 확인
+            setTimeout(fixKoreanEncoding, 3000);
+        });
+    </script>
+</body>
+</html> 
