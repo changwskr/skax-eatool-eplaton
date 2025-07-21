@@ -32,7 +32,7 @@
         <typeAlias alias="list" type="java.util.List"/>
         
         <!-- 비즈니스 모델들 -->
-        <package name="com.kbstar.mbc.fc.foundation.bzcrudbus.foundation"/>
+        <package name="com.skax.eatool.mbc.fc.foundation.bzcrudbus.foundation"/>
     </typeAliases>
     
     <!-- 타입 핸들러 -->
@@ -87,7 +87,7 @@
         <mapper resource="sqlmap/report.sqlmap.xml"/>
         
         <!-- 패키지 스캔 (선택사항) -->
-        <!-- <package name="com.kbstar.mbc.fc.foundation.bzcrudbus.mapper"/> -->
+        <!-- <package name="com.skax.eatool.mbc.fc.foundation.bzcrudbus.mapper"/> -->
     </mappers>
     
 </configuration> 

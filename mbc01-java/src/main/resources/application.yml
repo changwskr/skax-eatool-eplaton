@@ -40,7 +40,7 @@ spring:
 # MyBatis Configuration (MyBatis 프로파일에서만 활성화)
 mybatis:
   mapper-locations: classpath:sqlmap/*.xml
-  type-aliases-package: com.kbstar.mbc.fc.foundation.dto
+  type-aliases-package: com.skax.eatool.mbc.fc.foundation.dto
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -48,7 +48,7 @@ mybatis:
 # Logging Configuration
 logging:
   level:
-    com.kbstar.mbc: DEBUG
+    com.skax.eatool.mbc: DEBUG
     org.springframework.security: DEBUG
     org.mybatis: DEBUG
     org.hibernate: DEBUG

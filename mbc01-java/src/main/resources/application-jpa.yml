@@ -18,7 +18,7 @@ spring:
 # Logging Configuration for JPA
 logging:
   level:
-    com.kbstar.mbc: DEBUG
+    com.skax.eatool.mbc: DEBUG
     org.hibernate: DEBUG
     org.springframework.orm.jpa: DEBUG
 

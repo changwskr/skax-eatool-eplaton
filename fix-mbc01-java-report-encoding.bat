@@ -14,8 +14,8 @@ echo 수정된 파일 목록:
 echo.
 
 echo [Report 패키지 - 리포트 생성 기능]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/report/WordReportUtil.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/report/ReportMeta.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/report/WordReportUtil.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/report/ReportMeta.java
 echo.
 
 echo ========================================

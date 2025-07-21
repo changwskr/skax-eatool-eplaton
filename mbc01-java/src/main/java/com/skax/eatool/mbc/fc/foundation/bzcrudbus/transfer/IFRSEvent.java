@@ -1,7 +1,7 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.transfer;
 
 // import javax.servlet.http.HttpServletRequest;
-// import com.kbstar.ksa.infra.po.KBData;
+// import com.skax.eatool.ksa.infra.po.KBData;
 
 /**
  * IFRS 이벤트 클래스

@@ -14,13 +14,13 @@ echo 수정된 파일 목록:
 echo.
 
 echo [TCF 패키지 - 트랜잭션 제어 프레임워크]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tcf/AbstractTCF.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tcf/TCF.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tcf/BTF.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tcf/STF.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tcf/ETF.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tcf/BTF_WP.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tcf/BTF_SP.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tcf/AbstractTCF.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tcf/TCF.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tcf/BTF.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tcf/STF.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tcf/ETF.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tcf/BTF_WP.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tcf/BTF_SP.java
 echo.
 
 echo ========================================

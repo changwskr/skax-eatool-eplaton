@@ -42,12 +42,12 @@
 	<command id="MBC7200202" type="search">
 	  <service key="AccountList" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="Account" method="getList" seq="1" sql_id="com.getListAccount"/>
 	  <service key="AccountData" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="Account2" method="getData" seq="2" sql_id="com.getAccount"/>
-	  <service key="UserList2" name="com.kbstar.mbb.pc.user.PCUser2" element="User2" method="getUserList2" seq="3" sql_id=""/>
+	  <service key="UserList2" name="com.skax.eatool.mbb.pc.user.PCUser2" element="User2" method="getUserList2" seq="3" sql_id=""/>
 	  <service key="UserList" name="com.skax.eatool.mbc.pc.user.PCUser" element="User" method="getUserList" seq="4" sql_id=""/>
 	</command>
 	<command id="MBC7400110" type="search">
 	  <service key="UserData" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="User" method="getList" seq="1" sql_id="userpilot2.getListUser"/>
-	  <service key="UserList2" name="com.kbstar.mbb.pc.user.PCUser2" element="User2" method="getUserList2" seq="4" sql_id=""/>
+	  <service key="UserList2" name="com.skax.eatool.mbb.pc.user.PCUser2" element="User2" method="getUserList2" seq="4" sql_id=""/>
 	</command>
 	<command id="MBC7400120" type="search">
 	  <service key="UserData" name="com.skax.eatool.mbc.pc.commonpc.MBCComPC" element="User" method="getList" seq="1" sql_id="userpilot2.getListDept"/>

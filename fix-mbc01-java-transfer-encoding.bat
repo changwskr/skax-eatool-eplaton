@@ -14,11 +14,11 @@ echo 수정된 파일 목록:
 echo.
 
 echo [Transfer 패키지 - 데이터 전송 객체들]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/transfer/ICommonDTO.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/transfer/IFRSCommonDTO.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/transfer/IFRSEvent.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/transfer/DTO.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/transfer/IDTO.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/transfer/ICommonDTO.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/transfer/IFRSCommonDTO.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/transfer/IFRSEvent.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/transfer/DTO.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/transfer/IDTO.java
 echo.
 
 echo ========================================

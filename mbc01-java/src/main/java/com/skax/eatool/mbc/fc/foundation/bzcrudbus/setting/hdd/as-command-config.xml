@@ -14,7 +14,7 @@
 <configuration>
 
 	<command id="HDD7200202" type="search">
-	  <service key="UserList" name="com.kbstar.hdd.pc.userpc.PCUser3" element="User3" method="getUserList3" seq="1" sql_id=""/>
+	  <service key="UserList" name="com.skax.eatool.hdd.pc.userpc.PCUser3" element="User3" method="getUserList3" seq="1" sql_id=""/>
 	</command>
 		
 </configuration>

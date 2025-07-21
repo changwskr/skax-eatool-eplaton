@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 public class Env {
 
     /** 리소스 번들 이름 */
-    private static final String BUNDLE_NAME = "com.kbstar.mbc.fc.foundation.bzcrudbus.setting.env";
+    private static final String BUNDLE_NAME = "com.skax.eatool.mbc.fc.foundation.bzcrudbus.setting.env";
 
     /** 리소스 번들 인스턴스 */
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);

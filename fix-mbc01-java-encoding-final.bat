@@ -12,7 +12,7 @@ echo.
 echo 수정된 파일 목록:
 echo.
 echo [Config 패키지 - 설정 관리 클래스들]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/Env.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/Env.java
 echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/IFRSConfig.java
 echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/LoaderConfig.java
 echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ActionConfig.java

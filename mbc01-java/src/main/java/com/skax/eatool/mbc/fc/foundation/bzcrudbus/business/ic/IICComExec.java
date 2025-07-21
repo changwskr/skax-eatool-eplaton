@@ -1,6 +1,6 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.business.ic;
 
-// import com.kbstar.ksa.oltp.biz.IProcessComponent;
+// import com.skax.eatool.ksa.oltp.biz.IProcessComponent;
 
 /**
  * IC 공통 실행 클래스

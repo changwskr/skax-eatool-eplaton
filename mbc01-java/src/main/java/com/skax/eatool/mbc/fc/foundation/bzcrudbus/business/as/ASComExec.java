@@ -1,8 +1,8 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.business.as;
 
-// import com.kbstar.ksa.exception.BusinessException;
-// import com.kbstar.ksa.infra.po.KBData;
-// import com.kbstar.ksa.oltp.biz.IApplicationService;
+// import com.skax.eatool.ksa.exception.BusinessException;
+// import com.skax.eatool.ksa.infra.po.KBData;
+// import com.skax.eatool.ksa.oltp.biz.IApplicationService;
 import com.skax.eatool.mbc.fc.foundation.bzcrudbus.constant.Constants;
 import com.skax.eatool.mbc.fc.foundation.bzcrudbus.log.IIfrsLogger;
 import com.skax.eatool.mbc.fc.foundation.bzcrudbus.log.IfrsLogHelper;

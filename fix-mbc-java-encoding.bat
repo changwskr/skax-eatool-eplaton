@@ -12,17 +12,17 @@ echo.
 echo 수정된 파일 목록:
 echo.
 echo [AS 패키지 - Application Service]
-echo - mbc-java/src/com/kbstar/mbc/as/commonas/MBCComAS.java
-echo - mbc-java/src/com/kbstar/mbc/as/accountas/ASMBC71001.java
-echo - mbc-java/src/com/kbstar/mbc/as/accountas/ASMBC72001.java
-echo - mbc-java/src/com/kbstar/mbc/as/accountas/ASMBC72002.java
-echo - mbc-java/src/com/kbstar/mbc/as/accountas/ASMBC73001.java
-echo - mbc-java/src/com/kbstar/mbc/as/accountas/ASMBC74001.java
-echo - mbc-java/src/com/kbstar/mbc/as/usermgtas/ASMBC75Z01.java
+echo - mbc-java/src/com/skax/eatool/mbc/as/commonas/MBCComAS.java
+echo - mbc-java/src/com/skax/eatool/mbc/as/accountas/ASMBC71001.java
+echo - mbc-java/src/com/skax/eatool/mbc/as/accountas/ASMBC72001.java
+echo - mbc-java/src/com/skax/eatool/mbc/as/accountas/ASMBC72002.java
+echo - mbc-java/src/com/skax/eatool/mbc/as/accountas/ASMBC73001.java
+echo - mbc-java/src/com/skax/eatool/mbc/as/accountas/ASMBC74001.java
+echo - mbc-java/src/com/skax/eatool/mbc/as/usermgtas/ASMBC75Z01.java
 echo.
 echo [DC 패키지 - Domain Component]
-echo - mbc-java/src/com/kbstar/mbc/dc/accountdc/Account.java
-echo - mbc-java/src/com/kbstar/mbc/dc/accountdc/DCAccount.java
+echo - mbc-java/src/com/skax/eatool/mbc/dc/accountdc/Account.java
+echo - mbc-java/src/com/skax/eatool/mbc/dc/accountdc/DCAccount.java
 echo.
 
 echo 2. 모든 Java 파일의 한글 주석이 UTF-8로 수정되었습니다.

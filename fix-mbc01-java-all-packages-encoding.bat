@@ -14,42 +14,42 @@ echo 수정된 패키지 및 파일 목록:
 echo.
 
 echo [KESA 패키지 - KESA XML 통신 관리]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/kesa/KesaXmlManager.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/kesa/KesaXmlVO.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/kesa/KesaXmlManager.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/kesa/KesaXmlVO.java
 echo.
 
 echo [Loader 패키지 - 동적 클래스 로딩]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/loader/DynamicLoader.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/loader/IFRSClassLoader.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/loader/Javac.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/loader/DynamicLoader.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/loader/IFRSClassLoader.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/loader/Javac.java
 echo.
 
 echo [Log 패키지 - 로깅 시스템]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/log/IfrsLogHelper.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/log/IfrsLoggerImpl.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/log/IIfrsLogger.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/log/IfrsLoggerFactory.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/log/IfrsLogHelper.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/log/IfrsLoggerImpl.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/log/IIfrsLogger.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/log/IfrsLoggerFactory.java
 echo.
 
 echo [TCF 패키지 - 트랜잭션 처리 프레임워크]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tcf/BTF.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tcf/BTF.java
 echo.
 
 echo [TPM 패키지 - 트랜잭션 처리 관리]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tpm/TPMUtil.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tpm/KesaServiceDelegate.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/tpm/IServiceDelegate.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tpm/TPMUtil.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tpm/KesaServiceDelegate.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/tpm/IServiceDelegate.java
 echo.
 
 echo [Foundation 패키지 - 기반 클래스들]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/general/CommonUtil.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/config/Config.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/Doc.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/DOMXMLHandler.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/HandlerOption.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/SAXXMLHandler.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/XMLCache.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandler.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/general/CommonUtil.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/config/Config.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/Doc.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/DOMXMLHandler.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/HandlerOption.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/SAXXMLHandler.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/XMLCache.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandler.java
 echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandlerFactory.java
 echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/utility/StringUtils.java
 echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/utility/Dom4jUtil.java

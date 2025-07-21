@@ -12,15 +12,15 @@ echo.
 echo 수정된 파일 목록:
 echo.
 echo [Config 패키지 - 설정 관리 클래스들]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/Env.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/IFRSConfig.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/LoaderConfig.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ActionConfig.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/CommandObj.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ConfigInfo.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ParameterConverter.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ParameterInfo.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ParameterTransform.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/Env.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/IFRSConfig.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/LoaderConfig.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/ActionConfig.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/CommandObj.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/ConfigInfo.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/ParameterConverter.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/ParameterInfo.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/ParameterTransform.java
 echo.
 echo [Constant 패키지 - 상수 정의 클래스들]
 echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/constant/Constants.java

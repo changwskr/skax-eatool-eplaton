@@ -6,6 +6,6 @@
 			<property name="SqlMapConfigResource" value="/sql-map-bat-config.xml"/>
 		</transactionManager>
 		
-		<dao interface="com.kbstar.mbc.fc.foundation.bizsoa.dao.IDaoRuleMgmtDAO" implementation="com.kbstar.mbc.fc.foundation.bizsoa.dao.DaoRuleMgmtDAOImpl"/>				
+		<dao interface="com.skax.eatool.mbc.fc.foundation.bizsoa.dao.IDaoRuleMgmtDAO" implementation="com.skax.eatool.mbc.fc.foundation.bizsoa.dao.DaoRuleMgmtDAOImpl"/>
 	</context>
 </daoConfig>

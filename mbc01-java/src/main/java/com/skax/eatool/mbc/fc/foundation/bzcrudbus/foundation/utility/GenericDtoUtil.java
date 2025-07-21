@@ -9,7 +9,7 @@ import java.util.Map;
 // import org.dom4j.Document;
 // import org.dom4j.DocumentHelper;
 // import org.dom4j.Element;
-// import com.kbstar.ksa.infra.po.GenericDto;
+// import com.skax.eatool.ksa.infra.po.GenericDto;
 
 /**
  * Generic DTO 유틸리티 클래스

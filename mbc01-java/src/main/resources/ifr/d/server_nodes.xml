@@ -3,8 +3,8 @@
 <nodes
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
-        xmlns:kbstar="http://www.kbstar.com"
-        xmlns:kesa="http://www.kbstar.com/kesa"
+        xmlns:skax-eatool="http://www.skax-eatool.com"
+        xmlns:kesa="http://www.skax-eatool.com/kesa"
         xmlns:agent="http://www.kbstar.com/kesa/node"
         xmlns="http://www.kbstar.com/kesa/node"
 >

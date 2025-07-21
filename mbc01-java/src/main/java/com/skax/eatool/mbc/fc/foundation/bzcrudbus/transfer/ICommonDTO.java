@@ -1,6 +1,6 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.transfer;
 
-// import com.kbstar.ksa.infra.po.KBData;
+// import com.skax.eatool.ksa.infra.po.KBData;
 
 /**
  * 공통 DTO 인터페이스

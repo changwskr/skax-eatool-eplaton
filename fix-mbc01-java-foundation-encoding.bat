@@ -12,19 +12,19 @@ echo.
 echo 수정된 파일 목록:
 echo.
 echo [Foundation/General 패키지 - 공통 유틸리티 클래스]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/general/CommonUtil.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/general/CommonUtil.java
 echo.
 echo [Foundation/Config 패키지 - 설정 관리 클래스]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/config/Config.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/config/Config.java
 echo.
 echo [Foundation/Base 패키지 - XML 처리 기반 클래스들]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/Doc.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/DOMXMLHandler.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/HandlerOption.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/SAXXMLHandler.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/XMLCache.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandler.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandlerFactory.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/Doc.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/DOMXMLHandler.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/HandlerOption.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/SAXXMLHandler.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/XMLCache.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandler.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandlerFactory.java
 echo.
 
 echo 2. 모든 Java 파일의 주석이 UTF-8 인코딩으로 변경되었습니다.

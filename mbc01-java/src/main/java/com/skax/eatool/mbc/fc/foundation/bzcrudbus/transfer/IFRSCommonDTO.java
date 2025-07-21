@@ -2,8 +2,8 @@ package com.skax.eatool.mbc.fc.foundation.bzcrudbus.transfer;
 
 import java.util.HashMap;
 import java.util.Map;
-// import com.kbstar.ksa.infra.po.AbstractDTO;
-// import com.kbstar.ksa.infra.po.KBData;
+// import com.skax.eatool.ksa.infra.po.AbstractDTO;
+// import com.skax.eatool.ksa.infra.po.KBData;
 
 /**
  * IFRS 공통 DTO 클래스

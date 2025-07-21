@@ -5,7 +5,7 @@
 [![Java](https://img.shields.io/badge/Java-11-orange.svg)](https://openjdk.java.net/projects/jdk/11/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-green.svg)](https://spring.io/projects/spring-boot)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-KBSTAR%20Internal-red.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-skax-eatool%20Internal-red.svg)](LICENSE)
 
 ## 📋 목차
 
@@ -21,7 +21,7 @@
 
 ## 🎯 프로젝트 개요
 
-**SKAX EA Tool Eplaton**은 KBSTAR에서 개발한 엔터프라이즈 아키텍처 도구 플랫폼입니다. Spring Boot 기반의 멀티모듈 프로젝트로 구성되어 있으며, KSA 프레임워크를 기반으로 한 다양한 비즈니스 애플리케이션을 제공합니다.
+**SKAX EA Tool Eplaton**은 skax-eatool에서 개발한 엔터프라이즈 아키텍처 도구 플랫폼입니다. Spring Boot 기반의 멀티모듈 프로젝트로 구성되어 있으며, KSA 프레임워크를 기반으로 한 다양한 비즈니스 애플리케이션을 제공합니다.
 
 ### 주요 특징
 
@@ -352,7 +352,7 @@ mvn spring-boot:run -Xmx2048m -Xms1024m
 
 ## 📄 라이센스
 
-이 프로젝트는 **KBSTAR 내부 프로젝트**입니다.
+이 프로젝트는 **skax-eatool 내부 프로젝트**입니다.
 
 ---
 
@@ -363,8 +363,8 @@ mvn spring-boot:run -Xmx2048m -Xms1024m
 - [인코딩 문제 해결 가이드](ENCODING_GUIDE.md)
 
 ### **연락처**
-- **개발팀**: KBSTAR 개발팀
-- **이메일**: dev@kbstar.com
+- **개발팀**: skax-eatool 개발팀
+- **이메일**: dev@skax-eatool.com
 
 ---
 

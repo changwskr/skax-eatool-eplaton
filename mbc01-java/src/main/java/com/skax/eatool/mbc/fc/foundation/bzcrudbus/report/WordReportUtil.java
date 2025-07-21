@@ -1,6 +1,6 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.report;
 
-// import com.kbstar.ksa.das.ibatis.KesaSqlMapClient;
+// import com.skax.eatool.ksa.das.ibatis.KesaSqlMapClient;
 
 
 /**

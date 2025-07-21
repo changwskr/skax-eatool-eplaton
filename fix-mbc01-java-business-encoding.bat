@@ -16,17 +16,17 @@ echo.
 echo [Business 패키지 - 비즈니스 로직 계층]
 echo.
 echo [AS 패키지 - Application Service]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/business/as/ASComExec.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/business/as/ASComExec.java
 echo.
 echo [DC 패키지 - Domain Component]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/business/dc/DCComExec.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/business/dc/DCComExec.java
 echo.
 echo [IC 패키지 - Integration Component]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/business/ic/ICComExec.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/business/ic/IICComExec.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/business/ic/ICComExec.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/business/ic/IICComExec.java
 echo.
 echo [PC 패키지 - Process Component]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/business/pc/PCComExec.java
+echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/business/pc/PCComExec.java
 echo.
 
 echo ========================================

@@ -1,7 +1,7 @@
 # MyBatis Configuration
 mybatis:
   mapper-locations: classpath:sqlmap/*.xml
-  type-aliases-package: com.kbstar.mbc.fc.foundation.dto
+  type-aliases-package: com.skax.eatool.mbc.fc.foundation.dto
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -9,7 +9,7 @@ mybatis:
 # Logging Configuration for MyBatis
 logging:
   level:
-    com.kbstar.mbc: DEBUG
+    com.skax.eatool.mbc: DEBUG
     org.mybatis: DEBUG
     org.springframework.jdbc: DEBUG
 

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-// import com.kbstar.ksa.oltp.biz.IProcessComponent;
+// import com.skax.eatool.ksa.oltp.biz.IProcessComponent;
 import com.skax.eatool.mbc.fc.foundation.bzcrudbus.business.dc.DCComExec;
 import com.skax.eatool.mbc.fc.foundation.bzcrudbus.exception.CommonDCException;
 import com.skax.eatool.mbc.fc.foundation.bzcrudbus.exception.CommonPCException;

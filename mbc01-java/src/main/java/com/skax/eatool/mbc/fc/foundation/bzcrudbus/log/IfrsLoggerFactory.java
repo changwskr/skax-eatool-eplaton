@@ -1,6 +1,6 @@
 package com.skax.eatool.mbc.fc.foundation.bzcrudbus.log;
 
-// import com.kbstar.ksa.logger.KesaLoggerFactory;
+// import com.skax.eatool.ksa.logger.KesaLoggerFactory;
 
 /**
  * IFRS 로거 팩토리 클래스

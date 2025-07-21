@@ -1,6 +1,6 @@
 # SKAX EA Tool Eplaton - 완전 가이드
 
-> **SKAX EA Tool Eplaton** - KBSTAR 엔터프라이즈 아키텍처 도구 플랫폼 완전 가이드
+> **SKAX EA Tool Eplaton** - skax/eatool 엔터프라이즈 아키텍처 도구 플랫폼 완전 가이드
 
 [![Java](https://img.shields.io/badge/Java-11-orange.svg)](https://openjdk.java.net/projects/jdk/11/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-green.svg)](https://spring.io/projects/spring-boot)

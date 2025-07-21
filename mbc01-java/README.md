@@ -13,7 +13,7 @@ MBC01 Java 모듈은 MyBatis와 JPA를 동시에 사용할 수 있는 공통 라
 
 ```
 mbc01-java/
-├── src/main/java/com/kbstar/mbc/
+├── src/main/java/com/skax/eatool/mbc/
 │   ├── config/                    # 설정 클래스들
 │   │   ├── DataAccessConfig.java  # 데이터 접근 방식 설정
 │   │   ├── JpaConfig.java         # JPA 설정
