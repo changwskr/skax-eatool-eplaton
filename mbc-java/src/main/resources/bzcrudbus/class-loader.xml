@@ -33,12 +33,12 @@ BZCRUDBUS 클래스 로더 설정
     
     <!-- 설정 클래스 -->
     <configClasses>
-        <class name="com.skax.eatool.mbc.dc.config.EnvironmentConfig" />
-        <class name="com.skax.eatool.mbc.dc.config.ConfigurationManager" />
-        <class name="com.skax.eatool.mbc.dc.config.DataAccessConfig" />
+        <class name="com.skax.eatool.mbc.config.EnvironmentConfig" />
+        <class name="com.skax.eatool.mbc.config.ConfigurationManager" />
+        <class name="com.skax.eatool.mbc.config.DataAccessConfig" />
         <class name="com.skax.eatool.mbc.config.JpaConfig" />
-        <class name="com.skax.eatool.mbc.dc.config.MbcConfig" />
-        <class name="com.skax.eatool.mbc.dc.config.SwaggerConfig" />
+        <class name="com.skax.eatool.mbc.config.MbcConfig" />
+        <class name="com.skax.eatool.mbc.config.SwaggerConfig" />
     </configClasses>
     
     <!-- 유틸리티 클래스 -->

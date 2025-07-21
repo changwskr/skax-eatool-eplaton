@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.dc.config;
+package com.skax.eatool.mbc.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

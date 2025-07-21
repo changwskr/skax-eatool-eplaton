@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.dc.config;
+package com.skax.eatool.mbc.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;

@@ -1,8 +1,8 @@
 package com.skax.eatool.mbc.web.commonas.controller;
 
-import com.skax.eatool.mbc.dc.config.EnvironmentConfig;
-import com.skax.eatool.mbc.dc.config.ConfigurationManager;
-import com.skax.eatool.mbc.dc.config.EnvironmentInfo;
+import com.skax.eatool.mbc.config.EnvironmentConfig;
+import com.skax.eatool.mbc.config.ConfigurationManager;
+import com.skax.eatool.mbc.config.EnvironmentInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

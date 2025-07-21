@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.dc.config;
+package com.skax.eatool.mbc.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

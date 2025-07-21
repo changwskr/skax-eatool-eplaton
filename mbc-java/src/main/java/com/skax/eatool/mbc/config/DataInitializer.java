@@ -1,4 +1,4 @@
-package com.skax.eatool.mbc.dc.config;
+package com.skax.eatool.mbc.config;
 
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
