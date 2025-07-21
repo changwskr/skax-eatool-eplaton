@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true" lazyLoadingEnabled="true" maxRequests="1000"
+	maxSessions="200" maxTransactions="50" useStatementNamespaces="true"/>
+
+	<typeAlias alias="COMMIT_EXTERNAL" type="com.kbstar.ksa.das.ibatis.transaction.NoTranCommitExternalTransactionConfig"/>
+	<transactionManager type="COMMIT_EXTERNAL" commitRequired="true">
+		<dataSource type="JNDI">
+		    <property name="DataSource" value="${KESA.ds.jndi}"/>
+		</dataSource>
+	</transactionManager>	
+	${sqlMaps}
+</sqlMapConfig> 

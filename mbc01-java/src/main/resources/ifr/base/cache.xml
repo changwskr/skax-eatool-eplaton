@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<caches xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:kbstar="http://www.kbstar.com"
+        xmlns:kesa="http://www.kbstar.com/kesa"
+        xmlns:cache="http://www.kbstar.com/kesa/cache"
+        xmlns="http://www.kbstar.com/kesa/cache">
+
+	<cache name="DefaultCache"
+		class="com.kbstar.ksa.cache.impl.HashTableCache" />
+
+	<cache name="CacheForKBData"
+		class="com.kbstar.ksa.cache.impl.HashTableCache" >
+		<policy class="com.kbstar.ksa.cache.policy.LRUPolicy" />
+	</cache>
+
+	<cache name="CacheForBranch"
+		class="com.kbstar.ksa.cache.impl.HashTableCache"
+		group="kji" >
+		<policy class="com.kbstar.ksa.cache.policy.LRUPolicy" >
+			<param name="max" value="10000" />
+		</policy>
+	</cache>
+	<cache name="CacheForEmployee"
+		class="com.kbstar.ksa.cache.impl.HashTableCache"
+		group="kji" >
+		<policy class="com.kbstar.ksa.cache.policy.LRUPolicy">
+			<param name="max" value="100000" />
+		</policy>
+	</cache>
+</caches>

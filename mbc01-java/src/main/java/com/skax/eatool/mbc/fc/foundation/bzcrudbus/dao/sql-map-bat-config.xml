@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings useStatementNamespaces="false"/>
+    
+	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">
+			<property name="JDBC.Driver" value="oracle.jdbc.driver.OracleDriver"/>
+			<property name="JDBC.ConnectionURL" value="jdbc:oracle:thin:@192.168.151.89:1521:FAST"/>
+			<property name="JDBC.Username" value="fastapp"/>
+			<property name="JDBC.Password" value="fast"/>			
+			<property name="Pool.MaximumActiveConnections" value="10"/>
+			<property name="Pool.MaximumIdleConnections" value="5"/>
+			<property name="Pool.MaximumCheckoutTime" value="120000"/>
+			<property name="Pool.TimeToWait" value="500"/>
+			<property name="Pool.PingQuery" value="select 1 from DUAL"/>
+			<property name="Pool.PingEnabled" value="false"/>
+			<property name="Pool.PingConnectionsOlderThan" value="1"/>
+			<property name="Pool.PingConnectionsNotUsedFor" value="1"/>						
+		</dataSource>
+	</transactionManager>
+	
+ 	<sqlMap resource="dao/utilityMgtl/selectBatchByNm.xml"/> 	
+</sqlMapConfig>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<class-loader>
+	<class-path name="IFRS">
+		<source location="c:\ifrs.project\fsconfig\ifr\bzcrudbus\bzcrudbus_config.jar" />
+	</class-path>
+</class-loader>

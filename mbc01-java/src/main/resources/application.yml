@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: mbc01-application
+
+  # Profile Configuration
+  profiles:
+    active: mybatis # 기본값: mybatis, jpa로 변경 가능
+
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:mbc01db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  # JPA Configuration (JPA 프로파일에서만 활성화)
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    # JPA Auditing 활성화
+    open-in-view: false
+
+  # H2 Console (for development)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # Jackson Configuration
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Seoul
+    default-property-inclusion: non_null
+
+# MyBatis Configuration (MyBatis 프로파일에서만 활성화)
+mybatis:
+  mapper-locations: classpath:sqlmap/*.xml
+  type-aliases-package: com.kbstar.mbc.fc.foundation.dto
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# Logging Configuration
+logging:
+  level:
+    com.kbstar.mbc: DEBUG
+    org.springframework.security: DEBUG
+    org.mybatis: DEBUG
+    org.hibernate: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/mbc01-application.log
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Application Configuration
+app:
+  data-access:
+    type: mybatis # mybatis 또는 jpa
+    description: "데이터 접근 방식 설정 (mybatis/jpa)"

@@ -1,0 +1,26 @@
+
+
+<!-- id: 호출할 id (전문번호 + txCd) -->
+<!-- key : 키, KESA 로 XML 전송시 InData 하위의 Element 명으로 사용됨 -->
+<!-- seq : 호출될 순번  (실제로는 위에서 부터 순차적으로 읽음) -->
+<!-- server : AS 를 호출할 서버주소, 값이 없으면 디폴트 호스트 주소로 접속 (http://~ 모두 적어야 함) -->
+<!-- name: 호출할 AS 클래스 명 -->
+
+<configuration>
+	<command id="MBC7200202" type="list">
+	  <service key="Account" seq="1" server="" name="MBCCOMAS" />
+	</command>
+	<command id="MBC7200103" type="list">			
+	 	<service key="User" seq="1"  server="" name="MBCCOMAS" /> 
+		<service key="User" seq="2" server="" name="MBCCOMAS" /> 
+	</command>
+	<command id="HDD7200202" type="list">
+	  <service key="Account" seq="1" server="" name="HDDCOMAS" />
+	</command>
+	<command id="MBC72002R0" type="list">
+	  <service key="Test" seq="1" server="" name="MBC72001R0" />
+	</command>
+	<command id="MBC759S3R1" type="list">
+	  <service key="Test" seq="1" server="" name="MBC759S3R1" />
+	</command>
+</configuration>

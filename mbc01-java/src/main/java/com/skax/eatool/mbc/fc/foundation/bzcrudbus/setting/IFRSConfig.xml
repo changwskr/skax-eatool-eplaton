@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<SYSConfig>
+	
+	<SystemInfo id="ConfigFile">		
+		<MBA>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/mba/as-command-config.xml</MBA>
+		<MBB>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/mbb/as-command-config.xml</MBB>
+		<MBC>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/mbc/as-command-config.xml</MBC>
+		<HDD>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/hdd/as-command-config.xml</HDD>
+		<WAF>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/waf-command-config.xml</WAF>
+		<LDR>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/class-loader.xml</LDR>
+		<DAO>/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/sql-map-config.xml</DAO>
+	</SystemInfo>
+		
+	<SystemInfo id="ErrorCode">		
+		<CharList>E/B/S/D</CharList>
+	</SystemInfo>	
+		
+	<SystemInfo id="EnvironmentVariable">	
+		<ServiceCallAction.CALL_TYPE>KESA</ServiceCallAction.CALL_TYPE>
+		<KesaServiceDelegate.NGIANT_DEFAULT_HOST>http://localhost:9080</KesaServiceDelegate.NGIANT_DEFAULT_HOST>
+		<KesaServiceDelegate.NGIANT_SERVLET_URL>/ksa.web/nGiant</KesaServiceDelegate.NGIANT_SERVLET_URL>
+		<KesaServiceDelegate.NGIANT_PARAM_NAME>q</KesaServiceDelegate.NGIANT_PARAM_NAME>
+		<KesaServiceDelegate.HTTP_RESPONSE_ENCODING>euc-kr</KesaServiceDelegate.HTTP_RESPONSE_ENCODING>
+		<KesaDataSource.BIZDS_YN>N</KesaDataSource.BIZDS_YN>
+		<KesaXmlManager.HEADER_NAMES>commandId/danmalSeq/wafSeq/transactionNo/danmalInTime/danmalOutTime/errorCode/errorMsg/wafInTime/wafOutTime/asInTime/asOutTime/userId/sysDate/bizDate/gridName/metaData</KesaXmlManager.HEADER_NAMES>
+		<KesaXmlManager.HEADER_SVC_NAMES>hostServer/hostAs/hostPc/dtoName/sqlId</KesaXmlManager.HEADER_SVC_NAMES>
+		<KesaXmlManager.HEADER_SEPERATOR>/</KesaXmlManager.HEADER_SEPERATOR>
+		<KesaXmlVO.HOST_SERVER_PNAME>hostServer</KesaXmlVO.HOST_SERVER_PNAME>
+		<KesaXmlVO.HOST_AS_PNAME>hostAs</KesaXmlVO.HOST_AS_PNAME>
+		<TPMUtil.DANMAL_TYPE>I</TPMUtil.DANMAL_TYPE>
+		<GenericDtoUtil.DATA_ELEMENT_NAME>RowData</GenericDtoUtil.DATA_ELEMENT_NAME>
+		<IfrsCommonDAO.SEQ_SQL_ID>common.getSvrSeq</IfrsCommonDAO.SEQ_SQL_ID>
+	</SystemInfo>
+	
+</SYSConfig>

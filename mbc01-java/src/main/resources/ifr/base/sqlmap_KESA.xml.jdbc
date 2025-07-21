@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true" lazyLoadingEnabled="true" maxRequests="512"
+	maxSessions="128" maxTransactions="32" useStatementNamespaces="true"/>
+
+	<transactionManager type="JDBC">
+		<dataSource type="DBCP">
+			<property name="JDBC.Driver" value="${KESA.jdbc.driver}"/>
+			<property name="JDBC.ConnectionURL" value="${KESA.jdbc.url}" />
+			<property name="JDBC.Username" value="${KESA.jdbc.id}" />
+			<property name="JDBC.Password" value="${KESA.jdbc.password}" />
+			<property name="Pool.MaximumActiveConnections" value="100" />
+			<property name="Pool.MaximumIdleConnections" value="1" />
+			<property name="Pool.MaximumWait" value="10000" />
+		</dataSource>
+	</transactionManager>
+	${sqlMaps}
+</sqlMapConfig> 

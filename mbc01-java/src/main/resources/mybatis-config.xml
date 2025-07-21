@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    
+    <!-- 설정 -->
+    <settings>
+        <!-- 언더스코어를 카멜케이스로 자동 변환 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 자동 생성된 키 사용 -->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!-- 기본 실행자 타입 -->
+        <setting name="defaultExecutorType" value="SIMPLE"/>
+        <!-- 로깅 -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!-- 지연 로딩 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+    
+    <!-- 타입 별칭 -->
+    <typeAliases>
+        <!-- 기본 타입들 -->
+        <typeAlias alias="string" type="java.lang.String"/>
+        <typeAlias alias="int" type="java.lang.Integer"/>
+        <typeAlias alias="long" type="java.lang.Long"/>
+        <typeAlias alias="double" type="java.lang.Double"/>
+        <typeAlias alias="float" type="java.lang.Float"/>
+        <typeAlias alias="boolean" type="java.lang.Boolean"/>
+        <typeAlias alias="date" type="java.util.Date"/>
+        <typeAlias alias="map" type="java.util.Map"/>
+        <typeAlias alias="list" type="java.util.List"/>
+        
+        <!-- 비즈니스 모델들 -->
+        <package name="com.kbstar.mbc.fc.foundation.bzcrudbus.foundation"/>
+    </typeAliases>
+    
+    <!-- 타입 핸들러 -->
+    <typeHandlers>
+        <!-- 날짜 타입 핸들러 -->
+        <typeHandler handler="org.apache.ibatis.type.DateTypeHandler"/>
+        <!-- 숫자 타입 핸들러 -->
+        <typeHandler handler="org.apache.ibatis.type.BigDecimalTypeHandler"/>
+    </typeHandlers>
+    
+    <!-- 환경 설정 -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+                <!-- 커넥션 풀 설정 -->
+                <property name="poolMaximumActiveConnections" value="10"/>
+                <property name="poolMaximumIdleConnections" value="5"/>
+                <property name="poolMaximumCheckoutTime" value="20000"/>
+                <property name="poolTimeToWait" value="20000"/>
+            </dataSource>
+        </environment>
+        
+        <environment id="production">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+                <!-- 프로덕션 커넥션 풀 설정 -->
+                <property name="poolMaximumActiveConnections" value="20"/>
+                <property name="poolMaximumIdleConnections" value="10"/>
+                <property name="poolMaximumCheckoutTime" value="30000"/>
+                <property name="poolTimeToWait" value="30000"/>
+            </dataSource>
+        </environment>
+    </environments>
+    
+    <!-- 매퍼 파일들 -->
+    <mappers>
+        <!-- 공통 매퍼 -->
+        <mapper resource="sqlmap/common.sqlmap.xml"/>
+        
+        <!-- 비즈니스별 매퍼들 -->
+        <mapper resource="sqlmap/user.sqlmap.xml"/>
+        <mapper resource="sqlmap/account.sqlmap.xml"/>
+        <mapper resource="sqlmap/report.sqlmap.xml"/>
+        
+        <!-- 패키지 스캔 (선택사항) -->
+        <!-- <package name="com.kbstar.mbc.fc.foundation.bzcrudbus.mapper"/> -->
+    </mappers>
+    
+</configuration> 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preference>
+	<!--  jdbc connection  -->
+	<service bizCode="KESA" name="ds">
+		<!--entry name="factory">com.ibm.websphere.naming.WsnInitialContextFactory</entry-->
+		<entry name="jndi">jndi/ds/KESA</entry>
+	</service>
+	
+	<!-- Async Manager Preference
+			하나의 Instance에 1개의 AsyncMgr 을 설정한다. bizCode는 KESA 로 설정한다.
+			WORKER_NUMBER : Async 요청을 처리하는 worker 수. 0 이면, Async Manager는 프레임워크에서 비활성화.
+	-->
+	<service name="AsyncMgrPrefs" bizCode="KESA">
+		<entry name="WORKER_NUMBER">2</entry>
+	</service>
+	
+	<!-- HTTP Manager Preference for Test/Develop mode
+			ADAPTER_NAME : adapter name
+			CONCURRENT_CONNECTION : 동시 처리 가능한 connection number
+			TCP_NO_DELAY : TCP stream 모드. true : no delay / false : buffered mode
+			TCP_LINGER : TCP linger 설정. 0 이상의 integer
+			ACQUIRE_TIMEWAIT : HTTP connection 획득 대기 시간. milliseconds
+			TRANSFER_TIMEOUT : HTTP 전송 timeout. milliseconds
+			REQ_URL : HTTP 요청 URL
+	 -->
+	<service name="HTTPMgrPrefs" bizCode="EDU">
+		<entry name="ADAPTER_NAME">EDU_TEST</entry>
+		<entry name="CONCURRENT_CONNECTION">10</entry>
+		<entry name="TCP_NO_DELAY">true</entry> <!-- true/false -->
+		<entry name="TCP_LINGER">0</entry> <!-- 0 or higher number -->
+		<entry name="ACQUIRE_TIMEWAIT">2000</entry> <!-- milliseconds -->
+		<entry name="TRANSFER_TIMEOUT">60000</entry> <!-- milliseconds -->
+		<entry name="REQ_URL">127.0.0.1:9080/ksa.web/nGiant</entry>
+		<entry name="REQ_HDR_ACCEPT_LANG">ko</entry>
+		<entry name="REQ_HDR_ACCEPT_ENC">gzip, deflate</entry>
+	</service>
+	
+</preference>

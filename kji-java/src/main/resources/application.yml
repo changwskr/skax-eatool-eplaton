@@ -1,0 +1,53 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /kji
+
+spring:
+  application:
+    name: kji-application
+  
+  profiles:
+    active: dev
+  
+  datasource:
+    url: jdbc:h2:mem:kjidb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+  
+  security:
+    user:
+      name: admin
+      password: admin123
+      roles: ADMIN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.skax.eatool.kji: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n" 

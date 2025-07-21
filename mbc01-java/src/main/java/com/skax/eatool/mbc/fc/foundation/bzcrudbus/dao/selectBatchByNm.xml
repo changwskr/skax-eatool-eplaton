@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="EUC-KR" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Batch">
+
+	<resultMap id="resultBatchByNm" class="java.util.HashMap">
+		<result property="id"		column="ID"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="period"		column="PERIOD"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="seq"		column="SEQUENCE_NO"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="register"		column="REGISTER"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="name"		column="NAME"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="status"		column="STATUS"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="class"		column="ACTION_CLASS"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="method"		column="ACTION_METHOD"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="parameter"	column="PARAMETER_CLASS"	jdbcType="VARCHAR" nullValue=""/>
+		<result property="mandatory"		column="MANDATORY"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="multiplicity"		column="MULTIPLICITY"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="sqlid"		column="SQL_ID"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="business_doamin"		column="BUSINESS_DOMAIN"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="type"		column="TYPE"		jdbcType="VARCHAR" nullValue=""/>
+		<result property="invoke_time"		column="INVOKE_TIME"		jdbcType="VARCHAR" nullValue=""/>		
+	</resultMap>
+
+    <select id="selectBatchListByNm"  parameterClass="map" resultMap="resultBatchByNm">
+		SELECT ID,
+		       PERIOD,
+		       SEQUENCE_NO,			
+		       REGISTER,			
+		       NAME,			
+		       STATUS,			
+		       ACTION_CLASS,			
+		       ACTION_METHOD,			
+		       PARAMETER_CLASS,		
+		       MANDATORY,			
+		       MULTIPLICITY,			
+		       SQL_ID,			
+		       BUSINESS_DOMAIN,			
+		       TYPE	,			
+		       INVOKE_TIME
+		  FROM BATCH_REGISTER	
+		  	<dynamic prepend="WHERE">
+	    <isNotEmpty prepend="OR" property="condId" >
+	   		ID LIKE #condId# || '%' 
+	    </isNotEmpty>	
+	    <isNotEmpty prepend="OR" property="condName" >
+	   		NAME LIKE #condName# || '%'
+	    </isNotEmpty>
+	</dynamic>	  		              
+	</select>
+
+</sqlMap>
+
+
+
+

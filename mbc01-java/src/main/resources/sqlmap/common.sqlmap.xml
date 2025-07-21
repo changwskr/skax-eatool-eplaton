@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skax.eatool.mbc.fc.foundation.bzcrudbus.mapper.CommonMapper">
+
+    <!-- 공통 SQL 조각들 -->
+    <sql id="commonColumns">
+        <!-- 공통 컬럼들 -->
+    </sql>
+
+    <!-- 공통 WHERE 조건 -->
+    <sql id="commonWhere">
+        <where>
+            <if test="params != null">
+                <if test="params.useYn != null and params.useYn != ''">
+                    AND USE_YN = #{params.useYn}
+                </if>
+                <if test="params.delYn != null and params.delYn != ''">
+                    AND DEL_YN = #{params.delYn}
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 페이징 처리 -->
+    <sql id="paging">
+        <if test="params != null and params.startRow != null and params.endRow != null">
+            <choose>
+                <when test="params.dbType == 'ORACLE'">
+                    SELECT * FROM (
+                        SELECT A.*, ROWNUM RNUM FROM (
+                </when>
+                <when test="params.dbType == 'MYSQL'">
+                    LIMIT #{params.startRow}, #{params.endRow}
+                </when>
+                <when test="params.dbType == 'MSSQL'">
+                    OFFSET #{params.startRow} ROWS FETCH NEXT #{params.endRow} ROWS ONLY
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- 페이징 종료 -->
+    <sql id="pagingEnd">
+        <if test="params != null and params.startRow != null and params.endRow != null">
+            <choose>
+                <when test="params.dbType == 'ORACLE'">
+                        ) A WHERE ROWNUM &lt;= #{params.endRow}
+                    ) WHERE RNUM > #{params.startRow}
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- 동적 쿼리 실행 -->
+    <select id="executeDynamicQuery" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 동적 쿼리 실행 (목록) -->
+    <select id="executeDynamicQueryList" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 시퀀스 조회 (Oracle) -->
+    <select id="getSequence" resultType="long">
+        SELECT ${sequenceName}.NEXTVAL FROM DUAL
+    </select>
+
+    <!-- 현재 날짜 조회 -->
+    <select id="getCurrentDate" resultType="string">
+        <choose>
+            <when test="params != null and params.dbType == 'ORACLE'">
+                SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') FROM DUAL
+            </when>
+            <when test="params != null and params.dbType == 'MYSQL'">
+                SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')
+            </when>
+            <when test="params != null and params.dbType == 'MSSQL'">
+                SELECT CONVERT(VARCHAR, GETDATE(), 120)
+            </when>
+            <otherwise>
+                SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') FROM DUAL
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 데이터 존재 여부 확인 -->
+    <select id="exists" resultType="int">
+        SELECT COUNT(1) FROM ${tableName}
+        <include refid="commonWhere"/>
+    </select>
+
+    <!-- 데이터 개수 조회 -->
+    <select id="count" resultType="int">
+        SELECT COUNT(1) FROM ${tableName}
+        <include refid="commonWhere"/>
+    </select>
+
+    <!-- 공통 삭제 (논리 삭제) -->
+    <update id="logicalDelete">
+        UPDATE ${tableName}
+        SET DEL_YN = 'Y',
+            UPD_DT = <include refid="getCurrentDate"/>
+        <include refid="commonWhere"/>
+    </update>
+
+    <!-- 공통 복원 -->
+    <update id="restore">
+        UPDATE ${tableName}
+        SET DEL_YN = 'N',
+            UPD_DT = <include refid="getCurrentDate"/>
+        <include refid="commonWhere"/>
+    </update>
+
+</mapper> 

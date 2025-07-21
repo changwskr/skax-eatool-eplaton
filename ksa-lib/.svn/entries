@@ -1,0 +1,46 @@
+8
+
+dir
+246
+svn://172.28.186.105/ifrs_repository/ifrs.project/ksa-lib
+svn://172.28.186.105/ifrs_repository
+
+
+
+2008-12-04T13:05:46.311124Z
+246
+kspark
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+4748a35f-f0fb-4a19-b827-a4bf6ff651a3
+
+build
+dir
+
+runtime
+dir
+
+.project
+file
+247
+
+
+
+2008-11-25T01:06:14.000000Z
+00fe28080b2d016abf0367a56c49d8ff
+2008-12-04T13:06:20.707843Z
+247
+kspark
+

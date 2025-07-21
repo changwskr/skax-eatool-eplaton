@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<app-containers>
+	<app-container name="mba;mbb;mbc;hdd">
+		<source location="c:\ifrs.project\mba-java\bin" />
+		<source location="c:\ifrs.project\mbb-java\bin" />
+		<source location="c:\ifrs.project\mbc-java\bin" />
+		<source location="c:\ifrs.project\hdd-java\bin" />
+		<source location="c:\ifrs.project\mbc-java\lib\ifrs_foundation.jar" />
+		<source location="c:\ifrs.project\fsconfig\ifr\ifrs_config.jar" />
+	</app-container>
+</app-containers>

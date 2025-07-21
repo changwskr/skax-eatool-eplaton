@@ -1,0 +1,20 @@
+# MyBatis Configuration
+mybatis:
+  mapper-locations: classpath:sqlmap/*.xml
+  type-aliases-package: com.kbstar.mbc.fc.foundation.dto
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# Logging Configuration for MyBatis
+logging:
+  level:
+    com.kbstar.mbc: DEBUG
+    org.mybatis: DEBUG
+    org.springframework.jdbc: DEBUG
+
+# Application Configuration
+app:
+  data-access:
+    type: mybatis
+    description: "MyBatis 데이터 접근 방식 사용"

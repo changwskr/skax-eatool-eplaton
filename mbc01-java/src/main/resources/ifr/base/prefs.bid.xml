@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	BID preference 2008.05.14.
+-->
+<preference>	
+	<service name="BIDMgrPrefs" bizCode="EDU">
+		<entry name="ADAPTER_NAME">EDUNET_TEST</entry>
+		<entry name="HOST">172.17.49.60</entry>
+		<entry name="PORT">43000</entry>
+		<entry name="TIMEOUT">30000</entry>
+		<entry name="DEF_CONNECTION">5</entry>
+		<entry name="MAX_CONNECTION">10</entry>
+		<entry name="MAX_WAIT">5000</entry>
+		<entry name="TEST_ON_BORROW">true</entry>
+	</service>
+</preference>

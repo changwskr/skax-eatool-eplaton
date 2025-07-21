@@ -1,0 +1,20 @@
+
+<!-- id: 호출할 id(화면id+eventid) -->
+<!-- key : 해당 Method 실행후 Return된 객체를 request.setAttribute 시킬때 키값, 결과 XML에서 결과 그룹으로 사용됨-->
+<!-- element: 결과 그룹의 자식(결과 데이터) Element 명, 없으면 디폴트 값 -->
+<!-- name: 호출할 PC 모듈 class 명 -->
+<!-- method: 해당 PC에서 호출할 Method 명 -->
+<!-- seq:호출될 순번 -->
+<!-- sql_id: PC를 통해 호출할 경우 조회할 ibatis statement id -->
+<!--
+	type : singleSearch, search, init, save, operate, delete
+-->
+
+
+<configuration>
+
+	<command id="HDD7200202" type="search">
+	  <service key="UserList" name="com.kbstar.hdd.pc.userpc.PCUser3" element="User3" method="getUserList3" seq="1" sql_id=""/>
+	</command>
+		
+</configuration>

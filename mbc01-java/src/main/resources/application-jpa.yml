@@ -1,0 +1,29 @@
+# JPA Profile Configuration
+spring:
+  profiles:
+    active: jpa
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    # JPA Auditing 활성화
+    open-in-view: false
+
+# Logging Configuration for JPA
+logging:
+  level:
+    com.kbstar.mbc: DEBUG
+    org.hibernate: DEBUG
+    org.springframework.orm.jpa: DEBUG
+
+# Application Configuration
+app:
+  data-access:
+    type: jpa
+    description: "JPA 데이터 접근 방식 사용"

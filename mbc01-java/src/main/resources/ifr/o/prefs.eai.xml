@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	EAI preference 2008.03.07.
+-->
+<preference>	
+	<service name="EAIMgrPrefs" bizCode="EDU">
+		<entry name="NET_ADAPTER_NAME">EDUNET_PROD</entry>
+		<entry name="NET_HOST">127.0.0.1</entry>
+		<entry name="NET_PORTS">20153</entry>
+		<entry name="NET_DEF_CONNECTION">1</entry>
+		<entry name="NET_MAX_CONNECTION">1</entry>
+	</service>
+</preference>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	ServiceObjects.xml Sample
+-->
+<!DOCTYPE ServiceObjects [
+	<!--
+		* CAUTION *
+		FrameworkObjects는 framework에서 관리한다.
+		개발자가 임의로 수정하면 loading되지 않는다
+	-->
+	<!ELEMENT FrameworkObjects (providers*, frameworkObject*)>
+	<!--
+		개발자가 정의하는 ServiceObjects를 정의한다.
+	-->
+	<!ELEMENT ServiceObjects (providers*, object*)>
+	<!ELEMENT providers (provider+)>
+	<!ATTLIST providers
+		type (JNDI | ClassLoader) #REQUIRED
+		default CDATA #REQUIRED
+	>
+	<!ELEMENT provider (param*)>
+	<!ATTLIST provider
+		name CDATA #REQUIRED
+	>
+	<!ELEMENT param (#PCDATA)>
+	<!ATTLIST param
+		name CDATA #REQUIRED
+		value CDATA #REQUIRED
+	>
+	<!ELEMENT frameworkObject (param*)>
+	<!ATTLIST frameworkObject
+		name CDATA #REQUIRED
+		type (JNDI | ClassLoader) #REQUIRED
+		provider CDATA #IMPLIED
+		singleton (true | false) "false"
+	>
+	<!ELEMENT object (param*)>
+	<!ATTLIST object
+		name CDATA #REQUIRED
+		type (JNDI | ClassLoader) #REQUIRED
+		provider CDATA #IMPLIED
+	>
+]>
+
+<ServiceObjects>
+	<!-- Async Error Manager Preference
+		Async 처리에서 발생하는 특정 Error 처리 Manager를 정의하고, 사용한다.
+		등록되는 Async Error Manager는 
+		com.kbstar.ksa.oltp.async.impl.IAsyncErrorProcess 를 구현해야 하는 class 이어야 한다.
+	-->
+	<!-- 
+	<object name="EDU_AsyncErrorProcess" type="ClassLoader"
+		provider="basic">
+		<param name="Name"
+			value="com.kbstar.ksa.sr.impl.async.AsyncErrorProcess" />
+	</object>
+	 -->
+
+	<!-- 필요에 따라 pre/post process 설정을 추가할 수 있습니다. -->
+	
+	<object name="PreProcess" type="ClassLoader" provider="basic">
+	    <param name="Name" value="com.kbstar.kji.oltp.transaction.impl.PreProcess" />
+	</object>
+	<object name="PostProcess" type="ClassLoader" provider="basic">
+	    <param name="Name" value="com.kbstar.kji.oltp.transaction.impl.PostProcess" />
+	</object>
+	 
+</ServiceObjects>

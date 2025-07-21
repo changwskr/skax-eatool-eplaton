@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<caches xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:kbstar="http://www.kbstar.com"
+        xmlns:kesa="http://www.kbstar.com/kesa"
+        xmlns:cache="http://www.kbstar.com/kesa/cache"
+        xmlns="http://www.kbstar.com/kesa/cache">
+	<friend instance="server1" address="127.0.0.1" port="30000" />
+	<friend instance="server2" address="127.0.0.1" port="30001" />
+	<friend instance="server3" address="127.0.0.1" port="30002" />
+</caches>

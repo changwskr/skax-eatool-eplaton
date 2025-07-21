@@ -1,0 +1,51 @@
+# MBC Application Configuration
+# MBC 메인 애플리케이션 설정
+
+spring:
+  application:
+    name: mbc-java
+  profiles:
+    active: dev
+
+# Logging Configuration
+logging:
+  level:
+    com.skax.eatool.mbc: DEBUG
+    org.springframework: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /mbc
+
+# Database Configuration (for development)
+spring:
+  datasource:
+    url: jdbc:h2:mem:mbcdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# MyBatis Configuration
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.skax.eatool.mbc.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# Application Properties
+app:
+  mbc:
+    version: 1.0.0
+    description: MBC Main Application
+    author: SKAX EA Tool Team
+    mbc01-lib-path: ${mbc01.lib.dir} 

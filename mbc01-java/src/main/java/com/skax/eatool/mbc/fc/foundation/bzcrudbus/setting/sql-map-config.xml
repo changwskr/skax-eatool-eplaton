@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings useStatementNamespaces="true"/>
+    
+	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">
+			<property name="JDBC.Driver" value="com.ibm.db2.jcc.DB2Driver"/>
+			<property name="JDBC.ConnectionURL" value="jdbc:db2://172.28.186.105:60000/ifrsdb"/>
+			<property name="JDBC.Username" value="arch"/>
+			<property name="JDBC.Password" value="arch0929"/>			
+			<property name="Pool.MaximumActiveConnections" value="10"/>
+			<property name="Pool.MaximumIdleConnections" value="5"/>
+			<property name="Pool.MaximumCheckoutTime" value="120000"/>
+			<property name="Pool.TimeToWait" value="50000"/>
+			<property name="Pool.PingQuery" value=""/>
+			<property name="Pool.PingEnabled" value="false"/>
+			<property name="Pool.PingConnectionsOlderThan" value="0"/>
+			<property name="Pool.PingConnectionsNotUsedFor" value="0"/>						
+		</dataSource>
+	</transactionManager>
+	
+ 	<sqlMap resource="/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/common.sqlmap.xml"/>
+</sqlMapConfig>

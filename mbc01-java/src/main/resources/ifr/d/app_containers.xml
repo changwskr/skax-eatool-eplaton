@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<app-containers>
+	<app-container name="kji">
+		<source location="c:\ifrs.project\kji-lib\runtime\kji-java.jar"  />
+		<app-container name="mba;mbb;mbc;hdd">
+			<source location="c:\ifrs.project\mba-java\bin" />
+			<source location="c:\ifrs.project\mbb-java\bin" />
+			<source location="c:\ifrs.project\mbc-java\bin" />
+			<source location="c:\ifrs.project\hdd-java\bin"  />
+		</app-container>			
+	</app-container>
+</app-containers>

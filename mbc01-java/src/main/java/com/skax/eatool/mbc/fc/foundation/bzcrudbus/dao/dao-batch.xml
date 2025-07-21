@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE daoConfig PUBLIC "-//iBATIS.com//DTD DAO Configuration 2.0//EN" "http://www.ibatis.com/dtd/dao-2.dtd">
+<daoConfig>
+	<context>
+		<transactionManager type="SQLMAP">
+			<property name="SqlMapConfigResource" value="/sql-map-bat-config.xml"/>
+		</transactionManager>
+		
+		<dao interface="com.kbstar.mbc.fc.foundation.bizsoa.dao.IDaoRuleMgmtDAO" implementation="com.kbstar.mbc.fc.foundation.bizsoa.dao.DaoRuleMgmtDAOImpl"/>				
+	</context>
+</daoConfig>

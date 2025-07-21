@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<appender class="org.apache.log4j.DailyRollingFileAppender" name="wafAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_WAF.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	 <appender class="org.apache.log4j.DailyRollingFileAppender" name="serverAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_SERVER.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	 <appender class="org.apache.log4j.DailyRollingFileAppender" name="comAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_COM.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	 <appender class="org.apache.log4j.DailyRollingFileAppender" name="mbaAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_MBA.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	 <appender class="org.apache.log4j.DailyRollingFileAppender" name="mbbAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_MBB.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	 <appender class="org.apache.log4j.DailyRollingFileAppender" name="mbcAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_MBC.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	 <appender class="org.apache.log4j.DailyRollingFileAppender" name="hddAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_HDD.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	 <appender class="org.apache.log4j.DailyRollingFileAppender" name="wafInTimeAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_WafInTime.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	 <appender class="org.apache.log4j.DailyRollingFileAppender" name="asInTimeAppender"> 
+		<param name="File" value="${LOG_PATH}/IFRS_AsInTime.log"/>  
+		<param name="Append" value="true"/>  
+		<layout class="org.apache.log4j.PatternLayout"> 
+			<param name="ConversionPattern" value="%d %p %t %c - %m%n"/> 
+		</layout> 
+	 </appender>
+	<logger additivity="true" name="log.ifrs.waf"> 
+		<level value="all"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="wafAppender"/> 
+	</logger>
+	<logger additivity="true" name="log.ifrs.server"> 
+		<level value="all"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="serverAppender"/> 
+	</logger>
+	<logger additivity="true" name="log.ifrs.com"> 
+		<level value="all"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="comAppender"/> 
+	</logger>
+	<logger additivity="true" name="log.ifrs.mba"> 
+		<level value="all"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="mbaAppender"/> 
+	</logger>
+	<logger additivity="true" name="log.ifrs.mbb"> 
+		<level value="all"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="mbbAppender"/> 
+	</logger>
+	<logger additivity="true" name="log.ifrs.mbc">
+		<level value="all"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="mbcAppender"/> 
+	</logger>
+	<logger additivity="true" name="log.ifrs.hdd"> 
+		<level value="all"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="hddAppender"/> 
+	</logger>
+	<logger additivity="true" name="log.ifrs.wafintime"> 
+		<level value="info"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="wafInTimeAppender"/> 
+	</logger>
+	<logger additivity="true" name="log.ifrs.asintime"> 
+		<level value="info"/>  
+		<appender-ref ref="consoleAppender"/>  
+		<appender-ref ref="asInTimeAppender"/> 
+	</logger>
+</log4j:configuration>
