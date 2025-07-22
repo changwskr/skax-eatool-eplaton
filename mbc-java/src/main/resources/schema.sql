@@ -3,6 +3,25 @@
 -- 설명: MBC 시스템의 기본 테이블 구조
 
 -- ========================================
+-- 보고서 관리 관련 테이블
+-- ========================================
+
+-- 보고서 정보 테이블
+CREATE TABLE IF NOT EXISTS REPORT_INFO (
+    REPORT_ID VARCHAR(50) PRIMARY KEY,
+    REPORT_TYPE VARCHAR(20) NOT NULL, -- ACCOUNT, USER, SYSTEM
+    REPORT_NAME VARCHAR(200) NOT NULL,
+    REPORT_DESCRIPTION TEXT,
+    REPORT_STATUS VARCHAR(20) DEFAULT 'ACTIVE', -- ACTIVE, INACTIVE, DRAFT
+    CREATED_BY VARCHAR(50),
+    CREATED_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_BY VARCHAR(50),
+    UPDATED_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    REPORT_CONFIG TEXT, -- JSON 형태의 설정 정보
+    REPORT_TEMPLATE TEXT -- 보고서 템플릿 정보
+);
+
+-- ========================================
 -- 사용자 관리 관련 테이블
 -- ========================================
 

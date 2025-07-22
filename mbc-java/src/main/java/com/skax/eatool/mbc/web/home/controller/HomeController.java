@@ -139,6 +139,34 @@ public class HomeController {
         logger.info("=== HomeController.showUserManagementPage END ===");
         return "user/user-management";
     }
+    
+    /**
+     * 보고서 관리 페이지 표시
+     */
+    @GetMapping("/report-management")
+    public String showReportManagementPage(Model model) {
+        logger.info("=== HomeController.showReportManagementPage START ===");
+        kesaLogger.info("보고서 관리 페이지 요청", "HomeController");
+
+        try {
+            // API 엔드포인트 정보
+            Map<String, Object> apiInfo = new HashMap<>();
+            apiInfo.put("baseUrl", "/api/report");
+            apiInfo.put("endpoints", getReportApiEndpoints());
+            
+            model.addAttribute("apiInfo", apiInfo);
+            model.addAttribute("currentTime", LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss")));
+
+            kesaLogger.info("보고서 관리 페이지 데이터 로드 완료", "HomeController");
+
+        } catch (Exception e) {
+            kesaLogger.error("보고서 관리 페이지 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.showReportManagementPage END ===");
+        return "report/report-management";
+    }
 
     /**
      * 계정관리 API 엔드포인트 정보 반환
@@ -614,16 +642,24 @@ public class HomeController {
 
         List<Map<String, Object>> reportSubMenus = new ArrayList<>();
 
+        Map<String, Object> reportManagement = new HashMap<>();
+        reportManagement.put("title", "보고서 관리");
+        reportManagement.put("url", "/web/report-management");
+        reportManagement.put("icon", "fas fa-chart-bar");
+        reportManagement.put("method", "GET");
+        reportManagement.put("description", "통계 보고서 및 분석");
+        reportSubMenus.add(reportManagement);
+
         Map<String, Object> accountReport = new HashMap<>();
         accountReport.put("title", "계정 통계");
-        accountReport.put("url", "/mbc/report/account");
+        accountReport.put("url", "/api/report/account/statistics");
         accountReport.put("icon", "fas fa-chart-pie");
         accountReport.put("method", "GET");
         reportSubMenus.add(accountReport);
 
         Map<String, Object> userReport = new HashMap<>();
         userReport.put("title", "사용자 통계");
-        userReport.put("url", "/mbc/report/user");
+        userReport.put("url", "/api/report/user/statistics");
         userReport.put("icon", "fas fa-chart-area");
         userReport.put("method", "GET");
         reportSubMenus.add(userReport);
@@ -721,6 +757,35 @@ public class HomeController {
         requestBody.put("userRole", "ADMIN");
         requestBody.put("userStatus", "ACTIVE");
         return requestBody;
+    }
+
+    /**
+     * 보고서 관리 API 엔드포인트 정보 반환
+     */
+    @GetMapping("/api-info/report/endpoints")
+    @ResponseBody
+    public Map<String, Object> getReportApiEndpoints() {
+        Map<String, Object> endpoints = new HashMap<>();
+        
+        // 계정 통계 보고서
+        Map<String, Object> accountReport = new HashMap<>();
+        accountReport.put("method", "GET");
+        accountReport.put("url", "/api/report/account");
+        accountReport.put("description", "계정 통계 보고서 조회");
+        accountReport.put("parameters", new String[]{"startDate", "endDate"});
+        accountReport.put("requestBody", null); // GET 요청이므로 본문 없음
+        endpoints.put("accountReport", accountReport);
+        
+        // 사용자 통계 보고서
+        Map<String, Object> userReport = new HashMap<>();
+        userReport.put("method", "GET");
+        userReport.put("url", "/api/report/user");
+        userReport.put("description", "사용자 통계 보고서 조회");
+        userReport.put("parameters", new String[]{"startDate", "endDate"});
+        userReport.put("requestBody", null); // GET 요청이므로 본문 없음
+        endpoints.put("userReport", userReport);
+        
+        return endpoints;
     }
 
     /**
