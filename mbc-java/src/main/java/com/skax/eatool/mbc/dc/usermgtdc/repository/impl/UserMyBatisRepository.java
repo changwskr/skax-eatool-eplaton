@@ -1,61 +1,60 @@
 package com.skax.eatool.mbc.dc.usermgtdc.repository.impl;
 
-import java.util.List;
-
-import com.skax.eatool.mbc.dc.usermgtdc.Page;
-import com.skax.eatool.mbc.dc.usermgtdc.Tree;
-import com.skax.eatool.mbc.dc.usermgtdc.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.skax.eatool.ksa.exception.NewBusinessException;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
-import com.skax.eatool.ksa.util.NewObjectUtil;
-import com.skax.eatool.mbc.dc.usermgtdc.dto.UserDDTO;
+import com.skax.eatool.mbc.dc.usermgtdc.User;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.PageDDTO;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.TreeDDTO;
+import com.skax.eatool.mbc.dc.usermgtdc.dto.UserDDTO;
 import com.skax.eatool.mbc.dc.usermgtdc.mapper.UserMapper;
 import com.skax.eatool.mbc.dc.usermgtdc.repository.UserRepository;
+import com.skax.eatool.mbc.dc.usermgtdc.Page;
+import com.skax.eatool.mbc.dc.usermgtdc.Tree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
- * MyBatis 기반 사용자 Repository 구현체
+ * 사용자 관리 MyBatis Repository 구현체
  * 
  * 프로그램명: UserMyBatisRepository.java
- * 설명: MyBatis를 사용한 사용자 관리 Repository 구현체
+ * 설명: MyBatis를 사용한 사용자 관리 Repository 구현
  * 작성일: 2024-01-01
  * 작성자: SKAX Project Team
  * 
  * 주요 기능:
- * - MyBatis를 통한 사용자 CRUD 작업
- * - 페이징 처리
- * - 트리 구조 데이터 조회
+ * - 사용자 목록 조회
+ * - 사용자 상세 조회
+ * - 사용자 등록/수정/삭제
+ * - 페이징 및 트리 구조 지원
  * 
  * @version 1.0
  */
 @Repository
 @Profile("mybatis")
 public class UserMyBatisRepository implements UserRepository {
-
+    
     private NewIKesaLogger logger = NewKesaLogHelper.getBiz();
     private static final Logger slf4jLogger = LoggerFactory.getLogger(UserMyBatisRepository.class);
-
+    
     @Autowired
     private UserMapper userMapper;
-
+    
     @Override
     public List<User> getListUser(UserDDTO userDDTO) throws NewBusinessException {
         logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.getListUser START ===");
         slf4jLogger.info("=== UserMyBatisRepository.getListUser START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.getListUser called");
-            List<User> userList = userMapper.getListUser(userDDTO);
+            List<User> userList = userMapper.findBySearchCondition(userDDTO);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.getListUser END ===");
             slf4jLogger.info("=== UserMyBatisRepository.getListUser END (SLF4J) ===");
-            return NewObjectUtil.copyForList(User.class, userList);
+            return userList; // NewObjectUtil 사용하지 않음
         } catch (Exception e) {
             logger.error("Error in getListUser: " + e.getMessage(), String.valueOf(e));
             slf4jLogger.error("Error in getListUser: " + e.getMessage(), e);
@@ -71,7 +70,9 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.insertUser START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.insertUser called");
-            int result = userMapper.insertUser(userDDTO);
+            // UserDDTO를 User 엔티티로 변환
+            User user = convertToUser(userDDTO);
+            int result = userMapper.insert(user);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.insertUser END ===");
             slf4jLogger.info("=== UserMyBatisRepository.insertUser END (SLF4J) ===");
             return result;
@@ -90,7 +91,9 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.updateUser START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.updateUser called");
-            int result = userMapper.updateUser(userDDTO);
+            // UserDDTO를 User 엔티티로 변환
+            User user = convertToUser(userDDTO);
+            int result = userMapper.update(user);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.updateUser END ===");
             slf4jLogger.info("=== UserMyBatisRepository.updateUser END (SLF4J) ===");
             return result;
@@ -109,7 +112,8 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.deleteUser START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.deleteUser called");
-            int result = userMapper.deleteUser(userDDTO);
+            String userId = userDDTO.getUserId();
+            int result = userMapper.delete(userId);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.deleteUser END ===");
             slf4jLogger.info("=== UserMyBatisRepository.deleteUser END (SLF4J) ===");
             return result;
@@ -128,7 +132,11 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.getListPage START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.getListPage called");
-            List<Page> result = userMapper.getListPage(pageDDTO);
+            // PageDDTO를 UserDDTO로 변환하여 검색 조건으로 사용
+            UserDDTO searchCondition = convertPageDDTOToUserDDTO(pageDDTO);
+            List<User> userList = userMapper.findBySearchCondition(searchCondition);
+            // User 리스트를 Page 리스트로 변환 (실제 구현에서는 적절한 변환 로직 필요)
+            List<Page> result = convertUserListToPageList(userList);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.getListPage END ===");
             slf4jLogger.info("=== UserMyBatisRepository.getListPage END (SLF4J) ===");
             return result;
@@ -147,7 +155,10 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.getPageCount START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.getPageCount called");
-            String result = userMapper.getPageCount(pageDDTO);
+            // PageDDTO를 UserDDTO로 변환하여 검색 조건으로 사용
+            UserDDTO searchCondition = convertPageDDTOToUserDDTO(pageDDTO);
+            int count = userMapper.countBySearchCondition(searchCondition);
+            String result = String.valueOf(count);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.getPageCount END ===");
             slf4jLogger.info("=== UserMyBatisRepository.getPageCount END (SLF4J) ===");
             return result;
@@ -166,10 +177,14 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.getListTree START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.getListTree called");
-            List<Tree> treeList = userMapper.getListTree(treeDDTO);
+            // TreeDDTO를 UserDDTO로 변환하여 검색 조건으로 사용
+            UserDDTO searchCondition = convertTreeDDTOToUserDDTO(treeDDTO);
+            List<User> userList = userMapper.findBySearchCondition(searchCondition);
+            // User 리스트를 Tree 리스트로 변환 (실제 구현에서는 적절한 변환 로직 필요)
+            List<Tree> result = convertUserListToTreeList(userList);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.getListTree END ===");
             slf4jLogger.info("=== UserMyBatisRepository.getListTree END (SLF4J) ===");
-            return NewObjectUtil.copyForList(Tree.class, treeList);
+            return result;
         } catch (Exception e) {
             logger.error("Error in getListTree: " + e.getMessage(), String.valueOf(e));
             slf4jLogger.error("Error in getListTree: " + e.getMessage(), e);
@@ -185,7 +200,7 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.getUserById START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.getUserById called");
-            User result = userMapper.getUserById(userId);
+            User result = userMapper.findByUserId(userId);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.getUserById END ===");
             slf4jLogger.info("=== UserMyBatisRepository.getUserById END (SLF4J) ===");
             return result;
@@ -204,7 +219,7 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.getUserByEmail START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.getUserByEmail called");
-            User result = userMapper.getUserByEmail(userEmail);
+            User result = userMapper.findByEmail(userEmail);
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.getUserByEmail END ===");
             slf4jLogger.info("=== UserMyBatisRepository.getUserByEmail END (SLF4J) ===");
             return result;
@@ -223,7 +238,8 @@ public class UserMyBatisRepository implements UserRepository {
         slf4jLogger.info("=== UserMyBatisRepository.existsUser START (SLF4J) ===");
         try {
             logger.debug("UserMyBatisRepository.existsUser called");
-            int result = userMapper.existsUser(userId);
+            User user = userMapper.findByUserId(userId);
+            int result = (user != null) ? 1 : 0;
             logger.info("UserMyBatisRepository", "=== UserMyBatisRepository.existsUser END ===");
             slf4jLogger.info("=== UserMyBatisRepository.existsUser END (SLF4J) ===");
             return result;
@@ -234,5 +250,80 @@ public class UserMyBatisRepository implements UserRepository {
             slf4jLogger.info("=== UserMyBatisRepository.existsUser END (SLF4J) ===");
             throw new NewBusinessException("B0000010", "existsUser", e);
         }
+    }
+    
+    /**
+     * UserDDTO를 User 엔티티로 변환
+     */
+    private User convertToUser(UserDDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        
+        User user = new User();
+        user.setUserId(dto.getUserId());
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setRole(dto.getRole());
+        user.setStatus(dto.getStatus());
+        user.setCreatedDate(dto.getCreatedDate());
+        user.setUpdatedDate(dto.getUpdatedDate());
+        user.setDepartment(dto.getDepartment());
+        user.setPosition(dto.getPosition());
+        user.setEmployeeId(dto.getEmployeeId());
+        user.setBirthDate(dto.getBirthDate());
+        user.setAddress(dto.getAddress());
+        user.setEmergencyContact(dto.getEmergencyContact());
+        user.setEmergencyContactName(dto.getEmergencyContactName());
+        user.setProfileImageUrl(dto.getProfileImageUrl());
+        user.setLastLoginDate(dto.getLastLoginDate());
+        user.setLoginCount(dto.getLoginCount());
+        
+        return user;
+    }
+    
+    /**
+     * PageDDTO를 UserDDTO로 변환
+     */
+    private UserDDTO convertPageDDTOToUserDDTO(PageDDTO pageDDTO) {
+        if (pageDDTO == null) {
+            return null;
+        }
+        
+        UserDDTO userDDTO = new UserDDTO();
+        // PageDDTO의 필드들을 UserDDTO의 검색 조건으로 매핑
+        // 실제 구현에서는 적절한 매핑 로직 필요
+        return userDDTO;
+    }
+    
+    /**
+     * TreeDDTO를 UserDDTO로 변환
+     */
+    private UserDDTO convertTreeDDTOToUserDDTO(TreeDDTO treeDDTO) {
+        if (treeDDTO == null) {
+            return null;
+        }
+        
+        UserDDTO userDDTO = new UserDDTO();
+        // TreeDDTO의 필드들을 UserDDTO의 검색 조건으로 매핑
+        // 실제 구현에서는 적절한 매핑 로직 필요
+        return userDDTO;
+    }
+    
+    /**
+     * User 리스트를 Page 리스트로 변환
+     */
+    private List<Page> convertUserListToPageList(List<User> userList) {
+        // 실제 구현에서는 User를 Page로 변환하는 로직 필요
+        return new java.util.ArrayList<>();
+    }
+    
+    /**
+     * User 리스트를 Tree 리스트로 변환
+     */
+    private List<Tree> convertUserListToTreeList(List<User> userList) {
+        // 실제 구현에서는 User를 Tree로 변환하는 로직 필요
+        return new java.util.ArrayList<>();
     }
 }

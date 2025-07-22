@@ -99,82 +99,97 @@ public class HomeController {
             apiInfo.put("endpoints", getAccountApiEndpoints());
             
             model.addAttribute("apiInfo", apiInfo);
-            model.addAttribute("pageTitle", "계정관리 API 테스트");
+            model.addAttribute("currentTime", LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss")));
+
+            kesaLogger.info("계정관리 API 테스트 페이지 데이터 로드 완료", "HomeController");
 
         } catch (Exception e) {
-            logger.error("계정관리 API 테스트 페이지 로드 중 오류: " + e.getMessage());
-            kesaLogger.error("계정관리 API 테스트 페이지 로드 중 오류: " + e.getMessage(), "HomeController");
+            kesaLogger.error("계정관리 API 테스트 페이지 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
         }
 
         logger.info("=== HomeController.showAccountTestPage END ===");
-        return "web/account/test";
+        return "web/accountas-test";
     }
 
     /**
-     * 계정관리 API 엔드포인트 정보 조회
+     * 사용자 관리 페이지
+     */
+    @GetMapping("/user-management")
+    public String showUserManagementPage(Model model) {
+        logger.info("=== HomeController.showUserManagementPage START ===");
+        kesaLogger.info("사용자 관리 페이지 요청", "HomeController");
+
+        try {
+            // API 엔드포인트 정보
+            Map<String, Object> apiInfo = new HashMap<>();
+            apiInfo.put("baseUrl", "/api/user");
+            apiInfo.put("endpoints", getUserApiEndpoints());
+            
+            model.addAttribute("apiInfo", apiInfo);
+            model.addAttribute("currentTime", LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss")));
+
+            kesaLogger.info("사용자 관리 페이지 데이터 로드 완료", "HomeController");
+
+        } catch (Exception e) {
+            kesaLogger.error("사용자 관리 페이지 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.showUserManagementPage END ===");
+        return "user/user-management";
+    }
+
+    /**
+     * 계정관리 API 엔드포인트 정보 반환
      */
     @GetMapping("/api-info/account/endpoints")
     @ResponseBody
     public Map<String, Object> getAccountApiEndpoints() {
-        logger.info("=== HomeController.getAccountApiEndpoints START ===");
         Map<String, Object> endpoints = new HashMap<>();
-
-        try {
-            // 계정 생성 API
-            Map<String, Object> createEndpoint = new HashMap<>();
-            createEndpoint.put("method", "POST");
-            createEndpoint.put("url", "/api/account/create");
-            createEndpoint.put("description", "새로운 계정을 생성합니다");
-            createEndpoint.put("requestBody", getCreateAccountRequestBody());
-            endpoints.put("create", createEndpoint);
-
-            // 계정 목록 조회 API
-            Map<String, Object> listEndpoint = new HashMap<>();
-            listEndpoint.put("method", "POST");
-            listEndpoint.put("url", "/api/account/list");
-            listEndpoint.put("description", "계정 목록을 조회합니다");
-            listEndpoint.put("requestBody", getListAccountRequestBody());
-            endpoints.put("list", listEndpoint);
-
-            // 계정 상세 조회 API
-            Map<String, Object> detailEndpoint = new HashMap<>();
-            detailEndpoint.put("method", "GET");
-            detailEndpoint.put("url", "/api/account/detail/{accountId}");
-            detailEndpoint.put("description", "특정 계정을 조회합니다");
-            detailEndpoint.put("pathVariable", "accountId");
-            endpoints.put("detail", detailEndpoint);
-
-            // 계정 수정 API
-            Map<String, Object> updateEndpoint = new HashMap<>();
-            updateEndpoint.put("method", "PUT");
-            updateEndpoint.put("url", "/api/account/update/{accountId}");
-            updateEndpoint.put("description", "계정 정보를 수정합니다");
-            updateEndpoint.put("requestBody", getUpdateAccountRequestBody());
-            endpoints.put("update", updateEndpoint);
-
-            // 계정 삭제 API
-            Map<String, Object> deleteEndpoint = new HashMap<>();
-            deleteEndpoint.put("method", "DELETE");
-            deleteEndpoint.put("url", "/api/account/delete/{accountId}");
-            deleteEndpoint.put("description", "계정을 삭제합니다");
-            deleteEndpoint.put("pathVariable", "accountId");
-            endpoints.put("delete", deleteEndpoint);
-
-            // 계정 상태 변경 API
-            Map<String, Object> statusEndpoint = new HashMap<>();
-            statusEndpoint.put("method", "PUT");
-            statusEndpoint.put("url", "/api/account/status/{accountId}?status={status}");
-            statusEndpoint.put("description", "계정 상태를 변경합니다");
-            statusEndpoint.put("pathVariable", "accountId");
-            statusEndpoint.put("queryParameter", "status");
-            endpoints.put("status", statusEndpoint);
-
-        } catch (Exception e) {
-            logger.error("계정관리 API 엔드포인트 정보 조회 중 오류: " + e.getMessage());
-            kesaLogger.error("계정관리 API 엔드포인트 정보 조회 중 오류: " + e.getMessage(), "HomeController");
-        }
-
-        logger.info("=== HomeController.getAccountApiEndpoints END ===");
+        
+        // 계정 목록 조회
+        Map<String, Object> listAccount = new HashMap<>();
+        listAccount.put("method", "GET");
+        listAccount.put("url", "/api/account/list");
+        listAccount.put("description", "계정 목록 조회");
+        listAccount.put("parameters", new String[]{"searchKeyword", "searchType", "page", "size"});
+        listAccount.put("requestBody", getListAccountRequestBody());
+        endpoints.put("listAccount", listAccount);
+        
+        // 계정 상세 조회
+        Map<String, Object> getAccount = new HashMap<>();
+        getAccount.put("method", "GET");
+        getAccount.put("url", "/api/account/detail/{accountId}");
+        getAccount.put("description", "계정 상세 정보 조회");
+        getAccount.put("parameters", new String[]{"accountId (path)"});
+        endpoints.put("getAccount", getAccount);
+        
+        // 계정 생성
+        Map<String, Object> createAccount = new HashMap<>();
+        createAccount.put("method", "POST");
+        createAccount.put("url", "/api/account/create");
+        createAccount.put("description", "새 계정 생성");
+        createAccount.put("requestBody", getCreateAccountRequestBody());
+        endpoints.put("createAccount", createAccount);
+        
+        // 계정 수정
+        Map<String, Object> updateAccount = new HashMap<>();
+        updateAccount.put("method", "PUT");
+        updateAccount.put("url", "/api/account/{accountId}");
+        updateAccount.put("description", "계정 정보 수정");
+        updateAccount.put("parameters", new String[]{"accountId (path)"});
+        updateAccount.put("requestBody", getUpdateAccountRequestBody());
+        endpoints.put("updateAccount", updateAccount);
+        
+        // 계정 삭제
+        Map<String, Object> deleteAccount = new HashMap<>();
+        deleteAccount.put("method", "DELETE");
+        deleteAccount.put("url", "/api/account/{accountId}");
+        deleteAccount.put("description", "계정 삭제");
+        deleteAccount.put("parameters", new String[]{"accountId (path)"});
+        endpoints.put("deleteAccount", deleteAccount);
+        
         return endpoints;
     }
 
@@ -551,19 +566,13 @@ public class HomeController {
 
         List<Map<String, Object>> userSubMenus = new ArrayList<>();
 
-        Map<String, Object> createUser = new HashMap<>();
-        createUser.put("title", "사용자 등록");
-        createUser.put("url", "/mbc/user/create");
-        createUser.put("icon", "fas fa-user-plus");
-        createUser.put("method", "GET");
-        userSubMenus.add(createUser);
-
-        Map<String, Object> listUser = new HashMap<>();
-        listUser.put("title", "사용자 목록");
-        listUser.put("url", "/mbc/user/list");
-        listUser.put("icon", "fas fa-list");
-        listUser.put("method", "GET");
-        userSubMenus.add(listUser);
+        Map<String, Object> userManagement = new HashMap<>();
+        userManagement.put("title", "사용자 관리");
+        userManagement.put("url", "/web/user-management");
+        userManagement.put("icon", "fas fa-user-cog");
+        userManagement.put("method", "GET");
+        userManagement.put("description", "사용자 등록, 조회, 수정, 삭제");
+        userSubMenus.add(userManagement);
 
         userMenu.put("subMenus", userSubMenus);
         menus.add(userMenu);
@@ -624,6 +633,94 @@ public class HomeController {
 
         logger.info("=== HomeController.getNavigationMenus END ===");
         return menus;
+    }
+
+    /**
+     * 사용자관리 API 엔드포인트 정보 반환
+     */
+    @GetMapping("/api-info/user/endpoints")
+    @ResponseBody
+    public Map<String, Object> getUserApiEndpoints() {
+        Map<String, Object> endpoints = new HashMap<>();
+        
+        // 사용자 목록 조회
+        Map<String, Object> listUser = new HashMap<>();
+        listUser.put("method", "GET");
+        listUser.put("url", "/api/user/list");
+        listUser.put("description", "사용자 목록 조회");
+        listUser.put("parameters", new String[]{"searchKeyword", "searchType", "page", "size"});
+        listUser.put("requestBody", getListUserRequestBody());
+        endpoints.put("listUser", listUser);
+        
+        // 사용자 상세 조회
+        Map<String, Object> getUser = new HashMap<>();
+        getUser.put("method", "GET");
+        getUser.put("url", "/api/user/detail/{userId}");
+        getUser.put("description", "사용자 상세 정보 조회");
+        getUser.put("parameters", new String[]{"userId (path)"});
+        endpoints.put("getUser", getUser);
+        
+        // 사용자 생성
+        Map<String, Object> createUser = new HashMap<>();
+        createUser.put("method", "POST");
+        createUser.put("url", "/api/user/create");
+        createUser.put("description", "새 사용자 생성");
+        createUser.put("requestBody", getCreateUserRequestBody());
+        endpoints.put("createUser", createUser);
+        
+        // 사용자 수정
+        Map<String, Object> updateUser = new HashMap<>();
+        updateUser.put("method", "PUT");
+        updateUser.put("url", "/api/user/{userId}");
+        updateUser.put("description", "사용자 정보 수정");
+        updateUser.put("parameters", new String[]{"userId (path)"});
+        updateUser.put("requestBody", getUpdateUserRequestBody());
+        endpoints.put("updateUser", updateUser);
+        
+        // 사용자 삭제
+        Map<String, Object> deleteUser = new HashMap<>();
+        deleteUser.put("method", "DELETE");
+        deleteUser.put("url", "/api/user/{userId}");
+        deleteUser.put("description", "사용자 삭제");
+        deleteUser.put("parameters", new String[]{"userId (path)"});
+        endpoints.put("deleteUser", deleteUser);
+        
+        return endpoints;
+    }
+
+    /**
+     * 계정 생성 API 요청 본문 예시
+     */
+    private Map<String, Object> getCreateUserRequestBody() {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("userId", "USER001");
+        requestBody.put("userName", "홍길동");
+        requestBody.put("userRole", "ADMIN");
+        requestBody.put("userStatus", "ACTIVE");
+        return requestBody;
+    }
+
+    /**
+     * 계정 목록 조회 API 요청 본문 예시
+     */
+    private Map<String, Object> getListUserRequestBody() {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("searchKeyword", "");
+        requestBody.put("userRole", "");
+        requestBody.put("pageNumber", 1);
+        requestBody.put("pageSize", 10);
+        return requestBody;
+    }
+
+    /**
+     * 계정 수정 API 요청 본문 예시
+     */
+    private Map<String, Object> getUpdateUserRequestBody() {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("userName", "홍길동 (수정)");
+        requestBody.put("userRole", "ADMIN");
+        requestBody.put("userStatus", "ACTIVE");
+        return requestBody;
     }
 
     /**

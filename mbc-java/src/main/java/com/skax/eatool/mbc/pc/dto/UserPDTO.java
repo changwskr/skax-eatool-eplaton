@@ -1,12 +1,23 @@
 package com.skax.eatool.mbc.pc.dto;
 
-import com.skax.eatool.ksa.infra.po.NewAbstractDTO;
+import java.util.List;
 
 /**
  * 사용자 관리 Process Domain Transfer Object
- * 화면과 PC 레이어 간의 데이터 전송을 담당
+ * 
+ * 프로그램명: UserPDTO.java
+ * 설명: 사용자 관리 데이터 전송 객체 (Process Layer)
+ * 작성일: 2024-01-01
+ * 작성자: SKAX Project Team
+ * 
+ * 주요 기능:
+ * - 사용자 정보 전송
+ * - 검색 조건 전송
+ * - 페이징 정보 전송
+ * 
+ * @version 1.0
  */
-public class UserPDTO extends NewAbstractDTO {
+public class UserPDTO {
     
     // 사용자 기본 정보
     private String userId;
@@ -18,140 +29,121 @@ public class UserPDTO extends NewAbstractDTO {
     private String createdDate;
     private String updatedDate;
     
+    // 사용자 상세 정보
+    private String department;
+    private String position;
+    private String employeeId;
+    private String birthDate;
+    private String address;
+    private String emergencyContact;
+    private String emergencyContactName;
+    private String profileImageUrl;
+    private String lastLoginDate;
+    private Integer loginCount;
+    
     // 검색 조건
     private String searchKeyword;
-    private String searchType; // userId, userName, email, phone
+    private String searchType;
+    private String roleFilter;
+    private String statusFilter;
+    private String departmentFilter;
     
     // 페이징 정보
     private Integer page;
     private Integer size;
-    private String sortBy;
-    private String sortOrder;
+    private Integer totalCount;
+    private List<UserPDTO> userList;
     
     // 생성자
     public UserPDTO() {}
     
-    public UserPDTO(String userId, String userName, String email, String phone, String role, String status) {
+    public UserPDTO(String userId, String userName, String email) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
-        this.phone = phone;
-        this.role = role;
-        this.status = status;
     }
     
-    // Getter and Setter methods
-    public String getUserId() {
-        return userId;
-    }
+    // Getter/Setter 메서드들
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
     
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
     
-    public String getUserName() {
-        return userName;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
     
-    public String getEmail() {
-        return email;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
     
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
     
-    public String getPhone() {
-        return phone;
-    }
+    public String getCreatedDate() { return createdDate; }
+    public void setCreatedDate(String createdDate) { this.createdDate = createdDate; }
     
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    public String getUpdatedDate() { return updatedDate; }
+    public void setUpdatedDate(String updatedDate) { this.updatedDate = updatedDate; }
     
-    public String getRole() {
-        return role;
-    }
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
     
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public String getPosition() { return position; }
+    public void setPosition(String position) { this.position = position; }
     
-    public String getStatus() {
-        return status;
-    }
+    public String getEmployeeId() { return employeeId; }
+    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
     
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getBirthDate() { return birthDate; }
+    public void setBirthDate(String birthDate) { this.birthDate = birthDate; }
     
-    public String getCreatedDate() {
-        return createdDate;
-    }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
     
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
+    public String getEmergencyContact() { return emergencyContact; }
+    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
     
-    public String getUpdatedDate() {
-        return updatedDate;
-    }
+    public String getEmergencyContactName() { return emergencyContactName; }
+    public void setEmergencyContactName(String emergencyContactName) { this.emergencyContactName = emergencyContactName; }
     
-    public void setUpdatedDate(String updatedDate) {
-        this.updatedDate = updatedDate;
-    }
+    public String getProfileImageUrl() { return profileImageUrl; }
+    public void setProfileImageUrl(String profileImageUrl) { this.profileImageUrl = profileImageUrl; }
     
-    public String getSearchKeyword() {
-        return searchKeyword;
-    }
+    public String getLastLoginDate() { return lastLoginDate; }
+    public void setLastLoginDate(String lastLoginDate) { this.lastLoginDate = lastLoginDate; }
     
-    public void setSearchKeyword(String searchKeyword) {
-        this.searchKeyword = searchKeyword;
-    }
+    public Integer getLoginCount() { return loginCount; }
+    public void setLoginCount(Integer loginCount) { this.loginCount = loginCount; }
     
-    public String getSearchType() {
-        return searchType;
-    }
+    public String getSearchKeyword() { return searchKeyword; }
+    public void setSearchKeyword(String searchKeyword) { this.searchKeyword = searchKeyword; }
     
-    public void setSearchType(String searchType) {
-        this.searchType = searchType;
-    }
+    public String getSearchType() { return searchType; }
+    public void setSearchType(String searchType) { this.searchType = searchType; }
     
-    public Integer getPage() {
-        return page;
-    }
+    public String getRoleFilter() { return roleFilter; }
+    public void setRoleFilter(String roleFilter) { this.roleFilter = roleFilter; }
     
-    public void setPage(Integer page) {
-        this.page = page;
-    }
+    public String getStatusFilter() { return statusFilter; }
+    public void setStatusFilter(String statusFilter) { this.statusFilter = statusFilter; }
     
-    public Integer getSize() {
-        return size;
-    }
+    public String getDepartmentFilter() { return departmentFilter; }
+    public void setDepartmentFilter(String departmentFilter) { this.departmentFilter = departmentFilter; }
     
-    public void setSize(Integer size) {
-        this.size = size;
-    }
+    public Integer getPage() { return page; }
+    public void setPage(Integer page) { this.page = page; }
     
-    public String getSortBy() {
-        return sortBy;
-    }
+    public Integer getSize() { return size; }
+    public void setSize(Integer size) { this.size = size; }
     
-    public void setSortBy(String sortBy) {
-        this.sortBy = sortBy;
-    }
+    public Integer getTotalCount() { return totalCount; }
+    public void setTotalCount(Integer totalCount) { this.totalCount = totalCount; }
     
-    public String getSortOrder() {
-        return sortOrder;
-    }
-    
-    public void setSortOrder(String sortOrder) {
-        this.sortOrder = sortOrder;
-    }
+    public List<UserPDTO> getUserList() { return userList; }
+    public void setUserList(List<UserPDTO> userList) { this.userList = userList; }
     
     @Override
     public String toString() {
@@ -162,14 +154,10 @@ public class UserPDTO extends NewAbstractDTO {
                 ", phone='" + phone + '\'' +
                 ", role='" + role + '\'' +
                 ", status='" + status + '\'' +
-                ", createdDate='" + createdDate + '\'' +
-                ", updatedDate='" + updatedDate + '\'' +
-                ", searchKeyword='" + searchKeyword + '\'' +
-                ", searchType='" + searchType + '\'' +
+                ", department='" + department + '\'' +
+                ", position='" + position + '\'' +
                 ", page=" + page +
                 ", size=" + size +
-                ", sortBy='" + sortBy + '\'' +
-                ", sortOrder='" + sortOrder + '\'' +
                 '}';
     }
 } 

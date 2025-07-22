@@ -1,263 +1,427 @@
 package com.skax.eatool.mbc.dc.usermgtdc;
 
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.skax.eatool.ksa.exception.NewBusinessException;
-import com.skax.eatool.ksa.util.NewObjectUtil;
-import com.skax.eatool.mbc.dc.usermgtdc.dto.PageDDTO;
-import com.skax.eatool.mbc.dc.usermgtdc.dto.TreeDDTO;
+import com.skax.eatool.ksa.logger.NewIKesaLogger;
+import com.skax.eatool.ksa.logger.NewKesaLogHelper;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.UserDDTO;
-import com.skax.eatool.mbc.as.bzcrudbus.transfer.ICommonDTO;
+import com.skax.eatool.mbc.dc.usermgtdc.mapper.UserMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
- * 사용자 관리 도메인 컴포넌트
+ * 사용자 관리 Domain Component
  * 
  * 프로그램명: DCUser.java
- * 설명: 사용자 관리 관련 데이터베이스 작업을 수행하는 도메인 컴포넌트
+ * 설명: 사용자 관리 비즈니스 로직을 담당하는 Domain Component
  * 작성일: 2024-01-01
  * 작성자: SKAX Project Team
  * 
  * 주요 기능:
- * - 사용자 CRUD 작업
- * - 페이징 처리
- * - 트리 구조 데이터 조회
- * - JDBC Template 기반 데이터 접근
+ * - 사용자 목록 조회
+ * - 사용자 상세 조회
+ * - 사용자 등록/수정/삭제
+ * - 사용자 검색 및 페이징
  * 
  * @version 1.0
  */
-@Repository
-public class DCUser implements IDCUser {
-
-	private static final Logger logger = LoggerFactory.getLogger(DCUser.class);
-
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
-	private final RowMapper<User> userRowMapper = (rs, rowNum) -> {
-		User user = new User();
-		user.setUserId(rs.getString("USER_ID"));
-		user.setUserName(rs.getString("USER_NAME"));
-		user.setEmail(rs.getString("EMAIL"));
-		user.setPhone(rs.getString("PHONE"));
-		user.setRole(rs.getString("ROLE"));
-		user.setStatus(rs.getString("STATUS"));
-		return user;
-	};
-
-	// IDCUser interface methods
-	@Override
-	public String getUserId() {
-		logger.info("=== DCUser.getUserId START ===");
-		logger.info("=== DCUser.getUserId END ===");
-		return null; // Stub implementation
-	}
-
-	@Override
-	public void setUserId(String userId) {
-		logger.info("=== DCUser.setUserId START ===");
-		logger.info("=== DCUser.setUserId END ===");
-		// Stub implementation
-	}
-
-	@Override
-	public String getUserName() {
-		logger.info("=== DCUser.getUserName START ===");
-		logger.info("=== DCUser.getUserName END ===");
-		return null; // Stub implementation
-	}
-
-	@Override
-	public void setUserName(String userName) {
-		logger.info("=== DCUser.setUserName START ===");
-		logger.info("=== DCUser.setUserName END ===");
-		// Stub implementation
-	}
-
-	@Override
-	public String getUserEmail() {
-		logger.info("=== DCUser.getUserEmail START ===");
-		logger.info("=== DCUser.getUserEmail END ===");
-		return null; // Stub implementation
-	}
-
-	@Override
-	public void setUserEmail(String userEmail) {
-		logger.info("=== DCUser.setUserEmail START ===");
-		logger.info("=== DCUser.setUserEmail END ===");
-		// Stub implementation
-	}
-
-	@Override
-	public List<HashMap> getUserList(ICommonDTO commonDto) throws NewBusinessException {
-		logger.info("=== DCUser.getUserList START ===");
-		logger.info("=== DCUser.getUserList END ===");
-		// Stub implementation
-		return new ArrayList<>();
-	}
-
-	@Override
-	public User selectUser(String userId) throws Exception {
-		logger.info("=== DCUser.selectUser START ===");
-		try {
-			String sql = "SELECT * FROM USER_INFO WHERE USER_ID = ?";
-			List<User> users = jdbcTemplate.query(sql, userRowMapper, userId);
-			logger.info("=== DCUser.selectUser END ===");
-			return users.isEmpty() ? null : users.get(0);
-		} catch (Exception e) {
-			logger.error("Unexpected error selecting user with ID: " + userId, e);
-			logger.info("=== DCUser.selectUser END ===");
-			throw new NewBusinessException("B0000001", "selectUser", e);
-		}
-	}
-
-	@Override
-	public void crudUser(UserDDTO[] userDDTOs) throws NewBusinessException {
-		logger.info("=== DCUser.crudUser START ===");
-		logger.debug("crudUser method started");
-
-		String crud = null;
-		logger.debug("userDDTO count" + userDDTOs.length);
-		try {
-
-			for (int i = 0; i < userDDTOs.length; i++) {
-
-				crud = (userDDTOs[i].getCrud()).toUpperCase();
-				logger.debug("crud = " + crud);
-
-				if (crud.equals("C")) {
-					insertUser(userDDTOs[i]);
-				} else if (crud.equals("U")) {
-					updateUser(userDDTOs[i]);
-				} else if (crud.equals("D")) {
-					deleteUser(userDDTOs[i]);
-				}
-			}
-		} catch (Exception e) {
-			throw new NewBusinessException("B0000002", "processCode", e);
-		}
-		logger.info("=== DCUser.crudUser END ===");
-	}
-
-	@Override
-	public List<User> getListUser(UserDDTO userDDTO) throws NewBusinessException {
-		logger.info("=== DCUser.getListUser START ===");
-		List<User> UserList = null;
-
-		try {
-			String sql = "SELECT * FROM USER_INFO";
-			UserList = jdbcTemplate.query(sql, userRowMapper);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		logger.info("=== DCUser.getListUser END ===");
-		return NewObjectUtil.copyForList(User.class, UserList);
-	}
-
-	public List<Page> getListPage(PageDDTO pageDDTO) throws NewBusinessException {
-		logger.info("=== DCUser.getListPage START ===");
-
-		List<Page> pageList = null;
-		String pageCount;
-		String outptLineCnt;
-		try {
-			// Query page data that matches the request conditions
-			String sql = "SELECT * FROM USER_INFO LIMIT ? OFFSET ?";
-			int limit = pageDDTO.getPageSize() != null ? pageDDTO.getPageSize() : 10;
-			int offset = pageDDTO.getOffset() != null ? pageDDTO.getOffset() : 0;
-			pageList = jdbcTemplate.query(sql, (rs, rowNum) -> {
-				Page page = new Page();
-				page.setUserId(rs.getString("USER_ID"));
-				page.setUserName(rs.getString("USER_NAME"));
-				page.setEmail(rs.getString("EMAIL"));
-				return page;
-			}, limit, offset);
-
-			// Get total count
-			String countSql = "SELECT COUNT(*) FROM USER_INFO";
-			pageCount = jdbcTemplate.queryForObject(countSql, String.class);
-			// Get output count: may need to be calculated separately
-			outptLineCnt = String.valueOf(pageList.size());
-			// Set total count and output count in the first item of the List
-			if (pageList.size() > 0 && pageList != null) {
-				((Page) pageList.get(0)).setTotalLineCnt(Integer.parseInt(pageCount));
-				((Page) pageList.get(0)).setOutptLineCnt(Integer.parseInt(outptLineCnt));
-			}
-
-		} catch (Exception e) {
-			// TODO Add proper catch handling
-			e.printStackTrace();
-		}
-		logger.info("=== DCUser.getListPage END ===");
-		return pageList;
-
-	}
-
-	public List<Tree> getListTree(TreeDDTO treeDDTO) throws NewBusinessException {
-		logger.info("=== DCUser.getListTree START ===");
-
-		List<Tree> TreeList = null;
-
-		try {
-			String sql = "SELECT * FROM USER_INFO";
-			TreeList = jdbcTemplate.query(sql, (rs, rowNum) -> {
-				Tree tree = new Tree();
-				tree.setUserId(rs.getString("USER_ID"));
-				tree.setUserName(rs.getString("USER_NAME"));
-				return tree;
-			});
-		} catch (Exception e) {
-
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		}
-
-		logger.info("=== DCUser.getListTree END ===");
-		return NewObjectUtil.copyForList(Tree.class, TreeList);
-
-	}
-
-	// Helper methods for CRUD operations
-	private void insertUser(UserDDTO userDDTO) {
-		logger.info("=== DCUser.insertUser START ===");
-		String sql = "INSERT INTO USER_INFO (USER_ID, USER_NAME, EMAIL, PHONE, ROLE, STATUS) VALUES (?, ?, ?, ?, ?, ?)";
-		jdbcTemplate.update(sql,
-				userDDTO.getUserId(),
-				userDDTO.getUserName(),
-				userDDTO.getEmail(),
-				userDDTO.getPhone(),
-				userDDTO.getRole(),
-				userDDTO.getStatus());
-		logger.info("=== DCUser.insertUser END ===");
-	}
-
-	private void updateUser(UserDDTO userDDTO) {
-		logger.info("=== DCUser.updateUser START ===");
-		String sql = "UPDATE USER_INFO SET USER_NAME = ?, EMAIL = ?, PHONE = ?, ROLE = ?, STATUS = ? WHERE USER_ID = ?";
-		jdbcTemplate.update(sql,
-				userDDTO.getUserName(),
-				userDDTO.getEmail(),
-				userDDTO.getPhone(),
-				userDDTO.getRole(),
-				userDDTO.getStatus(),
-				userDDTO.getUserId());
-		logger.info("=== DCUser.updateUser END ===");
-	}
-
-	private void deleteUser(UserDDTO userDDTO) {
-		logger.info("=== DCUser.deleteUser START ===");
-		String sql = "DELETE FROM USER_INFO WHERE USER_ID = ?";
-		jdbcTemplate.update(sql, userDDTO.getUserId());
-		logger.info("=== DCUser.deleteUser END ===");
-	}
+@Component
+public class DCUser {
+    
+    private static final NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    
+    @Autowired
+    private UserMapper userMapper;
+    
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
+    /**
+     * 사용자 목록 조회
+     */
+    public List<UserDDTO> getListUser(UserDDTO searchCondition) throws NewBusinessException {
+        logger.info("=== DCUser.getListUser START ===", "DCUser");
+        logger.info("입력 UserDDTO: " + (searchCondition != null ? "NOT NULL" : "NULL"), "DCUser");
+        
+        if (searchCondition != null) {
+            logger.info("입력 UserDDTO - searchKeyword: " + (searchCondition.getSearchKeyword() != null ? searchCondition.getSearchKeyword() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - searchType: " + (searchCondition.getSearchType() != null ? searchCondition.getSearchType() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - roleFilter: " + (searchCondition.getRoleFilter() != null ? searchCondition.getRoleFilter() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - statusFilter: " + (searchCondition.getStatusFilter() != null ? searchCondition.getStatusFilter() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - page: " + (searchCondition.getPage() != null ? searchCondition.getPage() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - size: " + (searchCondition.getSize() != null ? searchCondition.getSize() : "NULL"), "DCUser");
+        }
+        
+        try {
+            // NULL 체크
+            if (searchCondition == null) {
+                logger.error("UserDDTO가 NULL입니다.", "DCUser");
+                throw new NewBusinessException("UserDDTO는 필수입니다.");
+            }
+            
+            // 검색 조건에 따른 사용자 목록 조회
+            List<User> userList = userMapper.findBySearchCondition(searchCondition);
+            
+            logger.info("Mapper 호출 결과 - userList: " + (userList != null ? "NOT NULL, 크기: " + userList.size() : "NULL"), "DCUser");
+            
+            // User 엔티티를 UserDDTO로 변환
+            List<UserDDTO> resultList = new ArrayList<>();
+            if (userList != null) {
+                for (User user : userList) {
+                    UserDDTO dto = convertToUserDDTO(user);
+                    resultList.add(dto);
+                }
+            }
+            
+            logger.info("변환된 UserDDTO 리스트: " + (resultList != null ? "NOT NULL, 크기: " + resultList.size() : "NULL"), "DCUser");
+            logger.info("=== DCUser.getListUser END ===", "DCUser");
+            
+            return resultList;
+            
+        } catch (NewBusinessException e) {
+            logger.error("DCUser.getListUser 중 비즈니스 오류: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.getListUser END (BUSINESS_ERROR) ===", "DCUser");
+            throw e;
+        } catch (Exception e) {
+            logger.error("DCUser.getListUser 중 오류 발생: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.getListUser END (ERROR) ===", "DCUser");
+            throw new NewBusinessException("사용자 목록 조회 중 오류가 발생했습니다.", e);
+        }
+    }
+    
+    /**
+     * 사용자 상세 조회
+     */
+    public UserDDTO getUser(String userId) throws NewBusinessException {
+        logger.info("=== DCUser.getUser START ===", "DCUser");
+        logger.info("입력 userId: " + (userId != null ? userId : "NULL"), "DCUser");
+        
+        try {
+            // NULL 체크
+            if (userId == null || userId.trim().isEmpty()) {
+                logger.error("userId가 NULL이거나 비어있습니다.", "DCUser");
+                throw new NewBusinessException("userId는 필수입니다.");
+            }
+            
+            User user = userMapper.findByUserId(userId);
+            
+            logger.info("Mapper 호출 결과 - user: " + (user != null ? "NOT NULL" : "NULL"), "DCUser");
+            if (user != null) {
+                logger.info("Mapper 호출 결과 - user.userId: " + (user.getUserId() != null ? user.getUserId() : "NULL"), "DCUser");
+                logger.info("Mapper 호출 결과 - user.userName: " + (user.getUserName() != null ? user.getUserName() : "NULL"), "DCUser");
+            }
+            
+            if (user == null) {
+                logger.error("사용자를 찾을 수 없습니다. ID: " + userId, "DCUser");
+                throw new NewBusinessException("사용자를 찾을 수 없습니다. ID: " + userId);
+            }
+            
+            UserDDTO result = convertToUserDDTO(user);
+            
+            logger.info("변환된 UserDDTO: " + (result != null ? "NOT NULL" : "NULL"), "DCUser");
+            if (result != null) {
+                logger.info("변환된 UserDDTO - userId: " + (result.getUserId() != null ? result.getUserId() : "NULL"), "DCUser");
+                logger.info("변환된 UserDDTO - userName: " + (result.getUserName() != null ? result.getUserName() : "NULL"), "DCUser");
+            }
+            
+            logger.info("=== DCUser.getUser END ===", "DCUser");
+            
+            return result;
+            
+        } catch (NewBusinessException e) {
+            logger.error("DCUser.getUser 중 비즈니스 오류: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.getUser END (BUSINESS_ERROR) ===", "DCUser");
+            throw e;
+        } catch (Exception e) {
+            logger.error("DCUser.getUser 중 오류 발생: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.getUser END (ERROR) ===", "DCUser");
+            throw new NewBusinessException("사용자 조회 중 오류가 발생했습니다.", e);
+        }
+    }
+    
+    /**
+     * 사용자 등록
+     */
+    public void createUser(UserDDTO userDDTO) throws NewBusinessException {
+        logger.info("=== DCUser.createUser START ===", "DCUser");
+        logger.info("입력 UserDDTO: " + (userDDTO != null ? "NOT NULL" : "NULL"), "DCUser");
+        
+        if (userDDTO != null) {
+            logger.info("입력 UserDDTO - userId: " + (userDDTO.getUserId() != null ? userDDTO.getUserId() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - userName: " + (userDDTO.getUserName() != null ? userDDTO.getUserName() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - email: " + (userDDTO.getEmail() != null ? userDDTO.getEmail() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - phone: " + (userDDTO.getPhone() != null ? userDDTO.getPhone() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - role: " + (userDDTO.getRole() != null ? userDDTO.getRole() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - status: " + (userDDTO.getStatus() != null ? userDDTO.getStatus() : "NULL"), "DCUser");
+        }
+        
+        try {
+            // NULL 체크
+            if (userDDTO == null) {
+                logger.error("UserDDTO가 NULL입니다.", "DCUser");
+                throw new NewBusinessException("UserDDTO는 필수입니다.");
+            }
+            
+            if (userDDTO.getUserId() == null || userDDTO.getUserId().trim().isEmpty()) {
+                logger.error("사용자 ID가 NULL이거나 비어있습니다.", "DCUser");
+                throw new NewBusinessException("사용자 ID는 필수입니다.");
+            }
+            
+            // 이메일 중복 체크
+            User existingUser = userMapper.findByEmail(userDDTO.getEmail());
+            if (existingUser != null) {
+                logger.error("이미 존재하는 이메일입니다: " + userDDTO.getEmail(), "DCUser");
+                throw new NewBusinessException("이미 존재하는 이메일입니다: " + userDDTO.getEmail());
+            }
+            
+            // UserDDTO를 User 엔티티로 변환
+            User user = convertToUser(userDDTO);
+            
+            logger.info("변환된 User 엔티티: " + (user != null ? "NOT NULL" : "NULL"), "DCUser");
+            if (user != null) {
+                logger.info("변환된 User 엔티티 - userId: " + (user.getUserId() != null ? user.getUserId() : "NULL"), "DCUser");
+                logger.info("변환된 User 엔티티 - userName: " + (user.getUserName() != null ? user.getUserName() : "NULL"), "DCUser");
+            }
+            
+            // Mapper 호출
+            int result = userMapper.insert(user);
+            
+            logger.info("Mapper 호출 결과 - insert 결과: " + result, "DCUser");
+            logger.info("사용자 등록 완료: " + userDDTO.getUserName(), "DCUser");
+            logger.info("=== DCUser.createUser END ===", "DCUser");
+            
+        } catch (NewBusinessException e) {
+            logger.error("DCUser.createUser 중 비즈니스 오류: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.createUser END (BUSINESS_ERROR) ===", "DCUser");
+            throw e;
+        } catch (Exception e) {
+            logger.error("DCUser.createUser 중 오류 발생: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.createUser END (ERROR) ===", "DCUser");
+            throw new NewBusinessException("사용자 등록 중 오류가 발생했습니다.", e);
+        }
+    }
+    
+    /**
+     * 사용자 수정
+     */
+    public void updateUser(UserDDTO userDDTO) throws NewBusinessException {
+        logger.info("=== DCUser.updateUser START ===", "DCUser");
+        logger.info("입력 UserDDTO: " + (userDDTO != null ? "NOT NULL" : "NULL"), "DCUser");
+        
+        if (userDDTO != null) {
+            logger.info("입력 UserDDTO - userId: " + (userDDTO.getUserId() != null ? userDDTO.getUserId() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - userName: " + (userDDTO.getUserName() != null ? userDDTO.getUserName() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - email: " + (userDDTO.getEmail() != null ? userDDTO.getEmail() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - phone: " + (userDDTO.getPhone() != null ? userDDTO.getPhone() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - role: " + (userDDTO.getRole() != null ? userDDTO.getRole() : "NULL"), "DCUser");
+            logger.info("입력 UserDDTO - status: " + (userDDTO.getStatus() != null ? userDDTO.getStatus() : "NULL"), "DCUser");
+        }
+        
+        try {
+            // NULL 체크
+            if (userDDTO == null) {
+                logger.error("UserDDTO가 NULL입니다.", "DCUser");
+                throw new NewBusinessException("UserDDTO는 필수입니다.");
+            }
+            
+            if (userDDTO.getUserId() == null || userDDTO.getUserId().trim().isEmpty()) {
+                logger.error("사용자 ID가 NULL이거나 비어있습니다.", "DCUser");
+                throw new NewBusinessException("사용자 ID는 필수입니다.");
+            }
+            
+            // 기존 사용자 존재 여부 확인
+            User existingUser = userMapper.findByUserId(userDDTO.getUserId());
+            if (existingUser == null) {
+                logger.error("수정할 사용자를 찾을 수 없습니다. ID: " + userDDTO.getUserId(), "DCUser");
+                throw new NewBusinessException("수정할 사용자를 찾을 수 없습니다. ID: " + userDDTO.getUserId());
+            }
+            
+            // 이메일 중복 체크 (자신 제외)
+            if (userDDTO.getEmail() != null && !userDDTO.getEmail().equals(existingUser.getEmail())) {
+                User emailUser = userMapper.findByEmail(userDDTO.getEmail());
+                if (emailUser != null) {
+                    logger.error("이미 존재하는 이메일입니다: " + userDDTO.getEmail(), "DCUser");
+                    throw new NewBusinessException("이미 존재하는 이메일입니다: " + userDDTO.getEmail());
+                }
+            }
+            
+            // UserDDTO를 User 엔티티로 변환
+            User user = convertToUser(userDDTO);
+            user.setUpdatedDate(new Date());
+            
+            logger.info("변환된 User 엔티티: " + (user != null ? "NOT NULL" : "NULL"), "DCUser");
+            if (user != null) {
+                logger.info("변환된 User 엔티티 - userId: " + (user.getUserId() != null ? user.getUserId() : "NULL"), "DCUser");
+                logger.info("변환된 User 엔티티 - userName: " + (user.getUserName() != null ? user.getUserName() : "NULL"), "DCUser");
+            }
+            
+            // Mapper 호출
+            int result = userMapper.update(user);
+            
+            logger.info("Mapper 호출 결과 - update 결과: " + result, "DCUser");
+            logger.info("사용자 수정 완료: " + userDDTO.getUserName(), "DCUser");
+            logger.info("=== DCUser.updateUser END ===", "DCUser");
+            
+        } catch (NewBusinessException e) {
+            logger.error("DCUser.updateUser 중 비즈니스 오류: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.updateUser END (BUSINESS_ERROR) ===", "DCUser");
+            throw e;
+        } catch (Exception e) {
+            logger.error("DCUser.updateUser 중 오류 발생: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.updateUser END (ERROR) ===", "DCUser");
+            throw new NewBusinessException("사용자 수정 중 오류가 발생했습니다.", e);
+        }
+    }
+    
+    /**
+     * 사용자 삭제
+     */
+    public void deleteUser(String userId) throws NewBusinessException {
+        logger.info("=== DCUser.deleteUser START ===", "DCUser");
+        logger.info("입력 userId: " + (userId != null ? userId : "NULL"), "DCUser");
+        
+        try {
+            // NULL 체크
+            if (userId == null || userId.trim().isEmpty()) {
+                logger.error("userId가 NULL이거나 비어있습니다.", "DCUser");
+                throw new NewBusinessException("userId는 필수입니다.");
+            }
+            
+            // 기존 사용자 존재 여부 확인
+            User existingUser = userMapper.findByUserId(userId);
+            if (existingUser == null) {
+                logger.error("삭제할 사용자를 찾을 수 없습니다. ID: " + userId, "DCUser");
+                throw new NewBusinessException("삭제할 사용자를 찾을 수 없습니다. ID: " + userId);
+            }
+            
+            logger.info("삭제할 사용자 정보 - userName: " + (existingUser.getUserName() != null ? existingUser.getUserName() : "NULL"), "DCUser");
+            
+            // Mapper 호출
+            int result = userMapper.delete(userId);
+            
+            logger.info("Mapper 호출 결과 - delete 결과: " + result, "DCUser");
+            logger.info("사용자 삭제 완료: " + userId, "DCUser");
+            logger.info("=== DCUser.deleteUser END ===", "DCUser");
+            
+        } catch (NewBusinessException e) {
+            logger.error("DCUser.deleteUser 중 비즈니스 오류: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.deleteUser END (BUSINESS_ERROR) ===", "DCUser");
+            throw e;
+        } catch (Exception e) {
+            logger.error("DCUser.deleteUser 중 오류 발생: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.deleteUser END (ERROR) ===", "DCUser");
+            throw new NewBusinessException("사용자 삭제 중 오류가 발생했습니다.", e);
+        }
+    }
+    
+    /**
+     * User 엔티티를 UserDDTO로 변환
+     */
+    private UserDDTO convertToUserDDTO(User user) {
+        logger.info("=== DCUser.convertToUserDDTO START ===", "DCUser");
+        logger.info("입력 User 엔티티: " + (user != null ? "NOT NULL" : "NULL"), "DCUser");
+        
+        if (user == null) {
+            logger.warn("입력 User 엔티티가 NULL입니다.", "DCUser");
+            logger.info("=== DCUser.convertToUserDDTO END (NULL_INPUT) ===", "DCUser");
+            return null;
+        }
+        
+        try {
+            UserDDTO dto = new UserDDTO();
+            
+            // 기본 정보 변환
+            dto.setUserId(user.getUserId());
+            dto.setUserName(user.getUserName());
+            dto.setEmail(user.getEmail());
+            dto.setPhone(user.getPhone());
+            dto.setRole(user.getRole());
+            dto.setStatus(user.getStatus());
+            dto.setCreatedDate(user.getCreatedDate());
+            dto.setUpdatedDate(user.getUpdatedDate());
+            
+            // 상세 정보 변환
+            dto.setDepartment(user.getDepartment());
+            dto.setPosition(user.getPosition());
+            dto.setEmployeeId(user.getEmployeeId());
+            dto.setBirthDate(user.getBirthDate());
+            dto.setAddress(user.getAddress());
+            dto.setEmergencyContact(user.getEmergencyContact());
+            dto.setEmergencyContactName(user.getEmergencyContactName());
+            dto.setProfileImageUrl(user.getProfileImageUrl());
+            dto.setLastLoginDate(user.getLastLoginDate());
+            dto.setLoginCount(user.getLoginCount());
+            
+            logger.info("변환된 UserDDTO: " + (dto != null ? "NOT NULL" : "NULL"), "DCUser");
+            if (dto != null) {
+                logger.info("변환된 UserDDTO - userId: " + (dto.getUserId() != null ? dto.getUserId() : "NULL"), "DCUser");
+                logger.info("변환된 UserDDTO - userName: " + (dto.getUserName() != null ? dto.getUserName() : "NULL"), "DCUser");
+            }
+            
+            logger.info("=== DCUser.convertToUserDDTO END ===", "DCUser");
+            return dto;
+            
+        } catch (Exception e) {
+            logger.error("User 엔티티를 UserDDTO로 변환 중 오류 발생: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.convertToUserDDTO END (ERROR) ===", "DCUser");
+            return null;
+        }
+    }
+    
+    /**
+     * UserDDTO를 User 엔티티로 변환
+     */
+    private User convertToUser(UserDDTO dto) {
+        logger.info("=== DCUser.convertToUser START ===", "DCUser");
+        logger.info("입력 UserDDTO: " + (dto != null ? "NOT NULL" : "NULL"), "DCUser");
+        
+        if (dto == null) {
+            logger.warn("입력 UserDDTO가 NULL입니다.", "DCUser");
+            logger.info("=== DCUser.convertToUser END (NULL_INPUT) ===", "DCUser");
+            return null;
+        }
+        
+        try {
+            User user = new User();
+            
+            // 기본 정보 변환
+            user.setUserId(dto.getUserId());
+            user.setUserName(dto.getUserName());
+            user.setEmail(dto.getEmail());
+            user.setPhone(dto.getPhone());
+            user.setRole(dto.getRole());
+            user.setStatus(dto.getStatus());
+            user.setCreatedDate(dto.getCreatedDate());
+            user.setUpdatedDate(dto.getUpdatedDate());
+            
+            // 상세 정보 변환
+            user.setDepartment(dto.getDepartment());
+            user.setPosition(dto.getPosition());
+            user.setEmployeeId(dto.getEmployeeId());
+            user.setBirthDate(dto.getBirthDate());
+            user.setAddress(dto.getAddress());
+            user.setEmergencyContact(dto.getEmergencyContact());
+            user.setEmergencyContactName(dto.getEmergencyContactName());
+            user.setProfileImageUrl(dto.getProfileImageUrl());
+            user.setLastLoginDate(dto.getLastLoginDate());
+            user.setLoginCount(dto.getLoginCount());
+            
+            logger.info("변환된 User 엔티티: " + (user != null ? "NOT NULL" : "NULL"), "DCUser");
+            if (user != null) {
+                logger.info("변환된 User 엔티티 - userId: " + (user.getUserId() != null ? user.getUserId() : "NULL"), "DCUser");
+                logger.info("변환된 User 엔티티 - userName: " + (user.getUserName() != null ? user.getUserName() : "NULL"), "DCUser");
+            }
+            
+            logger.info("=== DCUser.convertToUser END ===", "DCUser");
+            return user;
+            
+        } catch (Exception e) {
+            logger.error("UserDDTO를 User 엔티티로 변환 중 오류 발생: " + e.getMessage(), "DCUser");
+            logger.info("=== DCUser.convertToUser END (ERROR) ===", "DCUser");
+            return null;
+        }
+    }
 }

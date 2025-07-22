@@ -1,5 +1,8 @@
 package com.skax.eatool.ksa.oltp.biz;
 
+import com.skax.eatool.ksa.infra.po.NewKBData;
+import com.skax.eatool.ksa.exception.NewBusinessException;
+
 /**
  * New IApplicationService interface
  * 
@@ -7,5 +10,11 @@ package com.skax.eatool.ksa.oltp.biz;
  * IApplicationService
  */
 public interface NewIApplicationService {
-    // Interface methods can be added here as needed
+    /**
+     * Execute the application service
+     * @param reqData Request data
+     * @return Response data
+     * @throws NewBusinessException Business exception
+     */
+    NewKBData execute(NewKBData reqData) throws NewBusinessException;
 }
