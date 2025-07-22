@@ -6,7 +6,7 @@ import com.skax.eatool.ksa.infra.po.NewKBData;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
 import com.skax.eatool.ksa.oltp.biz.NewIApplicationService;
-import com.skax.eatool.mbc.as.accountas.ASMBC71001;
+import com.skax.eatool.mbc.as.accountas.ASMBC74001;
 import com.skax.eatool.mbc.pc.dto.AccountPDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,7 +40,7 @@ import java.util.Map;
  * 
  * @version 1.0
  */
-@Controller
+@RestController
 @RequestMapping({ "/api/account/create", "/mbc/account/create" })
 @Tag(name = "계정 관리", description = "계정 생성 관련 API")
 public class ACMBC71001 implements NewIApplicationService {
@@ -48,7 +48,7 @@ public class ACMBC71001 implements NewIApplicationService {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ACMBC71001.class);
 
     @Autowired
-    private ASMBC71001 asMbc71001;
+    private ASMBC74001 asMbc74001;
 
     /**
      * 계정 생성 웹 페이지 표시
@@ -99,8 +99,10 @@ public class ACMBC71001 implements NewIApplicationService {
             NewKBData reqData = new NewKBData();
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
             input.put("AccountPDTO", accountPDTO);
+            // 명령어 설정 (CREATE)
+            input.put("command", "CREATE");
 
-            NewKBData result = asMbc71001.execute(reqData);
+            NewKBData result = asMbc74001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -170,8 +172,10 @@ public class ACMBC71001 implements NewIApplicationService {
             NewKBData reqData = new NewKBData();
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
             input.put("AccountPDTO", accountPDTO);
+            // 명령어 설정 (CREATE)
+            input.put("command", "CREATE");
 
-            NewKBData result = asMbc71001.execute(reqData);
+            NewKBData result = asMbc74001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -223,7 +227,7 @@ public class ACMBC71001 implements NewIApplicationService {
             validateInputData(reqData);
 
             // 2. AS 호출
-            NewKBData result = asMbc71001.execute(reqData);
+            NewKBData result = asMbc74001.execute(reqData);
 
             logger.debug("ACMBC71001 - 계정 생성 요청 처리 완료");
             return result;

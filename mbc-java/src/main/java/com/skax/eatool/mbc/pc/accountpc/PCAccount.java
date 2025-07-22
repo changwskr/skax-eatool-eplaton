@@ -83,7 +83,35 @@ public class PCAccount implements NewIProcessComponent {
 			throw new NewBusinessException("B0000001", "DCAccount is not injected");
 		}
 		
-		AccountDDTO dDto = dcAccount.getAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
+		AccountDDTO searchDto = NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO);
+		
+		// searchDto null 체크 추가
+		if (searchDto == null) {
+			logger.warn("=== PCAccount.getAccount - searchDto is null after copy, creating new instance ===");
+			searchDto = new AccountDDTO();
+		}
+		
+		// 수동으로 검색 조건 복사 (NewObjectUtil이 제대로 작동하지 않을 경우)
+		if (accountPDTO != null) {
+			if (accountPDTO.getAccountNumber() != null && !accountPDTO.getAccountNumber().trim().isEmpty()) {
+				searchDto.setAccountNumber(accountPDTO.getAccountNumber());
+				logger.info("PCAccount", "=== PCAccount.getAccount - Manually copied accountNumber: " + accountPDTO.getAccountNumber() + " ===");
+			}
+			if (accountPDTO.getName() != null && !accountPDTO.getName().trim().isEmpty()) {
+				searchDto.setName(accountPDTO.getName());
+				logger.info("PCAccount", "=== PCAccount.getAccount - Manually copied name: " + accountPDTO.getName() + " ===");
+			}
+			if (accountPDTO.getAccountType() != null && !accountPDTO.getAccountType().trim().isEmpty()) {
+				searchDto.setAccountType(accountPDTO.getAccountType());
+				logger.info("PCAccount", "=== PCAccount.getAccount - Manually copied accountType: " + accountPDTO.getAccountType() + " ===");
+			}
+			if (accountPDTO.getStatus() != null && !accountPDTO.getStatus().trim().isEmpty()) {
+				searchDto.setStatus(accountPDTO.getStatus());
+				logger.info("PCAccount", "=== PCAccount.getAccount - Manually copied status: " + accountPDTO.getStatus() + " ===");
+			}
+		}
+		
+		AccountDDTO dDto = dcAccount.getAccount(searchDto);
 		
 		// 출력 객체 필드값 출력
 		logger.info("=== PCAccount.getAccount - Output AccountDDTO Field Values ===");
@@ -103,6 +131,26 @@ public class PCAccount implements NewIProcessComponent {
 		}
 		
 		AccountPDTO result = NewObjectUtil.copyForClass(AccountPDTO.class, dDto);
+		
+		// result null 체크 및 수동 변환
+		if (result == null) {
+			logger.warn("=== PCAccount.getAccount - result is null after copy, creating manual conversion ===");
+			result = new AccountPDTO();
+			if (dDto != null) {
+				result.setAccountNumber(dDto.getAccountNumber());
+				result.setName(dDto.getName());
+				result.setAccountType(dDto.getAccountType());
+				result.setStatus(dDto.getStatus());
+				result.setNetAmount(dDto.getNetAmount() != null ? dDto.getNetAmount().toString() : "0");
+				result.setCurrency(dDto.getCurrency());
+				result.setInterestRate(dDto.getInterestRate() != null ? dDto.getInterestRate().toString() : "0");
+				result.setIdentificationNumber(dDto.getIdentificationNumber());
+				result.setPassword(dDto.getPassword());
+				result.setCreatedDate(dDto.getCreatedDate() != null ? dDto.getCreatedDate().toString() : "");
+				result.setUpdatedDate(dDto.getUpdatedDate() != null ? dDto.getUpdatedDate().toString() : "");
+			}
+			logger.info("=== PCAccount.getAccount - Manual conversion completed ===");
+		}
 		
 		// 최종 출력 객체 필드값 출력
 		logger.info("=== PCAccount.getAccount - Final Output AccountPDTO Field Values ===");
@@ -172,6 +220,55 @@ public class PCAccount implements NewIProcessComponent {
 		
 		AccountDDTO dDto = NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO);
 		
+		// dDto null 체크 추가
+		if (dDto == null) {
+			logger.warn("=== PCAccount.updateAccount - dDto is null after copy, creating new instance ===");
+			dDto = new AccountDDTO();
+			// 수동으로 필드 복사 (타입 변환 포함)
+			dDto.setAccountNumber(accountPDTO.getAccountNumber());
+			dDto.setName(accountPDTO.getName());
+			dDto.setAccountType(accountPDTO.getAccountType());
+			dDto.setStatus(accountPDTO.getStatus());
+			// String -> Double 변환
+			if (accountPDTO.getNetAmount() != null && !accountPDTO.getNetAmount().trim().isEmpty()) {
+				try {
+					dDto.setNetAmount(Double.parseDouble(accountPDTO.getNetAmount()));
+				} catch (NumberFormatException e) {
+					logger.warn("=== PCAccount.updateAccount - Failed to parse netAmount: {} ===", accountPDTO.getNetAmount());
+				}
+			}
+			dDto.setCurrency(accountPDTO.getCurrency());
+			// String -> Double 변환
+			if (accountPDTO.getInterestRate() != null && !accountPDTO.getInterestRate().trim().isEmpty()) {
+				try {
+					dDto.setInterestRate(Double.parseDouble(accountPDTO.getInterestRate()));
+				} catch (NumberFormatException e) {
+					logger.warn("=== PCAccount.updateAccount - Failed to parse interestRate: {} ===", accountPDTO.getInterestRate());
+				}
+			}
+			dDto.setIdentificationNumber(accountPDTO.getIdentificationNumber());
+			dDto.setPassword(accountPDTO.getPassword());
+			// String -> Date 변환
+			if (accountPDTO.getCreatedDate() != null && !accountPDTO.getCreatedDate().trim().isEmpty()) {
+				try {
+					// ISO 8601 형식 (yyyy-MM-dd HH:mm:ss) 또는 다른 형식 처리
+					java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					dDto.setCreatedDate(sdf.parse(accountPDTO.getCreatedDate()));
+				} catch (Exception e) {
+					logger.warn("=== PCAccount.updateAccount - Failed to parse createdDate: {} ===", accountPDTO.getCreatedDate());
+				}
+			}
+			if (accountPDTO.getUpdatedDate() != null && !accountPDTO.getUpdatedDate().trim().isEmpty()) {
+				try {
+					java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					dDto.setUpdatedDate(sdf.parse(accountPDTO.getUpdatedDate()));
+				} catch (Exception e) {
+					logger.warn("=== PCAccount.updateAccount - Failed to parse updatedDate: {} ===", accountPDTO.getUpdatedDate());
+				}
+			}
+			logger.info("=== PCAccount.updateAccount - Manual field copy completed ===");
+		}
+		
 		// 변환된 DDTO 필드값 출력
 		logger.info("=== PCAccount.updateAccount - Converted AccountDDTO Field Values ===");
 		logger.info("=== PCAccount.updateAccount - dDto.accountNumber: {} ===", dDto.getAccountNumber());
@@ -231,6 +328,37 @@ public class PCAccount implements NewIProcessComponent {
 		}
 		
 		AccountDDTO dDto = NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO);
+		
+		// dDto null 체크 추가
+		if (dDto == null) {
+			logger.warn("=== PCAccount.deleteAccount - dDto is null after copy, creating new instance ===");
+			dDto = new AccountDDTO();
+			// 수동으로 필드 복사 (타입 변환 포함)
+			dDto.setAccountNumber(accountPDTO.getAccountNumber());
+			dDto.setName(accountPDTO.getName());
+			dDto.setAccountType(accountPDTO.getAccountType());
+			dDto.setStatus(accountPDTO.getStatus());
+			// String -> Double 변환
+			if (accountPDTO.getNetAmount() != null && !accountPDTO.getNetAmount().trim().isEmpty()) {
+				try {
+					dDto.setNetAmount(Double.parseDouble(accountPDTO.getNetAmount()));
+				} catch (NumberFormatException e) {
+					logger.warn("=== PCAccount.deleteAccount - Failed to parse netAmount: {} ===", accountPDTO.getNetAmount());
+				}
+			}
+			dDto.setCurrency(accountPDTO.getCurrency());
+			// String -> Double 변환
+			if (accountPDTO.getInterestRate() != null && !accountPDTO.getInterestRate().trim().isEmpty()) {
+				try {
+					dDto.setInterestRate(Double.parseDouble(accountPDTO.getInterestRate()));
+				} catch (NumberFormatException e) {
+					logger.warn("=== PCAccount.deleteAccount - Failed to parse interestRate: {} ===", accountPDTO.getInterestRate());
+				}
+			}
+			dDto.setIdentificationNumber(accountPDTO.getIdentificationNumber());
+			dDto.setPassword(accountPDTO.getPassword());
+			logger.info("=== PCAccount.deleteAccount - Manual field copy completed ===");
+		}
 		
 		// 변환된 DDTO 필드값 출력
 		logger.info("=== PCAccount.deleteAccount - Converted AccountDDTO Field Values ===");
@@ -405,6 +533,32 @@ public class PCAccount implements NewIProcessComponent {
 		
 		AccountDDTO dDto = NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO);
 		
+		// dDto null 체크 추가
+		if (dDto == null) {
+			logger.warn("=== PCAccount.getListAccount - dDto is null after copy, creating new instance ===");
+			dDto = new AccountDDTO();
+		}
+		
+		// 수동으로 검색 조건 복사 (NewObjectUtil이 제대로 작동하지 않을 경우)
+		if (accountPDTO != null) {
+			if (accountPDTO.getAccountNumber() != null && !accountPDTO.getAccountNumber().trim().isEmpty()) {
+				dDto.setAccountNumber(accountPDTO.getAccountNumber());
+				logger.info("PCAccount", "=== PCAccount.getListAccount - Manually copied accountNumber: " + accountPDTO.getAccountNumber() + " ===");
+			}
+			if (accountPDTO.getName() != null && !accountPDTO.getName().trim().isEmpty()) {
+				dDto.setName(accountPDTO.getName());
+				logger.info("PCAccount", "=== PCAccount.getListAccount - Manually copied name: " + accountPDTO.getName() + " ===");
+			}
+			if (accountPDTO.getAccountType() != null && !accountPDTO.getAccountType().trim().isEmpty()) {
+				dDto.setAccountType(accountPDTO.getAccountType());
+				logger.info("PCAccount", "=== PCAccount.getListAccount - Manually copied accountType: " + accountPDTO.getAccountType() + " ===");
+			}
+			if (accountPDTO.getStatus() != null && !accountPDTO.getStatus().trim().isEmpty()) {
+				dDto.setStatus(accountPDTO.getStatus());
+				logger.info("PCAccount", "=== PCAccount.getListAccount - Manually copied status: " + accountPDTO.getStatus() + " ===");
+			}
+		}
+		
 		// 변환된 DDTO 필드값 출력
 		logger.info("=== PCAccount.getListAccount - Converted AccountDDTO Field Values ===");
 		logger.info("=== PCAccount.getListAccount - dDto.accountNumber: {} ===", dDto.getAccountNumber());
@@ -430,7 +584,25 @@ public class PCAccount implements NewIProcessComponent {
 			}
 		}
 		
-		List<AccountPDTO> result = NewObjectUtil.copyForList(AccountPDTO.class, dDtoList);
+				// NewObjectUtil.copyForList 대신 직접 변환 사용
+		logger.info("=== PCAccount.getListAccount - Converting AccountDDTO list to AccountPDTO list ===");
+		List<AccountPDTO> result = new java.util.ArrayList<>();
+		for (AccountDDTO dto : dDtoList) {
+			AccountPDTO pDto = new AccountPDTO();
+			pDto.setAccountNumber(dto.getAccountNumber());
+			pDto.setName(dto.getName());
+			pDto.setAccountType(dto.getAccountType());
+			pDto.setStatus(dto.getStatus());
+			pDto.setNetAmount(dto.getNetAmount() != null ? dto.getNetAmount().toString() : "0");
+			pDto.setCurrency(dto.getCurrency());
+			pDto.setInterestRate(dto.getInterestRate() != null ? dto.getInterestRate().toString() : "0");
+			pDto.setIdentificationNumber(dto.getIdentificationNumber());
+			pDto.setPassword(dto.getPassword());
+			pDto.setCreatedDate(dto.getCreatedDate() != null ? dto.getCreatedDate().toString() : "");
+			pDto.setUpdatedDate(dto.getUpdatedDate() != null ? dto.getUpdatedDate().toString() : "");
+			result.add(pDto);
+		}
+		logger.info("=== PCAccount.getListAccount - Direct conversion completed, result size: {} ===", result.size());
 		
 		// 최종 출력 결과 로깅
 		logger.info("=== PCAccount.getListAccount - Final Output AccountPDTO List Size: {} ===", result != null ? result.size() : 0);

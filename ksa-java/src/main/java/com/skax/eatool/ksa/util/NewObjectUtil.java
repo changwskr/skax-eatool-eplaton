@@ -39,7 +39,17 @@ public class NewObjectUtil {
     }
 
     public static <T> List<T> copyForList(Class<T> targetClass, List<?> sourceList) {
-        // Stub implementation - returns empty list for now
-        return new ArrayList<>();
+        if (sourceList == null || sourceList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        List<T> result = new ArrayList<>();
+        for (Object source : sourceList) {
+            T target = copyForClass(targetClass, source);
+            if (target != null) {
+                result.add(target);
+            }
+        }
+        return result;
     }
 }

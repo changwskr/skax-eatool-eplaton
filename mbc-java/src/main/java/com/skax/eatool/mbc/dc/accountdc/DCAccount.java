@@ -20,6 +20,7 @@ import com.skax.eatool.ksa.oltp.biz.NewIDomainComponent;
 import com.skax.eatool.ksa.util.NewObjectUtil;
 import com.skax.eatool.mbc.dc.accountdc.dto.AccountDDTO;
 import com.skax.eatool.mbc.dc.accountdc.mapper.AccountMapper;
+import com.skax.eatool.mbc.dc.accountdc.Account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,6 +116,25 @@ public class DCAccount implements NewIDomainComponent {
 				logger.info("=== DCAccount.getAccount - account.updatedDate: {} ===", account.getUpdatedDate());
 				
 				AccountDDTO result = NewObjectUtil.copyForClass(AccountDDTO.class, account);
+				
+				// result null 체크 및 수동 변환
+				if (result == null) {
+					logger.warn("=== DCAccount.getAccount - result is null after copy, creating manual conversion ===");
+					result = new AccountDDTO();
+					result.setAccountNumber(account.getAccountNumber());
+					result.setName(account.getName());
+					result.setAccountType(account.getAccountType());
+					result.setStatus(account.getStatus());
+					result.setNetAmount(account.getNetAmount());
+					result.setCurrency(account.getCurrency());
+					result.setInterestRate(account.getInterestRate());
+					result.setIdentificationNumber(account.getIdentificationNumber());
+					result.setPassword(account.getPassword());
+					result.setLastTransaction(account.getLastTransaction());
+					result.setCreatedDate(account.getCreatedDate());
+					result.setUpdatedDate(account.getUpdatedDate());
+					logger.info("=== DCAccount.getAccount - Manual conversion completed ===");
+				}
 				
 				// 변환된 DDTO 필드값 출력
 				logger.info("=== DCAccount.getAccount - Converted AccountDDTO Field Values ===");
@@ -489,6 +509,29 @@ public class DCAccount implements NewIDomainComponent {
 			logger.info("=== DCAccount.getListAccount - Converting to AccountDDTO list ===");
 			List<AccountDDTO> result = NewObjectUtil.copyForList(AccountDDTO.class, accountList);
 			
+			// result null 또는 빈 리스트 체크 추가
+			if (result == null || result.isEmpty()) {
+				logger.warn("=== DCAccount.getListAccount - result is null or empty after copy, creating manual conversion ===");
+				result = new java.util.ArrayList<>();
+				for (Account account : accountList) {
+					AccountDDTO dto = new AccountDDTO();
+					dto.setAccountNumber(account.getAccountNumber());
+					dto.setName(account.getName());
+					dto.setAccountType(account.getAccountType());
+					dto.setStatus(account.getStatus());
+					dto.setNetAmount(account.getNetAmount());
+					dto.setCurrency(account.getCurrency());
+					dto.setInterestRate(account.getInterestRate());
+					dto.setIdentificationNumber(account.getIdentificationNumber());
+					dto.setPassword(account.getPassword());
+					dto.setLastTransaction(account.getLastTransaction());
+					dto.setCreatedDate(account.getCreatedDate());
+					dto.setUpdatedDate(account.getUpdatedDate());
+					result.add(dto);
+				}
+				logger.info("=== DCAccount.getListAccount - Manual conversion completed, result size: {} ===", result.size());
+			}
+			
 			// 결과 DDTO들의 필드값 출력 (최대 5개까지만)
 			logger.info("=== DCAccount.getListAccount - Result AccountDDTO Field Values (showing up to 5) ===");
 			count = 0;
@@ -579,6 +622,20 @@ public class DCAccount implements NewIDomainComponent {
 	private List<Account> filterAccounts(List<Account> accounts, AccountDDTO searchCriteria) {
 		return accounts.stream()
 			.filter(account -> {
+				// 계좌번호 필터 (부분 검색)
+				if (searchCriteria.getAccountNumber() != null && !searchCriteria.getAccountNumber().trim().isEmpty()) {
+					if (!account.getAccountNumber().contains(searchCriteria.getAccountNumber().trim())) {
+						return false;
+					}
+				}
+				
+				// 이름 필터 (부분 검색)
+				if (searchCriteria.getName() != null && !searchCriteria.getName().trim().isEmpty()) {
+					if (account.getName() == null || !account.getName().contains(searchCriteria.getName().trim())) {
+						return false;
+					}
+				}
+				
 				// 계정 타입 필터
 				if (searchCriteria.getAccountType() != null && !searchCriteria.getAccountType().isEmpty()) {
 					if (!searchCriteria.getAccountType().equals(account.getAccountType())) {

@@ -68,9 +68,15 @@ class AccountManager {
             
             if (result.success) {
                 this.renderAccountList(result.data);
-                this.renderPagination(result.pagination);
+                // 페이징 정보 구성
+                const pagination = {
+                    page: result.page || 1,
+                    totalPages: result.totalPages || 1,
+                    total: result.total || 0
+                };
+                this.renderPagination(pagination);
             } else {
-                this.showError('계정 목록을 불러오는데 실패했습니다: ' + result.error);
+                this.showError('계정 목록을 불러오는데 실패했습니다: ' + result.message);
             }
         } catch (error) {
             this.showError('계정 목록을 불러오는데 실패했습니다: ' + error.message);
@@ -224,7 +230,7 @@ class AccountManager {
 
     async showDetailModal(accountNumber) {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/read?accountId=${accountNumber}`);
+            const response = await fetch(`${this.apiBaseUrl}/detail/${accountNumber}`);
             const result = await response.json();
             
             if (result.success) {
@@ -240,7 +246,7 @@ class AccountManager {
                 
                 document.getElementById('accountDetailModal').style.display = 'block';
             } else {
-                this.showError('계정 정보를 불러오는데 실패했습니다: ' + result.error);
+                this.showError('계정 정보를 불러오는데 실패했습니다: ' + result.message);
             }
         } catch (error) {
             this.showError('계정 정보를 불러오는데 실패했습니다: ' + error.message);
@@ -249,7 +255,7 @@ class AccountManager {
 
     async showUpdateModal(accountNumber) {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/read?accountId=${accountNumber}`);
+            const response = await fetch(`${this.apiBaseUrl}/detail/${accountNumber}`);
             const result = await response.json();
             
             if (result.success) {
@@ -266,7 +272,7 @@ class AccountManager {
                 
                 document.getElementById('updateAccountModal').style.display = 'block';
             } else {
-                this.showError('계정 정보를 불러오는데 실패했습니다: ' + result.error);
+                this.showError('계정 정보를 불러오는데 실패했습니다: ' + result.message);
             }
         } catch (error) {
             this.showError('계정 정보를 불러오는데 실패했습니다: ' + error.message);
@@ -304,7 +310,7 @@ class AccountManager {
                 this.loadAccounts();
                 this.loadAccountStats();
             } else {
-                this.showError('계정 생성에 실패했습니다: ' + result.error);
+                this.showError('계정 생성에 실패했습니다: ' + result.message);
             }
         } catch (error) {
             this.showError('계정 생성에 실패했습니다: ' + error.message);
@@ -342,7 +348,7 @@ class AccountManager {
                 this.loadAccounts();
                 this.loadAccountStats();
             } else {
-                this.showError('계정 수정에 실패했습니다: ' + result.error);
+                this.showError('계정 수정에 실패했습니다: ' + result.message);
             }
         } catch (error) {
             this.showError('계정 수정에 실패했습니다: ' + error.message);
@@ -355,8 +361,16 @@ class AccountManager {
         }
         
         try {
-            const response = await fetch(`${this.apiBaseUrl}/delete?accountId=${accountNumber}`, {
-                method: 'GET'
+            const accountData = {
+                accountNumber: accountNumber
+            };
+            
+            const response = await fetch(`${this.apiBaseUrl}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(accountData)
             });
             
             const result = await response.json();
@@ -366,7 +380,7 @@ class AccountManager {
                 this.loadAccounts();
                 this.loadAccountStats();
             } else {
-                this.showError('계정 삭제에 실패했습니다: ' + result.error);
+                this.showError('계정 삭제에 실패했습니다: ' + result.message);
             }
         } catch (error) {
             this.showError('계정 삭제에 실패했습니다: ' + error.message);

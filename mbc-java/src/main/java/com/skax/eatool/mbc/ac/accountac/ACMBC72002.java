@@ -6,10 +6,11 @@ import com.skax.eatool.ksa.infra.po.NewKBData;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
 import com.skax.eatool.ksa.oltp.biz.NewIApplicationService;
-import com.skax.eatool.mbc.as.accountas.ASMBC72002;
+import com.skax.eatool.mbc.as.accountas.ASMBC74001;
 import com.skax.eatool.mbc.pc.dto.AccountPDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +32,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * 
  * @version 1.0
  */
-@Controller
+@RestController
 @RequestMapping("/api/account/update")
 @Tag(name = "계정 관리", description = "계정 수정 관련 API")
 public class ACMBC72002 implements NewIApplicationService {
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ACMBC72002.class);
+
+    @Autowired
+    private ASMBC74001 asMbc74001;
 
     /**
      * 계정 수정 처리 (POST)
@@ -63,9 +67,10 @@ public class ACMBC72002 implements NewIApplicationService {
             NewKBData reqData = new NewKBData();
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
             input.put("AccountPDTO", accountPDTO);
+            // 명령어 설정 (UPDATE)
+            input.put("command", "UPDATE");
 
-            ASMBC72002 asMbc72002 = new ASMBC72002();
-            NewKBData result = asMbc72002.execute(reqData);
+            NewKBData result = asMbc74001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -76,13 +81,20 @@ public class ACMBC72002 implements NewIApplicationService {
             logger.info("=== ACMBC72002.updateAccount - Response: success=true, message=계정이 성공적으로 수정되었습니다. ===", "ACMBC72002");
             if (result != null && result.getOutputGenericDto() != null) {
                 NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
-                AccountPDTO resultAccount = (AccountPDTO) output.get("AccountPDTO");
-                if (resultAccount != null) {
-                    logger.info("=== ACMBC72002.updateAccount - Output AccountPDTO: accountNumber=" + resultAccount.getAccountNumber() + 
-                               ", name=" + resultAccount.getName() + ", accountType=" + resultAccount.getAccountType() + 
-                               ", status=" + resultAccount.getStatus() + ", currency=" + resultAccount.getCurrency() + 
-                               ", netAmount=" + resultAccount.getNetAmount() + ", interestRate=" + resultAccount.getInterestRate() + 
-                               ", updatedDate=" + resultAccount.getUpdatedDate() + " ===", "ACMBC72002");
+                Object accountListObj = output.get("AccountPDTOList");
+                if (accountListObj instanceof java.util.List) {
+                    java.util.List<?> tempList = (java.util.List<?>) accountListObj;
+                    if (tempList != null && !tempList.isEmpty()) {
+                        Object obj = tempList.get(0);
+                        if (obj instanceof AccountPDTO) {
+                            AccountPDTO resultAccount = (AccountPDTO) obj;
+                            logger.info("=== ACMBC72002.updateAccount - Output AccountPDTO: accountNumber=" + resultAccount.getAccountNumber() + 
+                                       ", name=" + resultAccount.getName() + ", accountType=" + resultAccount.getAccountType() + 
+                                       ", status=" + resultAccount.getStatus() + ", currency=" + resultAccount.getCurrency() + 
+                                       ", netAmount=" + resultAccount.getNetAmount() + ", interestRate=" + resultAccount.getInterestRate() + 
+                                       ", updatedDate=" + resultAccount.getUpdatedDate() + " ===", "ACMBC72002");
+                        }
+                    }
                 }
             }
 
@@ -96,6 +108,85 @@ public class ACMBC72002 implements NewIApplicationService {
             response.put("success", false);
             response.put("message", "계정 수정 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
             logger.info("=== ACMBC72002.updateAccount END ===", "ACMBC72002");
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    /**
+     * 계정 수정 처리 (PUT)
+     * 
+     * @param accountId 계좌번호
+     * @param accountPDTO 계정 정보
+     * @return 응답 데이터
+     * @throws NewBusinessException 비즈니스 예외
+     */
+    @PutMapping("/{accountId}")
+    public ResponseEntity<Map<String, Object>> updateAccountPut(
+            @PathVariable String accountId,
+            @RequestBody AccountPDTO accountPDTO) throws NewBusinessException {
+        logger.info("=== ACMBC72002.updateAccountPut START ===", "ACMBC72002");
+        logger.info("=== ACMBC72002.updateAccountPut - accountId: " + accountId + " ===", "ACMBC72002");
+        logger.info("=== ACMBC72002.updateAccountPut - Input AccountPDTO: accountNumber=" + accountPDTO.getAccountNumber() + 
+                   ", name=" + accountPDTO.getName() + ", accountType=" + accountPDTO.getAccountType() + 
+                   ", status=" + accountPDTO.getStatus() + ", currency=" + accountPDTO.getCurrency() + 
+                   ", netAmount=" + accountPDTO.getNetAmount() + ", interestRate=" + accountPDTO.getInterestRate() + 
+                   ", identificationNumber=" + accountPDTO.getIdentificationNumber() + " ===", "ACMBC72002");
+
+        try {
+            // accountId와 accountPDTO의 accountNumber가 일치하는지 확인
+            if (!accountId.equals(accountPDTO.getAccountNumber())) {
+                accountPDTO.setAccountNumber(accountId);
+                logger.info("=== ACMBC72002.updateAccountPut - Updated accountNumber to match path variable: " + accountId + " ===", "ACMBC72002");
+            }
+
+            // 1. 입력 데이터 검증
+            validateInputData(accountPDTO);
+
+            // 2. AS 호출
+            NewKBData reqData = new NewKBData();
+            NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
+            input.put("AccountPDTO", accountPDTO);
+            // 명령어 설정 (UPDATE)
+            input.put("command", "UPDATE");
+
+            NewKBData result = asMbc74001.execute(reqData);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "계정이 성공적으로 수정되었습니다.");
+            response.put("data", result);
+
+            // 응답 데이터 로그 출력
+            logger.info("=== ACMBC72002.updateAccountPut - Response: success=true, message=계정이 성공적으로 수정되었습니다. ===", "ACMBC72002");
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                Object accountListObj = output.get("AccountPDTOList");
+                if (accountListObj instanceof java.util.List) {
+                    java.util.List<?> tempList = (java.util.List<?>) accountListObj;
+                    if (tempList != null && !tempList.isEmpty()) {
+                        Object obj = tempList.get(0);
+                        if (obj instanceof AccountPDTO) {
+                            AccountPDTO resultAccount = (AccountPDTO) obj;
+                            logger.info("=== ACMBC72002.updateAccountPut - Output AccountPDTO: accountNumber=" + resultAccount.getAccountNumber() + 
+                                       ", name=" + resultAccount.getName() + ", accountType=" + resultAccount.getAccountType() + 
+                                       ", status=" + resultAccount.getStatus() + ", currency=" + resultAccount.getCurrency() + 
+                                       ", netAmount=" + resultAccount.getNetAmount() + ", interestRate=" + resultAccount.getInterestRate() + 
+                                       ", updatedDate=" + resultAccount.getUpdatedDate() + " ===", "ACMBC72002");
+                        }
+                    }
+                }
+            }
+
+            logger.info("=== ACMBC72002.updateAccountPut - Success: accountNumber=" + accountPDTO.getAccountNumber() + " ===", "ACMBC72002");
+            logger.info("=== ACMBC72002.updateAccountPut END ===", "ACMBC72002");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("=== ACMBC72002.updateAccountPut - Error: " + e.getMessage() + " ===", "ACMBC72002");
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "계정 수정 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+            logger.info("=== ACMBC72002.updateAccountPut END ===", "ACMBC72002");
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -126,9 +217,11 @@ public class ACMBC72002 implements NewIApplicationService {
             NewKBData reqData = new NewKBData();
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
             input.put("AccountPDTO", accountPDTO);
+            // 명령어 설정 (UPDATE)
+            input.put("command", "UPDATE");
 
-            ASMBC72002 asMbc72002 = new ASMBC72002();
-            NewKBData result = asMbc72002.execute(reqData);
+            ASMBC74001 asMbc74001 = new ASMBC74001();
+            NewKBData result = asMbc74001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -162,8 +255,8 @@ public class ACMBC72002 implements NewIApplicationService {
             validateInputData(reqData);
 
             // 2. AS 호출
-            ASMBC72002 asMbc72002 = new ASMBC72002();
-            NewKBData result = asMbc72002.execute(reqData);
+            ASMBC74001 asMbc74001 = new ASMBC74001();
+            NewKBData result = asMbc74001.execute(reqData);
 
             logger.debug("ACMBC72002 - 계정 수정 요청 처리 완료");
             return result;

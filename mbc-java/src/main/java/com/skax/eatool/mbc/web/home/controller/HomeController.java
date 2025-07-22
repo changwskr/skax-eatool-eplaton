@@ -580,7 +580,7 @@ public class HomeController {
 
         Map<String, Object> database = new HashMap<>();
         database.put("title", "데이터베이스");
-        database.put("url", "/mbc/h2-console");
+        database.put("url", "/h2-console");
         database.put("icon", "fas fa-database");
         database.put("method", "GET");
         systemSubMenus.add(database);

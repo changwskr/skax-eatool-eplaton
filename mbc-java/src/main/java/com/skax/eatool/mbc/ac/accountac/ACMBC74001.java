@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -32,7 +33,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * 
  * @version 1.0
  */
-@Controller
+@RestController
 @RequestMapping("/api/account/list")
 @Tag(name = "계정 관리", description = "계정 목록 관련 API")
 public class ACMBC74001 implements NewIApplicationService {
@@ -93,34 +94,53 @@ public class ACMBC74001 implements NewIApplicationService {
             input.put("pageNumber", page);
             input.put("pageSize", size);
             input.put("AccountPDTO", accountPDTO);
+            // 명령어 설정 (LIST)
+            input.put("command", "LIST");
 
             NewKBData result = asMbc74001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "계정 목록 조회가 완료되었습니다.");
-            response.put("data", result);
+            
+            // 실제 계정 목록 데이터 추출
+            java.util.List<AccountPDTO> accountList = null;
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                // AS에서 put("AccountPDTOList", resultList)로 저장했으므로 직접 가져옴
+                Object accountListObj = output.get("AccountPDTOList");
+                if (accountListObj instanceof java.util.List) {
+                    java.util.List<?> tempList = (java.util.List<?>) accountListObj;
+                    if (tempList != null) {
+                        accountList = new java.util.ArrayList<>();
+                        for (Object obj : tempList) {
+                            if (obj instanceof AccountPDTO) {
+                                accountList.add((AccountPDTO) obj);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            response.put("data", accountList != null ? accountList : new java.util.ArrayList<>());
             response.put("page", page);
             response.put("size", size);
+            response.put("total", accountList != null ? accountList.size() : 0);
+            response.put("totalPages", 1); // 페이징 정보는 나중에 구현
 
             // 응답 데이터 로그 출력
             logger.info("=== ACMBC74001.getAccountList - Response: success=true, message=계정 목록 조회가 완료되었습니다., page=" + page + ", size=" + size + " ===", "ACMBC74001");
-            if (result != null && result.getOutputGenericDto() != null) {
-                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
-                @SuppressWarnings("unchecked")
-                java.util.List<AccountPDTO> accountList = (java.util.List<AccountPDTO>) output.get("AccountPDTO");
-                if (accountList != null) {
-                    logger.info("=== ACMBC74001.getAccountList - Output AccountPDTO List: count=" + accountList.size() + " ===", "ACMBC74001");
-                    for (int i = 0; i < Math.min(accountList.size(), 3); i++) { // 최대 3개만 로그 출력
-                        AccountPDTO account = accountList.get(i);
-                        logger.info("=== ACMBC74001.getAccountList - Account[" + i + "]: accountNumber=" + account.getAccountNumber() + 
-                                   ", name=" + account.getName() + ", accountType=" + account.getAccountType() + 
-                                   ", status=" + account.getStatus() + ", currency=" + account.getCurrency() + 
-                                   ", netAmount=" + account.getNetAmount() + " ===", "ACMBC74001");
-                    }
-                    if (accountList.size() > 3) {
-                        logger.info("=== ACMBC74001.getAccountList - ... and " + (accountList.size() - 3) + " more accounts ===", "ACMBC74001");
-                    }
+            if (accountList != null) {
+                logger.info("=== ACMBC74001.getAccountList - Output AccountPDTO List: count=" + accountList.size() + " ===", "ACMBC74001");
+                for (int i = 0; i < Math.min(accountList.size(), 3); i++) { // 최대 3개만 로그 출력
+                    AccountPDTO account = accountList.get(i);
+                    logger.info("=== ACMBC74001.getAccountList - Account[" + i + "]: accountNumber=" + account.getAccountNumber() + 
+                               ", name=" + account.getName() + ", accountType=" + account.getAccountType() + 
+                               ", status=" + account.getStatus() + ", currency=" + account.getCurrency() + 
+                               ", netAmount=" + account.getNetAmount() + " ===", "ACMBC74001");
+                }
+                if (accountList.size() > 3) {
+                    logger.info("=== ACMBC74001.getAccountList - ... and " + (accountList.size() - 3) + " more accounts ===", "ACMBC74001");
                 }
             }
 
@@ -180,32 +200,51 @@ public class ACMBC74001 implements NewIApplicationService {
             input.put("pageNumber", requestBody.getOrDefault("pageNumber", 1));
             input.put("pageSize", requestBody.getOrDefault("pageSize", 10));
             input.put("AccountPDTO", accountPDTO);
+            // 명령어 설정 (LIST)
+            input.put("command", "LIST");
 
             NewKBData result = asMbc74001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "계정 목록 조회가 완료되었습니다.");
-            response.put("data", result);
+            
+            // 실제 계정 목록 데이터 추출
+            java.util.List<AccountPDTO> accountList = null;
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                // AS에서 put("AccountPDTOList", resultList)로 저장했으므로 직접 가져옴
+                Object accountListObj = output.get("AccountPDTOList");
+                if (accountListObj instanceof java.util.List) {
+                    java.util.List<?> tempList = (java.util.List<?>) accountListObj;
+                    if (tempList != null) {
+                        accountList = new java.util.ArrayList<>();
+                        for (Object obj : tempList) {
+                            if (obj instanceof AccountPDTO) {
+                                accountList.add((AccountPDTO) obj);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            response.put("data", accountList != null ? accountList : new java.util.ArrayList<>());
+            response.put("total", accountList != null ? accountList.size() : 0);
+            response.put("totalPages", 1); // 페이징 정보는 나중에 구현
 
             // 응답 데이터 로그 출력
             logger.info("=== ACMBC74001.getAccountListPost - Response: success=true, message=계정 목록 조회가 완료되었습니다. ===", "ACMBC74001");
-            if (result != null && result.getOutputGenericDto() != null) {
-                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
-                @SuppressWarnings("unchecked")
-                java.util.List<AccountPDTO> accountList = (java.util.List<AccountPDTO>) output.get("AccountPDTO");
-                if (accountList != null) {
-                    logger.info("=== ACMBC74001.getAccountListPost - Output AccountPDTO List: count=" + accountList.size() + " ===", "ACMBC74001");
-                    for (int i = 0; i < Math.min(accountList.size(), 3); i++) { // 최대 3개만 로그 출력
-                        AccountPDTO account = accountList.get(i);
-                        logger.info("=== ACMBC74001.getAccountListPost - Account[" + i + "]: accountNumber=" + account.getAccountNumber() + 
-                                   ", name=" + account.getName() + ", accountType=" + account.getAccountType() + 
-                                   ", status=" + account.getStatus() + ", currency=" + account.getCurrency() + 
-                                   ", netAmount=" + account.getNetAmount() + " ===", "ACMBC74001");
-                    }
-                    if (accountList.size() > 3) {
-                        logger.info("=== ACMBC74001.getAccountListPost - ... and " + (accountList.size() - 3) + " more accounts ===", "ACMBC74001");
-                    }
+            if (accountList != null) {
+                logger.info("=== ACMBC74001.getAccountListPost - Output AccountPDTO List: count=" + accountList.size() + " ===", "ACMBC74001");
+                for (int i = 0; i < Math.min(accountList.size(), 3); i++) { // 최대 3개만 로그 출력
+                    AccountPDTO account = accountList.get(i);
+                    logger.info("=== ACMBC74001.getAccountListPost - Account[" + i + "]: accountNumber=" + account.getAccountNumber() + 
+                               ", name=" + account.getName() + ", accountType=" + account.getAccountType() + 
+                               ", status=" + account.getStatus() + ", currency=" + account.getCurrency() + 
+                               ", netAmount=" + account.getNetAmount() + " ===", "ACMBC74001");
+                }
+                if (accountList.size() > 3) {
+                    logger.info("=== ACMBC74001.getAccountListPost - ... and " + (accountList.size() - 3) + " more accounts ===", "ACMBC74001");
                 }
             }
 

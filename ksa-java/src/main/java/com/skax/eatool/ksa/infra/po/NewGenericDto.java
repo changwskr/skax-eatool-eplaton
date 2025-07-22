@@ -87,6 +87,10 @@ public class NewGenericDto {
         arrays.put("default", new ArrayList<>(list));
     }
 
+    public Map<String, List<Object>> getArrays() {
+        return arrays;
+    }
+
     public String toString() {
         return "NewGenericDto{data=" + data + ", attributes=" + attributes + 
                ", arrays=" + arrays + ", nodes=" + nodes + "}";

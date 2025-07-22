@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시스템 모니터링 - SKAX-EATOOL</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            padding: 2rem 0;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+        
+        .current-time {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .current-time h3 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .monitoring-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .monitoring-card h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .monitoring-card h3 i {
+            margin-right: 0.5rem;
+            color: #667eea;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+        
+        .refresh-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a6fd8;
+            transform: rotate(180deg);
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 뒤로가기 버튼 -->
+        <a href="/web/home" class="back-btn">
+            <i class="fas fa-arrow-left"></i> 홈으로
+        </a>
+        
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>🔧 시스템 모니터링</h1>
+            <p>SKAX-EATOOL MBC 시스템 상태 및 성능 모니터링</p>
+        </div>
+
+        <!-- 현재 시간 -->
+        <div class="current-time">
+            <h3>🕐 현재 시간</h3>
+            <p id="current-time" th:text="${currentTime}">2024년 01월 01일 12:00:00</p>
+        </div>
+
+        <!-- 시스템 정보 -->
+        <div class="monitoring-card">
+            <h3><i class="fas fa-server"></i> 시스템 정보</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">운영체제</div>
+                    <div class="info-value" th:text="${systemInfo.osName}">Windows 10</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Java 버전</div>
+                    <div class="info-value" th:text="${systemInfo.javaVersion}">17.0.2</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">사용자</div>
+                    <div class="info-value" th:text="${systemInfo.userName}">admin</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">프로세서</div>
+                    <div class="info-value" th:text="${systemInfo.availableProcessors} + '개'">8개</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메모리 정보 -->
+        <div class="monitoring-card">
+            <h3><i class="fas fa-memory"></i> 메모리 정보</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">총 메모리</div>
+                    <div class="info-value" th:text="${memoryInfo.totalMemory}">256 MB</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">사용 중</div>
+                    <div class="info-value" th:text="${memoryInfo.usedMemory}">128 MB</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">사용률</div>
+                    <div class="info-value" th:text="${memoryInfo.memoryUsagePercent}">50%</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">최대 메모리</div>
+                    <div class="info-value" th:text="${memoryInfo.maxMemory}">1 GB</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="memoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 데이터베이스 정보 -->
+        <div class="monitoring-card">
+            <h3><i class="fas fa-database"></i> 데이터베이스 정보</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">상태</div>
+                    <div class="status-badge" 
+                         th:classappend="${databaseInfo.statusColor == 'success' ? 'status-success' : (databaseInfo.statusColor == 'warning' ? 'status-warning' : 'status-danger')}"
+                         th:text="${databaseInfo.status}">연결됨</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">데이터베이스 타입</div>
+                    <div class="info-value" th:text="${databaseInfo.type}">H2 In-Memory</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">계정 수</div>
+                    <div class="info-value" th:text="${databaseInfo.accountCount} + '개'">8개</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">연결 URL</div>
+                    <div class="info-value" style="font-size: 0.9rem;" th:text="${databaseInfo.url}">jdbc:h2:mem:mbcdb_dev</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 애플리케이션 정보 -->
+        <div class="monitoring-card">
+            <h3><i class="fas fa-code"></i> 애플리케이션 정보</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">애플리케이션명</div>
+                    <div class="info-value" th:text="${applicationInfo.applicationName}">SKAX-EATOOL MBC</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">버전</div>
+                    <div class="info-value" th:text="${applicationInfo.version}">2.0.0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">환경</div>
+                    <div class="info-value" th:text="${applicationInfo.environment}">Development</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">업타임</div>
+                    <div class="info-value" th:text="${applicationInfo.uptime}">1시간 30분</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 새로고침 버튼 -->
+        <button class="refresh-btn" onclick="refreshData()" title="새로고침">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // 메모리 차트 초기화
+        let memoryChart;
+        
+        function initMemoryChart() {
+            const ctx = document.getElementById('memoryChart').getContext('2d');
+            memoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['사용 중', '여유'],
+                    datasets: [{
+                        data: [50, 50],
+                        backgroundColor: ['#667eea', '#e9ecef'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 데이터 새로고침
+        function refreshData() {
+            const refreshBtn = document.querySelector('.refresh-btn i');
+            refreshBtn.classList.add('fa-spin');
+            
+            fetch('/mbc/monitoring/api/system')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateDisplay(data);
+                    } else {
+                        console.error('데이터 새로고침 실패:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('API 호출 오류:', error);
+                })
+                .finally(() => {
+                    refreshBtn.classList.remove('fa-spin');
+                });
+        }
+        
+        // 화면 업데이트
+        function updateDisplay(data) {
+            // 시스템 정보 업데이트
+            if (data.systemInfo) {
+                updateInfoItems('systemInfo', data.systemInfo);
+            }
+            
+            // 메모리 정보 업데이트
+            if (data.memoryInfo) {
+                updateInfoItems('memoryInfo', data.memoryInfo);
+                updateMemoryChart(data.memoryInfo);
+            }
+            
+            // 데이터베이스 정보 업데이트
+            if (data.databaseInfo) {
+                updateInfoItems('databaseInfo', data.databaseInfo);
+            }
+            
+            // 애플리케이션 정보 업데이트
+            if (data.applicationInfo) {
+                updateInfoItems('applicationInfo', data.applicationInfo);
+            }
+        }
+        
+        // 정보 아이템 업데이트
+        function updateInfoItems(prefix, data) {
+            Object.keys(data).forEach(key => {
+                const element = document.querySelector(`[data-${prefix}-${key}]`);
+                if (element) {
+                    element.textContent = data[key];
+                }
+            });
+        }
+        
+        // 메모리 차트 업데이트
+        function updateMemoryChart(memoryInfo) {
+            if (memoryChart && memoryInfo.memoryUsagePercent) {
+                const usagePercent = parseFloat(memoryInfo.memoryUsagePercent);
+                const freePercent = 100 - usagePercent;
+                
+                memoryChart.data.datasets[0].data = [usagePercent, freePercent];
+                memoryChart.update();
+            }
+        }
+        
+        // 현재 시간 업데이트
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const timeElement = document.getElementById('current-time');
+            if (timeElement) {
+                timeElement.textContent = timeString;
+            }
+        }
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('시스템 모니터링 대시보드 로드됨');
+            
+            // 메모리 차트 초기화
+            initMemoryChart();
+            
+            // 1초마다 시간 업데이트
+            setInterval(updateCurrentTime, 1000);
+            updateCurrentTime(); // 초기 실행
+            
+            // 30초마다 자동 새로고침
+            setInterval(refreshData, 30000);
+        });
+    </script>
+</body>
+</html> 
