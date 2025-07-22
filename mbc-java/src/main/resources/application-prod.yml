@@ -6,6 +6,13 @@ server:
   port: 8080
   servlet:
     context-path: /mbc
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    connection-timeout: 20000
+    max-connections: 8192
+    accept-count: 100
 
 spring:
   application:
@@ -45,7 +52,7 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Seoul
-    default-property-inclusion: non_null
+    default-property-inclusion: NON_NULL
     serialization:
       write-dates-as-timestamps: false
       fail-on-empty-beans: false
@@ -66,6 +73,7 @@ logging:
   level:
     root: WARN
     com.skax.eatool.mbc: INFO
+    com.skax.eatool.mbc.ac: INFO
     com.skax.eatool.ksa: INFO
     org.springframework.security: WARN
     org.springframework.web: WARN
@@ -163,16 +171,6 @@ mbc:
     enabled: true
     ttl: 1800 # 30 minutes
     max-size: 5000
-
-# Performance Configuration
-server:
-  tomcat:
-    threads:
-      max: 200
-      min-spare: 10
-    connection-timeout: 20000
-    max-connections: 8192
-    accept-count: 100
 
 # Session Configuration
 session:

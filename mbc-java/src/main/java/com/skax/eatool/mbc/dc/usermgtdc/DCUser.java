@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skax.eatool.ksa.exception.NewBusinessException;
-import com.skax.eatool.ksa.logger.NewIKesaLogger;
-import com.skax.eatool.ksa.logger.NewKesaLogHelper;
 import com.skax.eatool.ksa.util.NewObjectUtil;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.PageDDTO;
 import com.skax.eatool.mbc.dc.usermgtdc.dto.TreeDDTO;
@@ -39,8 +37,7 @@ import com.skax.eatool.mbc.as.bzcrudbus.transfer.ICommonDTO;
 @Repository
 public class DCUser implements IDCUser {
 
-	protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
-	private static final Logger slf4jLogger = LoggerFactory.getLogger(DCUser.class);
+	private static final Logger logger = LoggerFactory.getLogger(DCUser.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -59,77 +56,72 @@ public class DCUser implements IDCUser {
 	// IDCUser interface methods
 	@Override
 	public String getUserId() {
-		logger.info("DCUser", "=== DCUser.getUserId START ===");
-		logger.info("DCUser", "=== DCUser.getUserId END ===");
+		logger.info("=== DCUser.getUserId START ===");
+		logger.info("=== DCUser.getUserId END ===");
 		return null; // Stub implementation
 	}
 
 	@Override
 	public void setUserId(String userId) {
-		logger.info("DCUser", "=== DCUser.setUserId START ===");
-		logger.info("DCUser", "=== DCUser.setUserId END ===");
+		logger.info("=== DCUser.setUserId START ===");
+		logger.info("=== DCUser.setUserId END ===");
 		// Stub implementation
 	}
 
 	@Override
 	public String getUserName() {
-		logger.info("DCUser", "=== DCUser.getUserName START ===");
-		logger.info("DCUser", "=== DCUser.getUserName END ===");
+		logger.info("=== DCUser.getUserName START ===");
+		logger.info("=== DCUser.getUserName END ===");
 		return null; // Stub implementation
 	}
 
 	@Override
 	public void setUserName(String userName) {
-		logger.info("DCUser", "=== DCUser.setUserName START ===");
-		logger.info("DCUser", "=== DCUser.setUserName END ===");
+		logger.info("=== DCUser.setUserName START ===");
+		logger.info("=== DCUser.setUserName END ===");
 		// Stub implementation
 	}
 
 	@Override
 	public String getUserEmail() {
-		logger.info("DCUser", "=== DCUser.getUserEmail START ===");
-		logger.info("DCUser", "=== DCUser.getUserEmail END ===");
+		logger.info("=== DCUser.getUserEmail START ===");
+		logger.info("=== DCUser.getUserEmail END ===");
 		return null; // Stub implementation
 	}
 
 	@Override
 	public void setUserEmail(String userEmail) {
-		logger.info("DCUser", "=== DCUser.setUserEmail START ===");
-		logger.info("DCUser", "=== DCUser.setUserEmail END ===");
+		logger.info("=== DCUser.setUserEmail START ===");
+		logger.info("=== DCUser.setUserEmail END ===");
 		// Stub implementation
 	}
 
 	@Override
 	public List<HashMap> getUserList(ICommonDTO commonDto) throws NewBusinessException {
-		logger.info("DCUser", "=== DCUser.getUserList START ===");
-		logger.info("DCUser", "=== DCUser.getUserList END ===");
+		logger.info("=== DCUser.getUserList START ===");
+		logger.info("=== DCUser.getUserList END ===");
 		// Stub implementation
 		return new ArrayList<>();
 	}
 
 	@Override
 	public User selectUser(String userId) throws Exception {
-		logger.info("DCUser", "=== DCUser.selectUser START ===");
-		slf4jLogger.info("=== DCUser.selectUser START (SLF4J) ===");
+		logger.info("=== DCUser.selectUser START ===");
 		try {
 			String sql = "SELECT * FROM USER_INFO WHERE USER_ID = ?";
 			List<User> users = jdbcTemplate.query(sql, userRowMapper, userId);
-			logger.info("DCUser", "=== DCUser.selectUser END ===");
-			slf4jLogger.info("=== DCUser.selectUser END (SLF4J) ===");
+			logger.info("=== DCUser.selectUser END ===");
 			return users.isEmpty() ? null : users.get(0);
 		} catch (Exception e) {
-			logger.error("Unexpected error selecting user with ID: " + userId, String.valueOf(e));
-			slf4jLogger.error("Unexpected error selecting user with ID: " + userId, e);
-			logger.info("DCUser", "=== DCUser.selectUser END ===");
-			slf4jLogger.info("=== DCUser.selectUser END (SLF4J) ===");
+			logger.error("Unexpected error selecting user with ID: " + userId, e);
+			logger.info("=== DCUser.selectUser END ===");
 			throw new NewBusinessException("B0000001", "selectUser", e);
 		}
 	}
 
 	@Override
 	public void crudUser(UserDDTO[] userDDTOs) throws NewBusinessException {
-		logger.info("DCUser", "=== DCUser.crudUser START ===");
-		slf4jLogger.info("=== DCUser.crudUser START (SLF4J) ===");
+		logger.info("=== DCUser.crudUser START ===");
 		logger.debug("crudUser method started");
 
 		String crud = null;
@@ -152,14 +144,12 @@ public class DCUser implements IDCUser {
 		} catch (Exception e) {
 			throw new NewBusinessException("B0000002", "processCode", e);
 		}
-		logger.info("DCUser", "=== DCUser.crudUser END ===");
-		slf4jLogger.info("=== DCUser.crudUser END (SLF4J) ===");
+		logger.info("=== DCUser.crudUser END ===");
 	}
 
 	@Override
 	public List<User> getListUser(UserDDTO userDDTO) throws NewBusinessException {
-		logger.info("DCUser", "=== DCUser.getListUser START ===");
-		slf4jLogger.info("=== DCUser.getListUser START (SLF4J) ===");
+		logger.info("=== DCUser.getListUser START ===");
 		List<User> UserList = null;
 
 		try {
@@ -169,14 +159,12 @@ public class DCUser implements IDCUser {
 			e.printStackTrace();
 		}
 
-		logger.info("DCUser", "=== DCUser.getListUser END ===");
-		slf4jLogger.info("=== DCUser.getListUser END (SLF4J) ===");
+		logger.info("=== DCUser.getListUser END ===");
 		return NewObjectUtil.copyForList(User.class, UserList);
 	}
 
 	public List<Page> getListPage(PageDDTO pageDDTO) throws NewBusinessException {
-		logger.info("DCUser", "=== DCUser.getListPage START ===");
-		slf4jLogger.info("=== DCUser.getListPage START (SLF4J) ===");
+		logger.info("=== DCUser.getListPage START ===");
 
 		List<Page> pageList = null;
 		String pageCount;
@@ -209,15 +197,13 @@ public class DCUser implements IDCUser {
 			// TODO Add proper catch handling
 			e.printStackTrace();
 		}
-		logger.info("DCUser", "=== DCUser.getListPage END ===");
-		slf4jLogger.info("=== DCUser.getListPage END (SLF4J) ===");
+		logger.info("=== DCUser.getListPage END ===");
 		return pageList;
 
 	}
 
 	public List<Tree> getListTree(TreeDDTO treeDDTO) throws NewBusinessException {
-		logger.info("DCUser", "=== DCUser.getListTree START ===");
-		slf4jLogger.info("=== DCUser.getListTree START (SLF4J) ===");
+		logger.info("=== DCUser.getListTree START ===");
 
 		List<Tree> TreeList = null;
 
@@ -236,16 +222,14 @@ public class DCUser implements IDCUser {
 
 		}
 
-		logger.info("DCUser", "=== DCUser.getListTree END ===");
-		slf4jLogger.info("=== DCUser.getListTree END (SLF4J) ===");
+		logger.info("=== DCUser.getListTree END ===");
 		return NewObjectUtil.copyForList(Tree.class, TreeList);
 
 	}
 
 	// Helper methods for CRUD operations
 	private void insertUser(UserDDTO userDDTO) {
-		logger.info("DCUser", "=== DCUser.insertUser START ===");
-		slf4jLogger.info("=== DCUser.insertUser START (SLF4J) ===");
+		logger.info("=== DCUser.insertUser START ===");
 		String sql = "INSERT INTO USER_INFO (USER_ID, USER_NAME, EMAIL, PHONE, ROLE, STATUS) VALUES (?, ?, ?, ?, ?, ?)";
 		jdbcTemplate.update(sql,
 				userDDTO.getUserId(),
@@ -254,13 +238,11 @@ public class DCUser implements IDCUser {
 				userDDTO.getPhone(),
 				userDDTO.getRole(),
 				userDDTO.getStatus());
-		logger.info("DCUser", "=== DCUser.insertUser END ===");
-		slf4jLogger.info("=== DCUser.insertUser END (SLF4J) ===");
+		logger.info("=== DCUser.insertUser END ===");
 	}
 
 	private void updateUser(UserDDTO userDDTO) {
-		logger.info("DCUser", "=== DCUser.updateUser START ===");
-		slf4jLogger.info("=== DCUser.updateUser START (SLF4J) ===");
+		logger.info("=== DCUser.updateUser START ===");
 		String sql = "UPDATE USER_INFO SET USER_NAME = ?, EMAIL = ?, PHONE = ?, ROLE = ?, STATUS = ? WHERE USER_ID = ?";
 		jdbcTemplate.update(sql,
 				userDDTO.getUserName(),
@@ -269,16 +251,13 @@ public class DCUser implements IDCUser {
 				userDDTO.getRole(),
 				userDDTO.getStatus(),
 				userDDTO.getUserId());
-		logger.info("DCUser", "=== DCUser.updateUser END ===");
-		slf4jLogger.info("=== DCUser.updateUser END (SLF4J) ===");
+		logger.info("=== DCUser.updateUser END ===");
 	}
 
 	private void deleteUser(UserDDTO userDDTO) {
-		logger.info("DCUser", "=== DCUser.deleteUser START ===");
-		slf4jLogger.info("=== DCUser.deleteUser START (SLF4J) ===");
+		logger.info("=== DCUser.deleteUser START ===");
 		String sql = "DELETE FROM USER_INFO WHERE USER_ID = ?";
 		jdbcTemplate.update(sql, userDDTO.getUserId());
-		logger.info("DCUser", "=== DCUser.deleteUser END ===");
-		slf4jLogger.info("=== DCUser.deleteUser END (SLF4J) ===");
+		logger.info("=== DCUser.deleteUser END ===");
 	}
 }

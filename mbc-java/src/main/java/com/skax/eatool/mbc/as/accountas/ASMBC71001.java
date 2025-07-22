@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 @Service
 public class ASMBC71001 implements NewIApplicationService {
 
-	protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+	    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ASMBC71001.class);
 	private static final Logger slf4jLogger = LoggerFactory.getLogger(ASMBC71001.class);
 	
 	@Autowired
@@ -84,27 +84,27 @@ public class ASMBC71001 implements NewIApplicationService {
 		slf4jLogger.info("=== ASMBC71001.execute - AccountPDTO Field Values (SLF4J) ===");
 		
 		// AccountPDTO 값 로그 출력
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountId: " + accountPDTO.getAccountId() + " ===");
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountName: " + accountPDTO.getAccountName() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountNumber: " + accountPDTO.getAccountNumber() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.name: " + accountPDTO.getName() + " ===");
 		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountType: " + accountPDTO.getAccountType() + " ===");
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountStatus: " + accountPDTO.getAccountStatus() + " ===");
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountBalance: " + accountPDTO.getAccountBalance() + " ===");
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountCurrency: " + accountPDTO.getAccountCurrency() + " ===");
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountOpenDate: " + accountPDTO.getAccountOpenDate() + " ===");
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountOwner: " + accountPDTO.getAccountOwner() + " ===");
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountManager: " + accountPDTO.getAccountManager() + " ===");
-		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.accountBranch: " + accountPDTO.getAccountBranch() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.status: " + accountPDTO.getStatus() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.netAmount: " + accountPDTO.getNetAmount() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.currency: " + accountPDTO.getCurrency() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.interestRate: " + accountPDTO.getInterestRate() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.identificationNumber: " + accountPDTO.getIdentificationNumber() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.createdDate: " + accountPDTO.getCreatedDate() + " ===");
+		logger.info("ASMBC71001", "=== ASMBC71001.execute - accountPDTO.updatedDate: " + accountPDTO.getUpdatedDate() + " ===");
 		
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountId: {} (SLF4J) ===", accountPDTO.getAccountId());
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountName: {} (SLF4J) ===", accountPDTO.getAccountName());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountNumber: {} (SLF4J) ===", accountPDTO.getAccountNumber());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.name: {} (SLF4J) ===", accountPDTO.getName());
 		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountType: {} (SLF4J) ===", accountPDTO.getAccountType());
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountStatus: {} (SLF4J) ===", accountPDTO.getAccountStatus());
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountBalance: {} (SLF4J) ===", accountPDTO.getAccountBalance());
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountCurrency: {} (SLF4J) ===", accountPDTO.getAccountCurrency());
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountOpenDate: {} (SLF4J) ===", accountPDTO.getAccountOpenDate());
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountOwner: {} (SLF4J) ===", accountPDTO.getAccountOwner());
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountManager: {} (SLF4J) ===", accountPDTO.getAccountManager());
-		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.accountBranch: {} (SLF4J) ===", accountPDTO.getAccountBranch());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.status: {} (SLF4J) ===", accountPDTO.getStatus());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.netAmount: {} (SLF4J) ===", accountPDTO.getNetAmount());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.currency: {} (SLF4J) ===", accountPDTO.getCurrency());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.interestRate: {} (SLF4J) ===", accountPDTO.getInterestRate());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.identificationNumber: {} (SLF4J) ===", accountPDTO.getIdentificationNumber());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.createdDate: {} (SLF4J) ===", accountPDTO.getCreatedDate());
+		slf4jLogger.info("=== ASMBC71001.execute - accountPDTO.updatedDate: {} (SLF4J) ===", accountPDTO.getUpdatedDate());
 
 		// 2.PC호출
 		pcAccount.createAccount(accountPDTO);

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
         "com.skax.eatool.mbc.dc",
         "com.skax.eatool.mbc.pc",
         "com.skax.eatool.mbc.ic",
+        "com.skax.eatool.mbc.ac",
         // "com.skax.eatool.mbc.fc", // mbc01-java의 UserServiceImpl 오류 방지를 위해 제거
         "com.skax.eatool.mbc.web",
         "com.skax.eatool.mbc.config",

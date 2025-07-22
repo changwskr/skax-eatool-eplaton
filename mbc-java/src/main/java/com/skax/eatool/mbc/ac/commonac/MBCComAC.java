@@ -33,7 +33,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class MBCComAC implements NewIApplicationService {
 
-    protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MBCComAC.class);
 
     /**
      * 공통 처리 (GET)

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,11 +42,13 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping({ "/api/account/create", "/mbc/account/create" })
-@CrossOrigin(origins = "*")
 @Tag(name = "계정 관리", description = "계정 생성 관련 API")
 public class ACMBC71001 implements NewIApplicationService {
 
-    protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ACMBC71001.class);
+
+    @Autowired
+    private ASMBC71001 asMbc71001;
 
     /**
      * 계정 생성 웹 페이지 표시
@@ -55,7 +58,7 @@ public class ACMBC71001 implements NewIApplicationService {
      */
     @GetMapping("/page")
     public String showAccountCreatePage(Model model) {
-        logger.info("ACMBC71001 - 계정 생성 웹 페이지 요청", "ACMBC71001");
+        logger.info("ACMBC71001 - 계정 생성 웹 페이지 요청");
 
         model.addAttribute("pageTitle", "계정 생성");
         model.addAttribute("apiEndpoint", "/api/account/create");
@@ -80,7 +83,13 @@ public class ACMBC71001 implements NewIApplicationService {
     })
     public ResponseEntity<Map<String, Object>> createAccountPost(@RequestBody AccountPDTO accountPDTO)
             throws NewBusinessException {
-        logger.debug("ACMBC71001 - 계정 생성 요청 처리 시작 (POST)");
+        logger.info("===============================================================");
+        logger.info("=== ACMBC71001.createAccountPost START ===");
+        logger.info("=== ACMBC71001.createAccountPost - Input AccountPDTO: accountNumber=" + accountPDTO.getAccountNumber() + 
+                   ", name=" + accountPDTO.getName() + ", accountType=" + accountPDTO.getAccountType() + 
+                   ", status=" + accountPDTO.getStatus() + ", currency=" + accountPDTO.getCurrency() + 
+                   ", netAmount=" + accountPDTO.getNetAmount() + ", interestRate=" + accountPDTO.getInterestRate() + 
+                   ", identificationNumber=" + accountPDTO.getIdentificationNumber() + " ===");
 
         try {
             // 1. 입력 데이터 검증
@@ -91,7 +100,6 @@ public class ACMBC71001 implements NewIApplicationService {
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
             input.put("AccountPDTO", accountPDTO);
 
-            ASMBC71001 asMbc71001 = new ASMBC71001();
             NewKBData result = asMbc71001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
@@ -99,14 +107,30 @@ public class ACMBC71001 implements NewIApplicationService {
             response.put("message", "계정이 성공적으로 생성되었습니다.");
             response.put("data", result);
 
-            logger.debug("ACMBC71001 - 계정 생성 요청 처리 완료");
+            // 응답 데이터 로그 출력
+            logger.info("=== ACMBC71001.createAccountPost - Response: success=true, message=계정이 성공적으로 생성되었습니다. ===");
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                AccountPDTO resultAccount = (AccountPDTO) output.get("AccountPDTO");
+                if (resultAccount != null) {
+                    logger.info("=== ACMBC71001.createAccountPost - Output AccountPDTO: accountNumber=" + resultAccount.getAccountNumber() + 
+                               ", name=" + resultAccount.getName() + ", accountType=" + resultAccount.getAccountType() + 
+                               ", status=" + resultAccount.getStatus() + ", currency=" + resultAccount.getCurrency() + 
+                               ", netAmount=" + resultAccount.getNetAmount() + ", interestRate=" + resultAccount.getInterestRate() + 
+                               ", createdDate=" + resultAccount.getCreatedDate() + " ===");
+                }
+            }
+
+            logger.info("=== ACMBC71001.createAccountPost - Success: accountNumber=" + accountPDTO.getAccountNumber() + " ===");
+            logger.info("=== ACMBC71001.createAccountPost END ===");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("ACMBC71001 - 계정 생성 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
+            logger.error("=== ACMBC71001.createAccountPost - Error: " + e.getMessage() + " ===");
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "계정 생성 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+            logger.info("=== ACMBC71001.createAccountPost END ===");
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -129,12 +153,15 @@ public class ACMBC71001 implements NewIApplicationService {
             @Parameter(description = "계좌번호", required = true, example = "ACC001") @RequestParam String accountId,
             @Parameter(description = "계정명", required = true, example = "테스트 계정") @RequestParam String accountName)
             throws NewBusinessException {
-        logger.debug("ACMBC71001 - 계정 생성 요청 처리 시작 (GET)");
+        logger.info("===============================================================");
+
+        logger.info("=== ACMBC71001.createAccountGet START ===", "ACMBC71001");
+        logger.info("=== ACMBC71001.createAccountGet - Input: accountId=" + accountId + ", accountName=" + accountName + " ===", "ACMBC71001");
 
         try {
             AccountPDTO accountPDTO = new AccountPDTO();
-            accountPDTO.setAccountId(accountId);
-            accountPDTO.setAccountName(accountName);
+            accountPDTO.setAccountNumber(accountId);
+            accountPDTO.setName(accountName);
 
             // 1. 입력 데이터 검증
             validateInputData(accountPDTO);
@@ -144,7 +171,6 @@ public class ACMBC71001 implements NewIApplicationService {
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
             input.put("AccountPDTO", accountPDTO);
 
-            ASMBC71001 asMbc71001 = new ASMBC71001();
             NewKBData result = asMbc71001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
@@ -152,14 +178,30 @@ public class ACMBC71001 implements NewIApplicationService {
             response.put("message", "계정이 성공적으로 생성되었습니다.");
             response.put("data", result);
 
-            logger.debug("ACMBC71001 - 계정 생성 요청 처리 완료");
+            // 응답 데이터 로그 출력
+            logger.info("=== ACMBC71001.createAccountGet - Response: success=true, message=계정이 성공적으로 생성되었습니다. ===", "ACMBC71001");
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                AccountPDTO resultAccount = (AccountPDTO) output.get("AccountPDTO");
+                if (resultAccount != null) {
+                    logger.info("=== ACMBC71001.createAccountGet - Output AccountPDTO: accountNumber=" + resultAccount.getAccountNumber() + 
+                               ", name=" + resultAccount.getName() + ", accountType=" + resultAccount.getAccountType() + 
+                               ", status=" + resultAccount.getStatus() + ", currency=" + resultAccount.getCurrency() + 
+                               ", netAmount=" + resultAccount.getNetAmount() + ", interestRate=" + resultAccount.getInterestRate() + 
+                               ", createdDate=" + resultAccount.getCreatedDate() + " ===", "ACMBC71001");
+                }
+            }
+
+            logger.info("=== ACMBC71001.createAccountGet - Success: accountId=" + accountId + " ===", "ACMBC71001");
+            logger.info("=== ACMBC71001.createAccountGet END ===", "ACMBC71001");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("ACMBC71001 - 계정 생성 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
+            logger.error("=== ACMBC71001.createAccountGet - Error: " + e.getMessage() + " ===", "ACMBC71001");
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "계정 생성 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+            logger.info("=== ACMBC71001.createAccountGet END ===", "ACMBC71001");
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -172,6 +214,8 @@ public class ACMBC71001 implements NewIApplicationService {
      * @throws NewBusinessException 비즈니스 예외
      */
     public NewKBData execute(NewKBData reqData) throws NewBusinessException {
+        logger.info("===============================================================");
+
         logger.debug("ACMBC71001 - 계정 생성 요청 처리 시작");
 
         try {
@@ -179,7 +223,6 @@ public class ACMBC71001 implements NewIApplicationService {
             validateInputData(reqData);
 
             // 2. AS 호출
-            ASMBC71001 asMbc71001 = new ASMBC71001();
             NewKBData result = asMbc71001.execute(reqData);
 
             logger.debug("ACMBC71001 - 계정 생성 요청 처리 완료");
@@ -206,7 +249,7 @@ public class ACMBC71001 implements NewIApplicationService {
             throw new NewBusinessException("AccountPDTO가 null입니다.");
         }
         // 계좌번호 검증 (필수 필드)
-        if (accountPDTO.getAccountId() == null || accountPDTO.getAccountId().trim().isEmpty()) {
+        if (accountPDTO.getAccountNumber() == null || accountPDTO.getAccountNumber().trim().isEmpty()) {
             throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
         }
 
@@ -225,7 +268,7 @@ public class ACMBC71001 implements NewIApplicationService {
             throw new NewBusinessException("AccountPDTO가 null입니다.");
         }
         // 계좌번호 검증 (필수 필드)
-        if (accountPDTO.getAccountId() == null || accountPDTO.getAccountId().trim().isEmpty()) {
+        if (accountPDTO.getAccountNumber() == null || accountPDTO.getAccountNumber().trim().isEmpty()) {
             throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
         }
 

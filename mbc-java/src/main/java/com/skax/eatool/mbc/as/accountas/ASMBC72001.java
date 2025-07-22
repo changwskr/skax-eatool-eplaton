@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Service
 public class ASMBC72001 implements NewIApplicationService {
 
-	protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+	    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ASMBC72001.class);
 	private static final Logger slf4jLogger = LoggerFactory.getLogger(ASMBC72001.class);
 
 	@Autowired
@@ -158,23 +158,20 @@ public class ASMBC72001 implements NewIApplicationService {
 			slf4jLogger.info("=== ASMBC72001.execute - Created AccountPDTO: {} (SLF4J) ===", accountPDTO);
 		}
 
-		// AccountPDTO 필드값 상세 출력
-		if (accountPDTO != null) {
-			logger.info("ASMBC72001", "=== ASMBC72001.execute - AccountPDTO Field Values ===");
-			slf4jLogger.info("=== ASMBC72001.execute - AccountPDTO Field Values (SLF4J) ===");
-			
-			logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.accountId: " + accountPDTO.getAccountId() + " ===");
-			logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.accountName: " + accountPDTO.getAccountName() + " ===");
-			logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.accountType: " + accountPDTO.getAccountType() + " ===");
-			logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.accountStatus: " + accountPDTO.getAccountStatus() + " ===");
-			logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.accountBalance: " + accountPDTO.getAccountBalance() + " ===");
-			
-			slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.accountId: {} (SLF4J) ===", accountPDTO.getAccountId());
-			slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.accountName: {} (SLF4J) ===", accountPDTO.getAccountName());
-			slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.accountType: {} (SLF4J) ===", accountPDTO.getAccountType());
-			slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.accountStatus: {} (SLF4J) ===", accountPDTO.getAccountStatus());
-			slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.accountBalance: {} (SLF4J) ===", accountPDTO.getAccountBalance());
-		}
+		// AccountPDTO 값 로그 출력
+		logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.accountNumber: " + accountPDTO.getAccountNumber() + " ===");
+		logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.name: " + accountPDTO.getName() + " ===");
+		logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.accountType: " + accountPDTO.getAccountType() + " ===");
+		logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.status: " + accountPDTO.getStatus() + " ===");
+		logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.netAmount: " + accountPDTO.getNetAmount() + " ===");
+		logger.info("ASMBC72001", "=== ASMBC72001.execute - accountPDTO.currency: " + accountPDTO.getCurrency() + " ===");
+		
+		slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.accountNumber: {} (SLF4J) ===", accountPDTO.getAccountNumber());
+		slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.name: {} (SLF4J) ===", accountPDTO.getName());
+		slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.accountType: {} (SLF4J) ===", accountPDTO.getAccountType());
+		slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.status: {} (SLF4J) ===", accountPDTO.getStatus());
+		slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.netAmount: {} (SLF4J) ===", accountPDTO.getNetAmount());
+		slf4jLogger.info("=== ASMBC72001.execute - accountPDTO.currency: {} (SLF4J) ===", accountPDTO.getCurrency());
 
 		// 2.PC호출 - 목록 조회
 		java.util.List<AccountPDTO> resultList = pcAccount.getListAccount(accountPDTO);

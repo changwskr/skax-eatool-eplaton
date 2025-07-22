@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Controller;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * 계정 삭제 Application Control
@@ -29,56 +31,12 @@ import java.util.Map;
  * 
  * @version 1.0
  */
-@RestController
+@Controller
 @RequestMapping("/api/account/delete")
-@CrossOrigin(origins = "*")
+@Tag(name = "계정 관리", description = "계정 삭제 관련 API")
 public class ACMBC73001 implements NewIApplicationService {
 
-    protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
-
-    /**
-     * 계정 삭제 처리 (DELETE)
-     * 
-     * @param accountId 계좌번호
-     * @return 응답 데이터
-     * @throws NewBusinessException 비즈니스 예외
-     */
-    @DeleteMapping
-    public ResponseEntity<Map<String, Object>> deleteAccount(@RequestParam String accountId)
-            throws NewBusinessException {
-        logger.debug("ACMBC73001 - 계정 삭제 요청 처리 시작 (DELETE)");
-
-        try {
-            AccountPDTO accountPDTO = new AccountPDTO();
-            accountPDTO.setAccountId(accountId);
-
-            // 1. 입력 데이터 검증
-            validateInputData(accountPDTO);
-
-            // 2. AS 호출
-            NewKBData reqData = new NewKBData();
-            NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
-            input.put("AccountPDTO", accountPDTO);
-
-            ASMBC73001 asMbc73001 = new ASMBC73001();
-            NewKBData result = asMbc73001.execute(reqData);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "계정이 성공적으로 삭제되었습니다.");
-            response.put("data", result);
-
-            logger.debug("ACMBC73001 - 계정 삭제 요청 처리 완료");
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            logger.error("ACMBC73001 - 계정 삭제 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "계정 삭제 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ACMBC73001.class);
 
     /**
      * 계정 삭제 처리 (POST)
@@ -129,20 +87,23 @@ public class ACMBC73001 implements NewIApplicationService {
      * @throws NewBusinessException 비즈니스 예외
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> deleteAccountGet(@RequestParam String accountId)
-            throws NewBusinessException {
-        logger.debug("ACMBC73001 - 계정 삭제 요청 처리 시작 (GET)");
+    public ResponseEntity<Map<String, Object>> deleteAccount(
+            @RequestParam(value = "accountId", required = true) String accountId) throws NewBusinessException {
+        logger.info("=== ACMBC73001.deleteAccount START ===", "ACMBC73001");
+        logger.info("=== ACMBC73001.deleteAccount - Input: accountId=" + accountId + " ===", "ACMBC73001");
 
         try {
-            AccountPDTO accountPDTO = new AccountPDTO();
-            accountPDTO.setAccountId(accountId);
-
             // 1. 입력 데이터 검증
-            validateInputData(accountPDTO);
+            if (accountId == null || accountId.trim().isEmpty()) {
+                throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
+            }
 
             // 2. AS 호출
             NewKBData reqData = new NewKBData();
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
+            
+            AccountPDTO accountPDTO = new AccountPDTO();
+            accountPDTO.setAccountNumber(accountId);
             input.put("AccountPDTO", accountPDTO);
 
             ASMBC73001 asMbc73001 = new ASMBC73001();
@@ -153,14 +114,27 @@ public class ACMBC73001 implements NewIApplicationService {
             response.put("message", "계정이 성공적으로 삭제되었습니다.");
             response.put("data", result);
 
-            logger.debug("ACMBC73001 - 계정 삭제 요청 처리 완료");
+            // 응답 데이터 로그 출력
+            logger.info("=== ACMBC73001.deleteAccount - Response: success=true, message=계정이 성공적으로 삭제되었습니다. ===", "ACMBC73001");
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                AccountPDTO resultAccount = (AccountPDTO) output.get("AccountPDTO");
+                if (resultAccount != null) {
+                    logger.info("=== ACMBC73001.deleteAccount - Output AccountPDTO: accountNumber=" + resultAccount.getAccountNumber() + 
+                               ", name=" + resultAccount.getName() + ", status=" + resultAccount.getStatus() + " ===", "ACMBC73001");
+                }
+            }
+
+            logger.info("=== ACMBC73001.deleteAccount - Success: accountId=" + accountId + " ===", "ACMBC73001");
+            logger.info("=== ACMBC73001.deleteAccount END ===", "ACMBC73001");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("ACMBC73001 - 계정 삭제 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
+            logger.error("=== ACMBC73001.deleteAccount - Error: " + e.getMessage() + " ===", "ACMBC73001");
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "계정 삭제 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+            logger.info("=== ACMBC73001.deleteAccount END ===", "ACMBC73001");
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -208,7 +182,7 @@ public class ACMBC73001 implements NewIApplicationService {
         }
 
         // 계좌번호 검증 (필수 필드)
-        if (accountPDTO.getAccountId() == null || accountPDTO.getAccountId().trim().isEmpty()) {
+        if (accountPDTO.getAccountNumber() == null || accountPDTO.getAccountNumber().trim().isEmpty()) {
             throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
         }
 
@@ -227,7 +201,7 @@ public class ACMBC73001 implements NewIApplicationService {
         }
 
         // 계좌번호 검증 (필수 필드)
-        if (accountPDTO.getAccountId() == null || accountPDTO.getAccountId().trim().isEmpty()) {
+        if (accountPDTO.getAccountNumber() == null || accountPDTO.getAccountNumber().trim().isEmpty()) {
             throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
         }
 

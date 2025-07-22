@@ -10,9 +10,12 @@ import com.skax.eatool.mbc.as.accountas.ASMBC74001;
 import com.skax.eatool.mbc.pc.dto.AccountPDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Controller;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * 계정 목록 조회 Application Control
@@ -29,12 +32,15 @@ import java.util.Map;
  * 
  * @version 1.0
  */
-@RestController
+@Controller
 @RequestMapping("/api/account/list")
-@CrossOrigin(origins = "*")
+@Tag(name = "계정 관리", description = "계정 목록 관련 API")
 public class ACMBC74001 implements NewIApplicationService {
 
-    protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ACMBC74001.class);
+
+    @Autowired
+    private ASMBC74001 asMbc74001;
 
     /**
      * 계정 목록 조회 처리 (GET)
@@ -49,8 +55,14 @@ public class ACMBC74001 implements NewIApplicationService {
     public ResponseEntity<Map<String, Object>> getAccountList(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "searchKeyword", required = false) String searchKeyword) throws NewBusinessException {
-        logger.debug("ACMBC74001 - 계정 목록 조회 요청 처리 시작 (GET)");
+            @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+            @RequestParam(value = "accountType", required = false) String accountType,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "currency", required = false) String currency) throws NewBusinessException {
+        logger.info("=== ACMBC74001.getAccountList START ===", "ACMBC74001");
+        logger.info("=== ACMBC74001.getAccountList - Input: page=" + page + ", size=" + size + 
+                   ", searchKeyword=" + searchKeyword + ", accountType=" + accountType + 
+                   ", status=" + status + ", currency=" + currency + " ===", "ACMBC74001");
 
         try {
             // 1. 입력 데이터 검증
@@ -59,13 +71,29 @@ public class ACMBC74001 implements NewIApplicationService {
             // 2. AS 호출
             NewKBData reqData = new NewKBData();
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
-            input.put("page", page);
-            input.put("size", size);
+            
+            // AccountPDTO 생성 및 설정
+            AccountPDTO accountPDTO = new AccountPDTO();
+            
+            // 검색 조건 설정
             if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-                input.put("searchKeyword", searchKeyword);
+                accountPDTO.setAccountNumber(searchKeyword);
             }
+            if (accountType != null && !accountType.trim().isEmpty()) {
+                accountPDTO.setAccountType(accountType);
+            }
+            if (status != null && !status.trim().isEmpty()) {
+                accountPDTO.setStatus(status);
+            }
+            if (currency != null && !currency.trim().isEmpty()) {
+                accountPDTO.setCurrency(currency);
+            }
+            
+            // 페이징 정보 설정
+            input.put("pageNumber", page);
+            input.put("pageSize", size);
+            input.put("AccountPDTO", accountPDTO);
 
-            ASMBC74001 asMbc74001 = new ASMBC74001();
             NewKBData result = asMbc74001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
@@ -75,14 +103,37 @@ public class ACMBC74001 implements NewIApplicationService {
             response.put("page", page);
             response.put("size", size);
 
-            logger.debug("ACMBC74001 - 계정 목록 조회 요청 처리 완료");
+            // 응답 데이터 로그 출력
+            logger.info("=== ACMBC74001.getAccountList - Response: success=true, message=계정 목록 조회가 완료되었습니다., page=" + page + ", size=" + size + " ===", "ACMBC74001");
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                @SuppressWarnings("unchecked")
+                java.util.List<AccountPDTO> accountList = (java.util.List<AccountPDTO>) output.get("AccountPDTO");
+                if (accountList != null) {
+                    logger.info("=== ACMBC74001.getAccountList - Output AccountPDTO List: count=" + accountList.size() + " ===", "ACMBC74001");
+                    for (int i = 0; i < Math.min(accountList.size(), 3); i++) { // 최대 3개만 로그 출력
+                        AccountPDTO account = accountList.get(i);
+                        logger.info("=== ACMBC74001.getAccountList - Account[" + i + "]: accountNumber=" + account.getAccountNumber() + 
+                                   ", name=" + account.getName() + ", accountType=" + account.getAccountType() + 
+                                   ", status=" + account.getStatus() + ", currency=" + account.getCurrency() + 
+                                   ", netAmount=" + account.getNetAmount() + " ===", "ACMBC74001");
+                    }
+                    if (accountList.size() > 3) {
+                        logger.info("=== ACMBC74001.getAccountList - ... and " + (accountList.size() - 3) + " more accounts ===", "ACMBC74001");
+                    }
+                }
+            }
+
+            logger.info("=== ACMBC74001.getAccountList - Success: found accounts ===", "ACMBC74001");
+            logger.info("=== ACMBC74001.getAccountList END ===", "ACMBC74001");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("ACMBC74001 - 계정 목록 조회 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
+            logger.error("=== ACMBC74001.getAccountList - Error: " + e.getMessage() + " ===", "ACMBC74001");
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "계정 목록 조회 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+            logger.info("=== ACMBC74001.getAccountList END ===", "ACMBC74001");
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -97,7 +148,8 @@ public class ACMBC74001 implements NewIApplicationService {
     @PostMapping
     public ResponseEntity<Map<String, Object>> getAccountListPost(@RequestBody Map<String, Object> requestBody)
             throws NewBusinessException {
-        logger.debug("ACMBC74001 - 계정 목록 조회 요청 처리 시작 (POST)");
+        logger.info("=== ACMBC74001.getAccountListPost START ===", "ACMBC74001");
+        logger.info("=== ACMBC74001.getAccountListPost - Input: " + requestBody.toString() + " ===", "ACMBC74001");
 
         try {
             // 1. 입력 데이터 검증
@@ -107,12 +159,28 @@ public class ACMBC74001 implements NewIApplicationService {
             NewKBData reqData = new NewKBData();
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
 
-            // 요청 본문의 모든 파라미터를 input에 추가
-            for (Map.Entry<String, Object> entry : requestBody.entrySet()) {
-                input.put(entry.getKey(), entry.getValue());
+            // AccountPDTO 생성 및 설정
+            AccountPDTO accountPDTO = new AccountPDTO();
+            
+            // 검색 조건 설정
+            if (requestBody.containsKey("searchKeyword")) {
+                accountPDTO.setAccountNumber((String) requestBody.get("searchKeyword"));
             }
+            if (requestBody.containsKey("accountType")) {
+                accountPDTO.setAccountType((String) requestBody.get("accountType"));
+            }
+            if (requestBody.containsKey("status")) {
+                accountPDTO.setStatus((String) requestBody.get("status"));
+            }
+            if (requestBody.containsKey("currency")) {
+                accountPDTO.setCurrency((String) requestBody.get("currency"));
+            }
+            
+            // 페이징 정보 설정
+            input.put("pageNumber", requestBody.getOrDefault("pageNumber", 1));
+            input.put("pageSize", requestBody.getOrDefault("pageSize", 10));
+            input.put("AccountPDTO", accountPDTO);
 
-            ASMBC74001 asMbc74001 = new ASMBC74001();
             NewKBData result = asMbc74001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
@@ -120,14 +188,37 @@ public class ACMBC74001 implements NewIApplicationService {
             response.put("message", "계정 목록 조회가 완료되었습니다.");
             response.put("data", result);
 
-            logger.debug("ACMBC74001 - 계정 목록 조회 요청 처리 완료");
+            // 응답 데이터 로그 출력
+            logger.info("=== ACMBC74001.getAccountListPost - Response: success=true, message=계정 목록 조회가 완료되었습니다. ===", "ACMBC74001");
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                @SuppressWarnings("unchecked")
+                java.util.List<AccountPDTO> accountList = (java.util.List<AccountPDTO>) output.get("AccountPDTO");
+                if (accountList != null) {
+                    logger.info("=== ACMBC74001.getAccountListPost - Output AccountPDTO List: count=" + accountList.size() + " ===", "ACMBC74001");
+                    for (int i = 0; i < Math.min(accountList.size(), 3); i++) { // 최대 3개만 로그 출력
+                        AccountPDTO account = accountList.get(i);
+                        logger.info("=== ACMBC74001.getAccountListPost - Account[" + i + "]: accountNumber=" + account.getAccountNumber() + 
+                                   ", name=" + account.getName() + ", accountType=" + account.getAccountType() + 
+                                   ", status=" + account.getStatus() + ", currency=" + account.getCurrency() + 
+                                   ", netAmount=" + account.getNetAmount() + " ===", "ACMBC74001");
+                    }
+                    if (accountList.size() > 3) {
+                        logger.info("=== ACMBC74001.getAccountListPost - ... and " + (accountList.size() - 3) + " more accounts ===", "ACMBC74001");
+                    }
+                }
+            }
+
+            logger.info("=== ACMBC74001.getAccountListPost - Success: found accounts ===", "ACMBC74001");
+            logger.info("=== ACMBC74001.getAccountListPost END ===", "ACMBC74001");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("ACMBC74001 - 계정 목록 조회 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
+            logger.error("=== ACMBC74001.getAccountListPost - Error: " + e.getMessage() + " ===", "ACMBC74001");
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "계정 목록 조회 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+            logger.info("=== ACMBC74001.getAccountListPost END ===", "ACMBC74001");
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -147,7 +238,6 @@ public class ACMBC74001 implements NewIApplicationService {
             validateInputData(reqData);
 
             // 2. AS 호출
-            ASMBC74001 asMbc74001 = new ASMBC74001();
             NewKBData result = asMbc74001.execute(reqData);
 
             logger.debug("ACMBC74001 - 계정 목록 조회 요청 처리 완료");

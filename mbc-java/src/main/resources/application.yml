@@ -82,6 +82,7 @@ server:
 logging:
   level:
     com.skax.eatool.mbc: INFO
+    com.skax.eatool.mbc.ac: INFO
     com.skax.eatool.mbc.as: INFO
     com.skax.eatool.mbc.pc: INFO
     com.skax.eatool.mbc.dc: INFO

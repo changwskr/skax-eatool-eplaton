@@ -24,7 +24,7 @@ spring:
 
   # Database Configuration (H2 In-Memory)
   datasource:
-    url: jdbc:h2:mem:mbcdb_dev;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -33,12 +33,21 @@ spring:
       minimum-idle: 5
       connection-timeout: 30000
 
-  # JPA Configuration - Disabled for MyBatis only
+  # JPA Configuration - Enabled for schema.sql and data.sql execution
   jpa:
-    enabled: false
+    enabled: true
     hibernate:
-      ddl-auto: none
-    show-sql: false
+      ddl-auto: create-drop
+    show-sql: true
+    defer-datasource-initialization: true
+
+  # SQL 초기화 설정
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: true
 
   # H2 Console (Development Only)
   h2:
@@ -63,7 +72,7 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Seoul
-    default-property-inclusion: non_null
+    default-property-inclusion: NON_NULL
     serialization:
       write-dates-as-timestamps: false
     deserialization:
@@ -83,6 +92,7 @@ logging:
   level:
     root: INFO
     com.skax.eatool.mbc: DEBUG
+    com.skax.eatool.mbc.ac: INFO
     com.skax.eatool.ksa: DEBUG
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG

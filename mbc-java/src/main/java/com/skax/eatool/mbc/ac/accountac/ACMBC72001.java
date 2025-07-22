@@ -10,9 +10,12 @@ import com.skax.eatool.mbc.as.accountas.ASMBC72001;
 import com.skax.eatool.mbc.pc.dto.AccountPDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Controller;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * 계정 조회 Application Control
@@ -29,12 +32,15 @@ import java.util.Map;
  * 
  * @version 1.0
  */
-@RestController
+@Controller
 @RequestMapping("/api/account/read")
-@CrossOrigin(origins = "*")
+@Tag(name = "계정 관리", description = "계정 조회 관련 API")
 public class ACMBC72001 implements NewIApplicationService {
 
-    protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ACMBC72001.class);
+
+    @Autowired
+    private ASMBC72001 asMbc72001;
 
     /**
      * 계정 조회 처리 (GET)
@@ -44,22 +50,25 @@ public class ACMBC72001 implements NewIApplicationService {
      * @throws NewBusinessException 비즈니스 예외
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAccount(@RequestParam String accountId) throws NewBusinessException {
-        logger.debug("ACMBC72001 - 계정 조회 요청 처리 시작 (GET)");
+    public ResponseEntity<Map<String, Object>> getAccountDetail(
+            @RequestParam(value = "accountId", required = true) String accountId) throws NewBusinessException {
+        logger.info("=== ACMBC72001.getAccountDetail START ===");
+        logger.info("=== ACMBC72001.getAccountDetail - Input: accountId=" + accountId + " ===");
 
         try {
-            AccountPDTO accountPDTO = new AccountPDTO();
-            accountPDTO.setAccountId(accountId);
-
             // 1. 입력 데이터 검증
-            validateInputData(accountPDTO);
+            if (accountId == null || accountId.trim().isEmpty()) {
+                throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
+            }
 
             // 2. AS 호출
             NewKBData reqData = new NewKBData();
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
+            
+            AccountPDTO accountPDTO = new AccountPDTO();
+            accountPDTO.setAccountNumber(accountId);
             input.put("AccountPDTO", accountPDTO);
 
-            ASMBC72001 asMbc72001 = new ASMBC72001();
             NewKBData result = asMbc72001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
@@ -67,14 +76,31 @@ public class ACMBC72001 implements NewIApplicationService {
             response.put("message", "계정 조회가 완료되었습니다.");
             response.put("data", result);
 
-            logger.debug("ACMBC72001 - 계정 조회 요청 처리 완료");
+            // 응답 데이터 로그 출력
+            logger.info("=== ACMBC72001.getAccountDetail - Response: success=true, message=계정 조회가 완료되었습니다. ===");
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                AccountPDTO resultAccount = (AccountPDTO) output.get("AccountPDTO");
+                if (resultAccount != null) {
+                    logger.info("=== ACMBC72001.getAccountDetail - Output AccountPDTO: accountNumber=" + resultAccount.getAccountNumber() + 
+                               ", name=" + resultAccount.getName() + ", accountType=" + resultAccount.getAccountType() + 
+                               ", status=" + resultAccount.getStatus() + ", currency=" + resultAccount.getCurrency() + 
+                               ", netAmount=" + resultAccount.getNetAmount() + ", interestRate=" + resultAccount.getInterestRate() + 
+                               ", identificationNumber=" + resultAccount.getIdentificationNumber() + ", createdDate=" + resultAccount.getCreatedDate() + 
+                               ", updatedDate=" + resultAccount.getUpdatedDate() + " ===");
+                }
+            }
+
+            logger.info("=== ACMBC72001.getAccountDetail - Success: accountId=" + accountId + " ===");
+            logger.info("=== ACMBC72001.getAccountDetail END ===");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("ACMBC72001 - 계정 조회 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
+            logger.error("=== ACMBC72001.getAccountDetail - Error: " + e.getMessage() + " ===");
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "계정 조회 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+            logger.info("=== ACMBC72001.getAccountDetail END ===");
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -100,7 +126,6 @@ public class ACMBC72001 implements NewIApplicationService {
             NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
             input.put("AccountPDTO", accountPDTO);
 
-            ASMBC72001 asMbc72001 = new ASMBC72001();
             NewKBData result = asMbc72001.execute(reqData);
 
             Map<String, Object> response = new HashMap<>();
@@ -135,7 +160,6 @@ public class ACMBC72001 implements NewIApplicationService {
             validateInputData(reqData);
 
             // 2. AS 호출
-            ASMBC72001 asMbc72001 = new ASMBC72001();
             NewKBData result = asMbc72001.execute(reqData);
 
             logger.debug("ACMBC72001 - 계정 조회 요청 처리 완료");
@@ -165,7 +189,7 @@ public class ACMBC72001 implements NewIApplicationService {
         }
 
         // 계좌번호 검증 (필수 필드)
-        if (accountPDTO.getAccountId() == null || accountPDTO.getAccountId().trim().isEmpty()) {
+        if (accountPDTO.getAccountNumber() == null || accountPDTO.getAccountNumber().trim().isEmpty()) {
             throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
         }
 
@@ -184,7 +208,7 @@ public class ACMBC72001 implements NewIApplicationService {
         }
 
         // 계좌번호 검증 (필수 필드)
-        if (accountPDTO.getAccountId() == null || accountPDTO.getAccountId().trim().isEmpty()) {
+        if (accountPDTO.getAccountNumber() == null || accountPDTO.getAccountNumber().trim().isEmpty()) {
             throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
         }
 

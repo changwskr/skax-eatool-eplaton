@@ -8,60 +8,45 @@
 package com.skax.eatool.mbc.pc.dto;
 
 import com.skax.eatool.ksa.infra.po.NewAbstractDTO;
+import java.util.Date;
 
 /**
- * AccountPDTO class
+ * AccountPDTO class - Entity와 일치하는 필드명으로 수정
  */
 public class AccountPDTO extends NewAbstractDTO {
 
-	private String accountId;
-	private String accountName;
-	private String accountType;
-	private String accountStatus;
-	private String accountBalance;
-	private String accountCurrency;
-	private String accountOpenDate;
-	private String accountCloseDate;
-	private String accountOwner;
-	private String accountManager;
-	private String accountBranch;
-	private String accountProduct;
-	private String accountInterestRate;
-	private String accountFee;
-	private String accountLimit;
-	private String accountOverdraft;
-	private String accountLastTransaction;
-	private String accountLastBalance;
-	private String accountLastInterest;
-	private String accountLastFee;
-	private String accountLastLimit;
-	private String accountLastOverdraft;
-	private String accountLastTransactionDate;
-	private String accountLastBalanceDate;
-	private String accountLastInterestDate;
-	private String accountLastFeeDate;
-	private String accountLastLimitDate;
-	private String accountLastOverdraftDate;
+	private String accountNumber; // 계좌번호 (Entity와 일치)
+	private String name; // 계정명 (Entity와 일치)
+	private String accountType; // 계정 타입
+	private String status; // 계정 상태 (Entity와 일치)
+	private String currency; // 통화 (Entity와 일치)
+	private String netAmount; // 잔액 (Entity와 일치, String으로 유지)
+	private String interestRate; // 이자율 (Entity와 일치, String으로 유지)
+	private String identificationNumber; // 주민번호 (Entity와 일치)
+	private String password; // 비밀번호 (Entity와 일치)
+	private String lastTransaction; // 마지막거래일 (Entity와 일치, String으로 유지)
+	private String createdDate; // 생성일 (Entity와 일치, String으로 유지)
+	private String updatedDate; // 수정일 (Entity와 일치, String으로 유지)
 
 	public AccountPDTO() {
 		// Default constructor
 	}
 
 	// Getters and setters
-	public String getAccountId() {
-		return accountId;
+	public String getAccountNumber() {
+		return accountNumber;
 	}
 
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
 	}
 
-	public String getAccountName() {
-		return accountName;
+	public String getName() {
+		return name;
 	}
 
-	public void setAccountName(String accountName) {
-		this.accountName = accountName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getAccountType() {
@@ -72,203 +57,136 @@ public class AccountPDTO extends NewAbstractDTO {
 		this.accountType = accountType;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getNetAmount() {
+		return netAmount;
+	}
+
+	public void setNetAmount(String netAmount) {
+		this.netAmount = netAmount;
+	}
+
+	public String getInterestRate() {
+		return interestRate;
+	}
+
+	public void setInterestRate(String interestRate) {
+		this.interestRate = interestRate;
+	}
+
+	public String getIdentificationNumber() {
+		return identificationNumber;
+	}
+
+	public void setIdentificationNumber(String identificationNumber) {
+		this.identificationNumber = identificationNumber;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getLastTransaction() {
+		return lastTransaction;
+	}
+
+	public void setLastTransaction(String lastTransaction) {
+		this.lastTransaction = lastTransaction;
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(String updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	// 레거시 호환성을 위한 메서드들
+	@Deprecated
+	public String getAccountId() {
+		return accountNumber;
+	}
+
+	@Deprecated
+	public void setAccountId(String accountId) {
+		this.accountNumber = accountId;
+	}
+
+	@Deprecated
+	public String getAccountName() {
+		return name;
+	}
+
+	@Deprecated
+	public void setAccountName(String accountName) {
+		this.name = accountName;
+	}
+
+	@Deprecated
 	public String getAccountStatus() {
-		return accountStatus;
+		return status;
 	}
 
+	@Deprecated
 	public void setAccountStatus(String accountStatus) {
-		this.accountStatus = accountStatus;
+		this.status = accountStatus;
 	}
 
-	public String getAccountBalance() {
-		return accountBalance;
-	}
-
-	public void setAccountBalance(String accountBalance) {
-		this.accountBalance = accountBalance;
-	}
-
+	@Deprecated
 	public String getAccountCurrency() {
-		return accountCurrency;
+		return currency;
 	}
 
+	@Deprecated
 	public void setAccountCurrency(String accountCurrency) {
-		this.accountCurrency = accountCurrency;
+		this.currency = accountCurrency;
 	}
 
-	public String getAccountOpenDate() {
-		return accountOpenDate;
+	@Deprecated
+	public String getAccountBalance() {
+		return netAmount;
 	}
 
-	public void setAccountOpenDate(String accountOpenDate) {
-		this.accountOpenDate = accountOpenDate;
+	@Deprecated
+	public void setAccountBalance(String accountBalance) {
+		this.netAmount = accountBalance;
 	}
 
-	public String getAccountCloseDate() {
-		return accountCloseDate;
-	}
-
-	public void setAccountCloseDate(String accountCloseDate) {
-		this.accountCloseDate = accountCloseDate;
-	}
-
-	public String getAccountOwner() {
-		return accountOwner;
-	}
-
-	public void setAccountOwner(String accountOwner) {
-		this.accountOwner = accountOwner;
-	}
-
-	public String getAccountManager() {
-		return accountManager;
-	}
-
-	public void setAccountManager(String accountManager) {
-		this.accountManager = accountManager;
-	}
-
-	public String getAccountBranch() {
-		return accountBranch;
-	}
-
-	public void setAccountBranch(String accountBranch) {
-		this.accountBranch = accountBranch;
-	}
-
-	public String getAccountProduct() {
-		return accountProduct;
-	}
-
-	public void setAccountProduct(String accountProduct) {
-		this.accountProduct = accountProduct;
-	}
-
+	@Deprecated
 	public String getAccountInterestRate() {
-		return accountInterestRate;
+		return interestRate;
 	}
 
+	@Deprecated
 	public void setAccountInterestRate(String accountInterestRate) {
-		this.accountInterestRate = accountInterestRate;
-	}
-
-	public String getAccountFee() {
-		return accountFee;
-	}
-
-	public void setAccountFee(String accountFee) {
-		this.accountFee = accountFee;
-	}
-
-	public String getAccountLimit() {
-		return accountLimit;
-	}
-
-	public void setAccountLimit(String accountLimit) {
-		this.accountLimit = accountLimit;
-	}
-
-	public String getAccountOverdraft() {
-		return accountOverdraft;
-	}
-
-	public void setAccountOverdraft(String accountOverdraft) {
-		this.accountOverdraft = accountOverdraft;
-	}
-
-	public String getAccountLastTransaction() {
-		return accountLastTransaction;
-	}
-
-	public void setAccountLastTransaction(String accountLastTransaction) {
-		this.accountLastTransaction = accountLastTransaction;
-	}
-
-	public String getAccountLastBalance() {
-		return accountLastBalance;
-	}
-
-	public void setAccountLastBalance(String accountLastBalance) {
-		this.accountLastBalance = accountLastBalance;
-	}
-
-	public String getAccountLastInterest() {
-		return accountLastInterest;
-	}
-
-	public void setAccountLastInterest(String accountLastInterest) {
-		this.accountLastInterest = accountLastInterest;
-	}
-
-	public String getAccountLastFee() {
-		return accountLastFee;
-	}
-
-	public void setAccountLastFee(String accountLastFee) {
-		this.accountLastFee = accountLastFee;
-	}
-
-	public String getAccountLastLimit() {
-		return accountLastLimit;
-	}
-
-	public void setAccountLastLimit(String accountLastLimit) {
-		this.accountLastLimit = accountLastLimit;
-	}
-
-	public String getAccountLastOverdraft() {
-		return accountLastOverdraft;
-	}
-
-	public void setAccountLastOverdraft(String accountLastOverdraft) {
-		this.accountLastOverdraft = accountLastOverdraft;
-	}
-
-	public String getAccountLastTransactionDate() {
-		return accountLastTransactionDate;
-	}
-
-	public void setAccountLastTransactionDate(String accountLastTransactionDate) {
-		this.accountLastTransactionDate = accountLastTransactionDate;
-	}
-
-	public String getAccountLastBalanceDate() {
-		return accountLastBalanceDate;
-	}
-
-	public void setAccountLastBalanceDate(String accountLastBalanceDate) {
-		this.accountLastBalanceDate = accountLastBalanceDate;
-	}
-
-	public String getAccountLastInterestDate() {
-		return accountLastInterestDate;
-	}
-
-	public void setAccountLastInterestDate(String accountLastInterestDate) {
-		this.accountLastInterestDate = accountLastInterestDate;
-	}
-
-	public String getAccountLastFeeDate() {
-		return accountLastFeeDate;
-	}
-
-	public void setAccountLastFeeDate(String accountLastFeeDate) {
-		this.accountLastFeeDate = accountLastFeeDate;
-	}
-
-	public String getAccountLastLimitDate() {
-		return accountLastLimitDate;
-	}
-
-	public void setAccountLastLimitDate(String accountLastLimitDate) {
-		this.accountLastLimitDate = accountLastLimitDate;
-	}
-
-	public String getAccountLastOverdraftDate() {
-		return accountLastOverdraftDate;
-	}
-
-	public void setAccountLastOverdraftDate(String accountLastOverdraftDate) {
-		this.accountLastOverdraftDate = accountLastOverdraftDate;
+		this.interestRate = accountInterestRate;
 	}
 }

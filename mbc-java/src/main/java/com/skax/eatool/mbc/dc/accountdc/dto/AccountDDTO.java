@@ -34,13 +34,24 @@ public class AccountDDTO extends NewAbstractDTO {
 
 	private String identificationNumber; // Identification Number
 
-	private Float interestRate; // Interest Rate
+	private Double interestRate; // Interest Rate (DECIMAL 타입에 맞춰 Double로 변경)
 
 	private Date lastTransaction; // Last Transaction Date
 
 	private String password; // Password
 
 	private Double netAmount; // Amount
+
+	// 누락된 컬럼들 추가
+	private String accountType; // 계정 타입
+
+	private String status; // 계정 상태
+
+	private String currency; // 통화
+
+	private Date createdDate; // 생성일
+
+	private Date updatedDate; // 수정일
 
 	public String getAccountNumber() {
 		return accountNumber;
@@ -58,11 +69,11 @@ public class AccountDDTO extends NewAbstractDTO {
 		this.identificationNumber = identificationNumber;
 	}
 
-	public Float getInterestRate() {
+	public Double getInterestRate() {
 		return interestRate;
 	}
 
-	public void setInterestRate(Float interestRate) {
+	public void setInterestRate(Double interestRate) {
 		this.interestRate = interestRate;
 	}
 
@@ -98,4 +109,44 @@ public class AccountDDTO extends NewAbstractDTO {
 		this.password = password;
 	}
 
+	// 추가된 컬럼들의 getter/setter
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
+	}
 }

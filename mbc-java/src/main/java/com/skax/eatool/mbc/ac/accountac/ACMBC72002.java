@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Controller;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * 계정 수정 Application Control
@@ -29,53 +31,12 @@ import java.util.Map;
  * 
  * @version 1.0
  */
-@RestController
+@Controller
 @RequestMapping("/api/account/update")
-@CrossOrigin(origins = "*")
+@Tag(name = "계정 관리", description = "계정 수정 관련 API")
 public class ACMBC72002 implements NewIApplicationService {
 
-    protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
-
-    /**
-     * 계정 수정 처리 (PUT)
-     * 
-     * @param accountPDTO 계정 정보
-     * @return 응답 데이터
-     * @throws NewBusinessException 비즈니스 예외
-     */
-    @PutMapping
-    public ResponseEntity<Map<String, Object>> updateAccount(@RequestBody AccountPDTO accountPDTO)
-            throws NewBusinessException {
-        logger.debug("ACMBC72002 - 계정 수정 요청 처리 시작 (PUT)");
-
-        try {
-            // 1. 입력 데이터 검증
-            validateInputData(accountPDTO);
-
-            // 2. AS 호출
-            NewKBData reqData = new NewKBData();
-            NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
-            input.put("AccountPDTO", accountPDTO);
-
-            ASMBC72002 asMbc72002 = new ASMBC72002();
-            NewKBData result = asMbc72002.execute(reqData);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "계정이 성공적으로 수정되었습니다.");
-            response.put("data", result);
-
-            logger.debug("ACMBC72002 - 계정 수정 요청 처리 완료");
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            logger.error("ACMBC72002 - 계정 수정 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "계정 수정 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ACMBC72002.class);
 
     /**
      * 계정 수정 처리 (POST)
@@ -85,9 +46,14 @@ public class ACMBC72002 implements NewIApplicationService {
      * @throws NewBusinessException 비즈니스 예외
      */
     @PostMapping
-    public ResponseEntity<Map<String, Object>> updateAccountPost(@RequestBody AccountPDTO accountPDTO)
+    public ResponseEntity<Map<String, Object>> updateAccount(@RequestBody AccountPDTO accountPDTO)
             throws NewBusinessException {
-        logger.debug("ACMBC72002 - 계정 수정 요청 처리 시작 (POST)");
+        logger.info("=== ACMBC72002.updateAccount START ===", "ACMBC72002");
+        logger.info("=== ACMBC72002.updateAccount - Input AccountPDTO: accountNumber=" + accountPDTO.getAccountNumber() + 
+                   ", name=" + accountPDTO.getName() + ", accountType=" + accountPDTO.getAccountType() + 
+                   ", status=" + accountPDTO.getStatus() + ", currency=" + accountPDTO.getCurrency() + 
+                   ", netAmount=" + accountPDTO.getNetAmount() + ", interestRate=" + accountPDTO.getInterestRate() + 
+                   ", identificationNumber=" + accountPDTO.getIdentificationNumber() + " ===", "ACMBC72002");
 
         try {
             // 1. 입력 데이터 검증
@@ -106,14 +72,30 @@ public class ACMBC72002 implements NewIApplicationService {
             response.put("message", "계정이 성공적으로 수정되었습니다.");
             response.put("data", result);
 
-            logger.debug("ACMBC72002 - 계정 수정 요청 처리 완료");
+            // 응답 데이터 로그 출력
+            logger.info("=== ACMBC72002.updateAccount - Response: success=true, message=계정이 성공적으로 수정되었습니다. ===", "ACMBC72002");
+            if (result != null && result.getOutputGenericDto() != null) {
+                NewGenericDto output = result.getOutputGenericDto().using(NewGenericDto.OUTDATA);
+                AccountPDTO resultAccount = (AccountPDTO) output.get("AccountPDTO");
+                if (resultAccount != null) {
+                    logger.info("=== ACMBC72002.updateAccount - Output AccountPDTO: accountNumber=" + resultAccount.getAccountNumber() + 
+                               ", name=" + resultAccount.getName() + ", accountType=" + resultAccount.getAccountType() + 
+                               ", status=" + resultAccount.getStatus() + ", currency=" + resultAccount.getCurrency() + 
+                               ", netAmount=" + resultAccount.getNetAmount() + ", interestRate=" + resultAccount.getInterestRate() + 
+                               ", updatedDate=" + resultAccount.getUpdatedDate() + " ===", "ACMBC72002");
+                }
+            }
+
+            logger.info("=== ACMBC72002.updateAccount - Success: accountNumber=" + accountPDTO.getAccountNumber() + " ===", "ACMBC72002");
+            logger.info("=== ACMBC72002.updateAccount END ===", "ACMBC72002");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("ACMBC72002 - 계정 수정 처리 중 오류 발생: " + e.getMessage(), String.valueOf(e));
+            logger.error("=== ACMBC72002.updateAccount - Error: " + e.getMessage() + " ===", "ACMBC72002");
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "계정 수정 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+            logger.info("=== ACMBC72002.updateAccount END ===", "ACMBC72002");
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -134,8 +116,8 @@ public class ACMBC72002 implements NewIApplicationService {
 
         try {
             AccountPDTO accountPDTO = new AccountPDTO();
-            accountPDTO.setAccountId(accountId);
-            accountPDTO.setAccountName(accountName);
+            accountPDTO.setAccountNumber(accountId);
+            accountPDTO.setName(accountName);
 
             // 1. 입력 데이터 검증
             validateInputData(accountPDTO);
@@ -208,7 +190,7 @@ public class ACMBC72002 implements NewIApplicationService {
         }
 
         // 계좌번호 검증 (필수 필드)
-        if (accountPDTO.getAccountId() == null || accountPDTO.getAccountId().trim().isEmpty()) {
+        if (accountPDTO.getAccountNumber() == null || accountPDTO.getAccountNumber().trim().isEmpty()) {
             throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
         }
 
@@ -227,7 +209,7 @@ public class ACMBC72002 implements NewIApplicationService {
         }
 
         // 계좌번호 검증 (필수 필드)
-        if (accountPDTO.getAccountId() == null || accountPDTO.getAccountId().trim().isEmpty()) {
+        if (accountPDTO.getAccountNumber() == null || accountPDTO.getAccountNumber().trim().isEmpty()) {
             throw new NewBusinessException("계좌번호는 필수 입력 항목입니다.");
         }
 

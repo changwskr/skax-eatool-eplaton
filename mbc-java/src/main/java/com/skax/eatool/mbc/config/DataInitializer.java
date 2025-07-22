@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 데이터 초기화 클래스
@@ -85,43 +87,38 @@ public class DataInitializer implements CommandLineRunner {
         logger.info("초기 데이터 확인 중...", "DataInitializer");
 
         try {
-            // 사용자 데이터 확인
-            int userCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER_INFO", Integer.class);
-            logger.info("사용자 데이터: " + userCount + "건", "DataInitializer");
-        } catch (Exception e) {
-            logger.warn("사용자 데이터 확인 실패: " + e.getMessage(), "DataInitializer");
-        }
+            // ACCOUNT 테이블 데이터 확인
+            String accountSql = "SELECT COUNT(*) FROM ACCOUNT";
+            int accountCount = jdbcTemplate.queryForObject(accountSql, Integer.class);
+            logger.info("ACCOUNT 테이블 레코드 수: " + accountCount, "DataInitializer");
 
-        try {
-            // 계정 데이터 확인
-            int accountCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM ACCOUNT", Integer.class);
-            logger.info("계정 데이터: " + accountCount + "건", "DataInitializer");
-        } catch (Exception e) {
-            logger.warn("계정 데이터 확인 실패: " + e.getMessage(), "DataInitializer");
-        }
+            if (accountCount > 0) {
+                // ACCOUNT 테이블의 실제 데이터 확인
+                String accountDataSql = "SELECT ACCOUNT_NUMBER, NAME, NET_AMOUNT FROM ACCOUNT LIMIT 5";
+                List<Map<String, Object>> accounts = jdbcTemplate.queryForList(accountDataSql);
+                
+                logger.info("ACCOUNT 테이블 샘플 데이터:", "DataInitializer");
+                for (Map<String, Object> account : accounts) {
+                    logger.info("  - 계좌번호: " + account.get("ACCOUNT_NUMBER") + 
+                               ", 이름: " + account.get("NAME") + 
+                               ", 잔액: " + account.get("NET_AMOUNT"), "DataInitializer");
+                }
+            } else {
+                logger.warn("ACCOUNT 테이블에 데이터가 없습니다!", "DataInitializer");
+            }
 
-        try {
-            // 시스템 코드 확인
-            int codeCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM SYSTEM_CODE", Integer.class);
-            logger.info("시스템 코드: " + codeCount + "건", "DataInitializer");
-        } catch (Exception e) {
-            logger.warn("시스템 코드 확인 실패: " + e.getMessage(), "DataInitializer");
-        }
+            // USER_INFO 테이블 데이터 확인
+            String userSql = "SELECT COUNT(*) FROM USER_INFO";
+            int userCount = jdbcTemplate.queryForObject(userSql, Integer.class);
+            logger.info("USER_INFO 테이블 레코드 수: " + userCount, "DataInitializer");
 
-        try {
-            // 사용자-계정 매핑 확인
-            int mappingCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER_ACCOUNT", Integer.class);
-            logger.info("사용자-계정 매핑: " + mappingCount + "건", "DataInitializer");
-        } catch (Exception e) {
-            logger.warn("사용자-계정 매핑 확인 실패: " + e.getMessage(), "DataInitializer");
-        }
+            // SYSTEM_CODE 테이블 데이터 확인
+            String codeSql = "SELECT COUNT(*) FROM SYSTEM_CODE";
+            int codeCount = jdbcTemplate.queryForObject(codeSql, Integer.class);
+            logger.info("SYSTEM_CODE 테이블 레코드 수: " + codeCount, "DataInitializer");
 
-        try {
-            // 로그 데이터 확인
-            int logCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM SYSTEM_LOG", Integer.class);
-            logger.info("시스템 로그: " + logCount + "건", "DataInitializer");
         } catch (Exception e) {
-            logger.warn("시스템 로그 확인 실패: " + e.getMessage(), "DataInitializer");
+            logger.error("초기 데이터 확인 중 오류 발생: " + e.getMessage(), "DataInitializer");
         }
     }
 

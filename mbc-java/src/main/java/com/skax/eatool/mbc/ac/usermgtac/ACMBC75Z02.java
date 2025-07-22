@@ -33,7 +33,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class ACMBC75Z02 implements NewIApplicationService {
 
-    protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ACMBC75Z02.class);
 
     /**
      * 사용자 트리 조회 처리 (GET)
