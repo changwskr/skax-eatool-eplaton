@@ -15,7 +15,7 @@
     <artifactId>mbc01-lib</artifactId>
     <packaging>jar</packaging>
     <name>MBC01 Library - External JAR Distribution</name>
-    <description>MBC01 External JAR files distribution module</description>
+    <description>MBC01 External JAR files distribution module (for external dependencies only)</description>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -30,12 +30,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>runtime</directory>
-                <targetPath>runtime</targetPath>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

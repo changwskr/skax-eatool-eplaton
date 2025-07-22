@@ -13,6 +13,7 @@
     </parent>
 
     <artifactId>ksa-java</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <name>KSA Java Implementation</name>
     <description>KSA Framework Java Implementation - Spring Boot Application</description>
 

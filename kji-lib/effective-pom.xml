@@ -21,7 +21,7 @@
   <artifactId>kji-lib</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>KJI Library - External JAR Distribution</name>
-  <description>KJI External JAR files distribution module</description>
+  <description>KJI External JAR files distribution module (for external dependencies only)</description>
   <properties>
     <java.version>11</java.version>
     <maven.compiler.source>11</maven.compiler.source>
@@ -6127,8 +6127,7 @@
     <testOutputDirectory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\kji-lib\target\test-classes</testOutputDirectory>
     <resources>
       <resource>
-        <targetPath>runtime</targetPath>
-        <directory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\kji-lib\runtime</directory>
+        <directory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\kji-lib\src\main\resources</directory>
       </resource>
     </resources>
     <testResources>

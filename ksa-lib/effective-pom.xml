@@ -20,8 +20,8 @@
   <groupId>com.skax.eatool</groupId>
   <artifactId>ksa-lib</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>KSA Library</name>
-  <description>KSA Framework Library Module</description>
+  <name>KSA Library - External JAR Distribution</name>
+  <description>KSA External JAR files distribution module (for external dependencies only)</description>
   <properties>
     <java.version>11</java.version>
     <maven.compiler.source>11</maven.compiler.source>
@@ -6127,12 +6127,7 @@
     <testOutputDirectory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\ksa-lib\target\test-classes</testOutputDirectory>
     <resources>
       <resource>
-        <filtering>true</filtering>
         <directory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\ksa-lib\src\main\resources</directory>
-      </resource>
-      <resource>
-        <targetPath>runtime</targetPath>
-        <directory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\ksa-lib\runtime</directory>
       </resource>
     </resources>
     <testResources>

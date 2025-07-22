@@ -14,8 +14,8 @@
 
     <artifactId>ksa-lib</artifactId>
     <packaging>jar</packaging>
-    <name>KSA Library</name>
-    <description>KSA Framework Library Module</description>
+    <name>KSA Library - External JAR Distribution</name>
+    <description>KSA External JAR files distribution module (for external dependencies only)</description>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -28,18 +28,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>runtime</directory>
-                <targetPath>runtime</targetPath>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

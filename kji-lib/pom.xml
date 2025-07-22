@@ -15,7 +15,7 @@
     <artifactId>kji-lib</artifactId>
     <packaging>jar</packaging>
     <name>KJI Library - External JAR Distribution</name>
-    <description>KJI External JAR files distribution module</description>
+    <description>KJI External JAR files distribution module (for external dependencies only)</description>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -29,12 +29,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>runtime</directory>
-                <targetPath>runtime</targetPath>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

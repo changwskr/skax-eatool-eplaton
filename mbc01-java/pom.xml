@@ -13,9 +13,9 @@
     </parent>
 
     <artifactId>mbc01-java</artifactId>
-    <packaging>jar</packaging>
-    <name>MBC01 Java - Common Library</name>
-    <description>Common library module for MBC project</description>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>MBC01 Java Implementation</name>
+    <description>MBC01 Framework Java Implementation - Spring Boot Application</description>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
