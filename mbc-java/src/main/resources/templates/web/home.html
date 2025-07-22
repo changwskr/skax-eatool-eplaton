@@ -289,7 +289,7 @@
         <!-- 현재 시간 -->
         <div class="current-time">
             <h3>🕐 현재 시간</h3>
-            <p th:text="${currentTime}">2024년 01월 01일 12:00:00</p>
+            <p id="current-time">2024년 01월 01일 12:00:00</p>
         </div>
 
         <!-- 시스템 정보 -->
@@ -321,22 +321,34 @@
         <div class="system-info">
             <h3>📊 업무별 통계</h3>
             <div class="info-grid">
+                <!-- 계정 통계 -->
                 <div class="info-item">
                     <div class="info-label">전체 계정</div>
-                    <div class="info-value" th:text="${businessStats.totalAccounts}">0</div>
+                    <div class="info-value" th:text="${businessStats.accountStats.totalAccounts}">0</div>
                 </div>
+                <div class="info-item">
+                    <div class="info-label">활성 계정</div>
+                    <div class="info-value" th:text="${businessStats.accountStats.activeAccounts}">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">비활성 계정</div>
+                    <div class="info-value" th:text="${businessStats.accountStats.inactiveAccounts}">0</div>
+                </div>
+                <!-- 사용자 통계 -->
                 <div class="info-item">
                     <div class="info-label">전체 사용자</div>
-                    <div class="info-value" th:text="${businessStats.totalUsers}">0</div>
+                    <div class="info-value" th:text="${businessStats.userStats.totalUsers}">0</div>
                 </div>
-                <div class="info-item">
-                    <div class="info-label">거래 내역</div>
-                    <div class="info-value" th:text="${businessStats.totalTransactions}">0</div>
-                </div>
+                <!-- 시스템 통계 -->
                 <div class="info-item">
                     <div class="info-label">활성 세션</div>
-                    <div class="info-value" th:text="${businessStats.activeSessions}">0</div>
+                    <div class="info-value" th:text="${businessStats.systemStats.activeSessions}">0</div>
                 </div>
+            </div>
+            <!-- 통계 업데이트 시간 -->
+            <div class="stats-update-time" style="margin-top: 1rem; text-align: center; color: #666; font-size: 0.9rem;">
+                <span>마지막 업데이트: </span>
+                <span th:text="${businessStats.accountStats.lastUpdate}">2024-01-01 00:00:00</span>
             </div>
         </div>
 
@@ -355,7 +367,10 @@
                     <div class="menu-description" th:text="${menu.description}">계정 생성, 조회, 수정, 삭제</div>
                     <ul class="submenu-list">
                         <li class="submenu-item" th:each="submenu : ${menu.subMenus}">
-                            <a th:href="${submenu.url}" class="submenu-link">
+                            <a th:href="${submenu.url}" class="submenu-link" 
+                               th:data-method="${submenu.method}" 
+                               th:data-url="${submenu.url}"
+                               onclick="handleMenuClick(event, this.getAttribute('data-method'), this.getAttribute('data-url'))">
                                 <i th:class="${submenu.icon} + ' submenu-icon'"></i>
                                 <span th:text="${submenu.title}">계정 생성</span>
                             </a>
@@ -445,30 +460,46 @@
             <p>&copy; 2024 SKAX-EATOOL. All rights reserved.</p>
         </div>
     </div>
-
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // 실시간 시간 업데이트
-        function updateTime() {
+        // 메뉴 클릭 처리
+        function handleMenuClick(event, method, url) {
+            // GET 메서드가 아닌 경우 기본 동작 방지
+            if (method !== 'GET') {
+                event.preventDefault();
+                alert('이 기능은 API 테스트 페이지에서 사용할 수 있습니다.\n' + url + '로 이동합니다.');
+                window.location.href = '/web/account-test';
+                return;
+            }
+            
+            // GET 메서드인 경우 정상적으로 링크 이동
+            return true;
+        }
+        
+        // 페이지 로드 시 현재 시간 업데이트
+        function updateCurrentTime() {
             const now = new Date();
-            const options = {
+            const timeString = now.toLocaleString('ko-KR', {
                 year: 'numeric',
-                month: 'long',
-                day: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
                 hour: '2-digit',
                 minute: '2-digit',
-                second: '2-digit',
-                timeZone: 'Asia/Seoul'
-            };
-            const timeString = now.toLocaleDateString('ko-KR', options);
-            document.querySelector('.current-time p').textContent = timeString;
+                second: '2-digit'
+            });
+            
+            const timeElement = document.getElementById('current-time');
+            if (timeElement) {
+                timeElement.textContent = timeString;
+            }
         }
-
+        
         // 1초마다 시간 업데이트
-        setInterval(updateTime, 1000);
-        updateTime(); // 초기 실행
+        setInterval(updateCurrentTime, 1000);
+        updateCurrentTime(); // 초기 실행
 
         // 한글 인코딩 확인 및 수정
         function fixKoreanEncoding() {

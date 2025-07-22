@@ -15,6 +15,10 @@ import com.skax.eatool.ksa.infra.po.NewKBData;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
 import com.skax.eatool.ksa.oltp.biz.NewIApplicationService;
+import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <br>
@@ -29,9 +33,14 @@ import com.skax.eatool.ksa.oltp.biz.NewIApplicationService;
  * <li>2008-08-26::전체::최초작성
  * </ul>
  */
+@Service
 public class ASMBC74001 implements NewIApplicationService {
 
 	protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+	private static final Logger slf4jLogger = LoggerFactory.getLogger(ASMBC74001.class);
+
+	@Autowired
+	private PCAccount pcAccount;
 
 	/**
 	 * <br>
@@ -49,11 +58,14 @@ public class ASMBC74001 implements NewIApplicationService {
 	 */
 	public NewKBData execute(NewKBData reqData) throws NewBusinessException {
 		logger.info("ASMBC74001", "=== ASMBC74001.execute START ===");
+		slf4jLogger.info("=== ASMBC74001.execute START (SLF4J) ===");
 
 		// Null 체크 추가
 		if (reqData == null) {
 			logger.warn("ASMBC74001", "=== ASMBC74001.execute - reqData is null ===");
+			slf4jLogger.warn("=== ASMBC74001.execute - reqData is null (SLF4J) ===");
 			logger.info("ASMBC74001", "=== ASMBC74001.execute END ===");
+			slf4jLogger.info("=== ASMBC74001.execute END (SLF4J) ===");
 			return null;
 		}
 
@@ -64,14 +76,17 @@ public class ASMBC74001 implements NewIApplicationService {
 		// AccountPDTO null 체크
 		if (accountPDTO == null) {
 			logger.warn("ASMBC74001", "=== ASMBC74001.execute - accountPDTO is null ===");
+			slf4jLogger.warn("=== ASMBC74001.execute - accountPDTO is null (SLF4J) ===");
 			logger.info("ASMBC74001", "=== ASMBC74001.execute END ===");
+			slf4jLogger.info("=== ASMBC74001.execute END (SLF4J) ===");
 			return reqData;
 		}
 
 		// 2.PC호출
-		new PCAccount().deleteAccount(accountPDTO);
+		pcAccount.deleteAccount(accountPDTO);
 		
 		logger.info("ASMBC74001", "=== ASMBC74001.execute END ===");
+		slf4jLogger.info("=== ASMBC74001.execute END (SLF4J) ===");
 		return reqData;
 	}
 

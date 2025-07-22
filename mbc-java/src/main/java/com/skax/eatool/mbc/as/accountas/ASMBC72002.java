@@ -1,6 +1,11 @@
-package com.skax.eatool.mbc.as.accountas;
+/*
+ * (@)# ASMBC72002.java
+ *
+ * Copyright KB Kookmin Bank Inc. All rights reserved.
+ * PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 
-import java.util.List;
+package com.skax.eatool.mbc.as.accountas;
 
 import com.skax.eatool.mbc.pc.accountpc.PCAccount;
 import com.skax.eatool.mbc.pc.dto.AccountPDTO;
@@ -10,26 +15,133 @@ import com.skax.eatool.ksa.infra.po.NewKBData;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
 import com.skax.eatool.ksa.oltp.biz.NewIApplicationService;
+import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 계정 목록 조회 Application Service
- * 
- * @author KBSTAR
- * @version 1.0.0
+ * <br>
+ * [프로그램명] 계정상세조회
+ * <br>
+ * [설명]
+ * <br>
+ * [상세설명]
+ * <br>
+ * [변경이력]
+ * <ul>
+ * <li>2024-01-01::전체::최초작성
+ * </ul>
  */
+@Service
 public class ASMBC72002 implements NewIApplicationService {
 
 	protected NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+	private static final Logger slf4jLogger = LoggerFactory.getLogger(ASMBC72002.class);
 
+	@Autowired
+	private PCAccount pcAccount;
+
+	/**
+	 * <br>
+	 * [메서드명] 계정상세조회
+	 * <br>
+	 * [설명]
+	 * <br>
+	 * [상세설명]
+	 * 
+	 * @param NewKBData
+	 * <ul>
+	 * <li>accountId //계정ID
+	 * </ul>
+	 * 
+	 * @return NewKBData
+	 *         <ul>
+	 *         <li>accountId //계정ID
+	 *         <li>accountName //계정명
+	 *         <li>accountType //계정타입
+	 *         <li>accountStatus //계정상태
+	 *         <li>accountBalance //계정잔액
+	 *         </ul>
+	 */
 	public NewKBData execute(NewKBData reqData) throws NewBusinessException {
-		// TODO 코드 구현 및 메서드 추가
-		AccountPDTO accountPDTO = (AccountPDTO) reqData.getInputGenericDto().using(NewGenericDto.INDATA)
-				.get("AccountPDTO");
+		logger.info("ASMBC72002", "=== ASMBC72002.execute START ===");
+		slf4jLogger.info("=== ASMBC72002.execute START (SLF4J) ===");
 
-		List<AccountPDTO> resAccountPDTOs = new PCAccount().getListAccount(accountPDTO);
+		// Null 체크 추가
+		if (reqData == null) {
+			logger.warn("ASMBC72002", "=== ASMBC72002.execute - reqData is null ===");
+			slf4jLogger.warn("=== ASMBC72002.execute - reqData is null (SLF4J) ===");
+			logger.info("ASMBC72002", "=== ASMBC72002.execute END ===");
+			slf4jLogger.info("=== ASMBC72002.execute END (SLF4J) ===");
+			return null;
+		}
 
-		reqData.getOutputGenericDto().using(NewGenericDto.OUTDATA).add(resAccountPDTOs);
+		// 입력 객체 필드값 출력
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - Input Object Field Values ===");
+		slf4jLogger.info("=== ASMBC72002.execute - Input Object Field Values (SLF4J) ===");
+		
+		NewGenericDto inputDto = reqData.getInputGenericDto();
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - inputDto: " + inputDto + " ===");
+		slf4jLogger.info("=== ASMBC72002.execute - inputDto: {} (SLF4J) ===", inputDto);
+		
+		// inputDto의 주요 키들을 직접 확인
+		if (inputDto != null) {
+			logger.info("ASMBC72002", "=== ASMBC72002.execute - Checking inputDto contents ===");
+			slf4jLogger.info("=== ASMBC72002.execute - Checking inputDto contents (SLF4J) ===");
+			
+			// 주요 키들을 직접 확인
+			Object accountIdValue = inputDto.get("accountId");
+			
+			logger.info("ASMBC72002", "=== ASMBC72002.execute - accountId value: " + accountIdValue + " ===");
+			slf4jLogger.info("=== ASMBC72002.execute - accountId value: {} (SLF4J) ===", accountIdValue);
+		}
 
+		// 1.계정ID 가져오기
+		String accountId = (String) reqData.getInputGenericDto().get("accountId");
+		
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - accountId: " + accountId + " ===");
+		slf4jLogger.info("=== ASMBC72002.execute - accountId: {} (SLF4J) ===", accountId);
+
+		// accountId null 체크
+		if (accountId == null) {
+			logger.warn("ASMBC72002", "=== ASMBC72002.execute - accountId is null ===");
+			slf4jLogger.warn("=== ASMBC72002.execute - accountId is null (SLF4J) ===");
+			logger.info("ASMBC72002", "=== ASMBC72002.execute END ===");
+			slf4jLogger.info("=== ASMBC72002.execute END (SLF4J) ===");
+			return reqData;
+		}
+
+		// 2.AccountPDTO 생성
+		AccountPDTO accountPDTO = new AccountPDTO();
+		accountPDTO.setAccountId(accountId);
+
+		// AccountPDTO 필드값 상세 출력
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - AccountPDTO Field Values ===");
+		slf4jLogger.info("=== ASMBC72002.execute - AccountPDTO Field Values (SLF4J) ===");
+		
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - accountPDTO.accountId: " + accountPDTO.getAccountId() + " ===");
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - accountPDTO.accountName: " + accountPDTO.getAccountName() + " ===");
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - accountPDTO.accountType: " + accountPDTO.getAccountType() + " ===");
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - accountPDTO.accountStatus: " + accountPDTO.getAccountStatus() + " ===");
+		logger.info("ASMBC72002", "=== ASMBC72002.execute - accountPDTO.accountBalance: " + accountPDTO.getAccountBalance() + " ===");
+		
+		slf4jLogger.info("=== ASMBC72002.execute - accountPDTO.accountId: {} (SLF4J) ===", accountPDTO.getAccountId());
+		slf4jLogger.info("=== ASMBC72002.execute - accountPDTO.accountName: {} (SLF4J) ===", accountPDTO.getAccountName());
+		slf4jLogger.info("=== ASMBC72002.execute - accountPDTO.accountType: {} (SLF4J) ===", accountPDTO.getAccountType());
+		slf4jLogger.info("=== ASMBC72002.execute - accountPDTO.accountStatus: {} (SLF4J) ===", accountPDTO.getAccountStatus());
+		slf4jLogger.info("=== ASMBC72002.execute - accountPDTO.accountBalance: {} (SLF4J) ===", accountPDTO.getAccountBalance());
+
+		// 3.PC호출
+		AccountPDTO resAccountPDTO = pcAccount.getAccount(accountPDTO);
+
+		// 4.결과를 OUTDATA에 set
+		java.util.List<AccountPDTO> resultList = new java.util.ArrayList<>();
+		resultList.add(resAccountPDTO);
+		reqData.getOutputGenericDto().using(NewGenericDto.OUTDATA).add(resultList);
+		
+		logger.info("ASMBC72002", "=== ASMBC72002.execute END ===");
+		slf4jLogger.info("=== ASMBC72002.execute END (SLF4J) ===");
 		return reqData;
 	}
 

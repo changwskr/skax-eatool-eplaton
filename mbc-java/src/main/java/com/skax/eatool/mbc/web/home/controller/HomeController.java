@@ -2,12 +2,17 @@ package com.skax.eatool.mbc.web.home.controller;
 
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
+import com.skax.eatool.ksa.infra.po.NewKBData;
+import com.skax.eatool.ksa.infra.po.NewGenericDto;
+import com.skax.eatool.mbc.as.accountas.ASMBC72001;
+import com.skax.eatool.mbc.pc.dto.AccountPDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +38,9 @@ public class HomeController {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private ASMBC72001 accountReadService;  // 계정 조회 서비스
 
     /**
      * 웹 홈화면 표시
@@ -74,6 +82,137 @@ public class HomeController {
 
         logger.info("=== HomeController.showWebHome END ===");
         return "web/home";
+    }
+
+    /**
+     * 계정관리 API 테스트 페이지
+     */
+    @GetMapping("/account-test")
+    public String showAccountTestPage(Model model) {
+        logger.info("=== HomeController.showAccountTestPage START ===");
+        kesaLogger.info("계정관리 API 테스트 페이지 요청", "HomeController");
+
+        try {
+            // API 엔드포인트 정보
+            Map<String, Object> apiInfo = new HashMap<>();
+            apiInfo.put("baseUrl", "/api/account");
+            apiInfo.put("endpoints", getAccountApiEndpoints());
+            
+            model.addAttribute("apiInfo", apiInfo);
+            model.addAttribute("pageTitle", "계정관리 API 테스트");
+
+        } catch (Exception e) {
+            logger.error("계정관리 API 테스트 페이지 로드 중 오류: " + e.getMessage());
+            kesaLogger.error("계정관리 API 테스트 페이지 로드 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.showAccountTestPage END ===");
+        return "web/account/test";
+    }
+
+    /**
+     * 계정관리 API 엔드포인트 정보 조회
+     */
+    @GetMapping("/api-info/account/endpoints")
+    @ResponseBody
+    public Map<String, Object> getAccountApiEndpoints() {
+        logger.info("=== HomeController.getAccountApiEndpoints START ===");
+        Map<String, Object> endpoints = new HashMap<>();
+
+        try {
+            // 계정 생성 API
+            Map<String, Object> createEndpoint = new HashMap<>();
+            createEndpoint.put("method", "POST");
+            createEndpoint.put("url", "/api/account/create");
+            createEndpoint.put("description", "새로운 계정을 생성합니다");
+            createEndpoint.put("requestBody", getCreateAccountRequestBody());
+            endpoints.put("create", createEndpoint);
+
+            // 계정 목록 조회 API
+            Map<String, Object> listEndpoint = new HashMap<>();
+            listEndpoint.put("method", "POST");
+            listEndpoint.put("url", "/api/account/list");
+            listEndpoint.put("description", "계정 목록을 조회합니다");
+            listEndpoint.put("requestBody", getListAccountRequestBody());
+            endpoints.put("list", listEndpoint);
+
+            // 계정 상세 조회 API
+            Map<String, Object> detailEndpoint = new HashMap<>();
+            detailEndpoint.put("method", "GET");
+            detailEndpoint.put("url", "/api/account/detail/{accountId}");
+            detailEndpoint.put("description", "특정 계정을 조회합니다");
+            detailEndpoint.put("pathVariable", "accountId");
+            endpoints.put("detail", detailEndpoint);
+
+            // 계정 수정 API
+            Map<String, Object> updateEndpoint = new HashMap<>();
+            updateEndpoint.put("method", "PUT");
+            updateEndpoint.put("url", "/api/account/update/{accountId}");
+            updateEndpoint.put("description", "계정 정보를 수정합니다");
+            updateEndpoint.put("requestBody", getUpdateAccountRequestBody());
+            endpoints.put("update", updateEndpoint);
+
+            // 계정 삭제 API
+            Map<String, Object> deleteEndpoint = new HashMap<>();
+            deleteEndpoint.put("method", "DELETE");
+            deleteEndpoint.put("url", "/api/account/delete/{accountId}");
+            deleteEndpoint.put("description", "계정을 삭제합니다");
+            deleteEndpoint.put("pathVariable", "accountId");
+            endpoints.put("delete", deleteEndpoint);
+
+            // 계정 상태 변경 API
+            Map<String, Object> statusEndpoint = new HashMap<>();
+            statusEndpoint.put("method", "PUT");
+            statusEndpoint.put("url", "/api/account/status/{accountId}?status={status}");
+            statusEndpoint.put("description", "계정 상태를 변경합니다");
+            statusEndpoint.put("pathVariable", "accountId");
+            statusEndpoint.put("queryParameter", "status");
+            endpoints.put("status", statusEndpoint);
+
+        } catch (Exception e) {
+            logger.error("계정관리 API 엔드포인트 정보 조회 중 오류: " + e.getMessage());
+            kesaLogger.error("계정관리 API 엔드포인트 정보 조회 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.getAccountApiEndpoints END ===");
+        return endpoints;
+    }
+
+    /**
+     * 계정 생성 API 요청 본문 예시
+     */
+    private Map<String, Object> getCreateAccountRequestBody() {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("accountId", "ACC001");
+        requestBody.put("accountName", "홍길동");
+        requestBody.put("accountType", "SAVINGS");
+        requestBody.put("accountBalance", "1000000");
+        requestBody.put("accountStatus", "ACTIVE");
+        return requestBody;
+    }
+
+    /**
+     * 계정 목록 조회 API 요청 본문 예시
+     */
+    private Map<String, Object> getListAccountRequestBody() {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("searchKeyword", "");
+        requestBody.put("accountType", "");
+        requestBody.put("pageNumber", 1);
+        requestBody.put("pageSize", 10);
+        return requestBody;
+    }
+
+    /**
+     * 계정 수정 API 요청 본문 예시
+     */
+    private Map<String, Object> getUpdateAccountRequestBody() {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("accountName", "홍길동 (수정)");
+        requestBody.put("accountType", "SAVINGS");
+        requestBody.put("accountBalance", "1500000");
+        requestBody.put("accountStatus", "ACTIVE");
+        return requestBody;
     }
 
     /**
@@ -119,43 +258,174 @@ public class HomeController {
         Map<String, Object> stats = new HashMap<>();
 
         try {
-            // 계정 관련 통계
-            int totalAccounts = 0;
-            int totalUsers = 0;
-            int totalTransactions = 0;
+            // 계정 통계
+            Map<String, Object> accountStats = getAccountStats();
+            stats.put("accountStats", accountStats);
 
-            try {
-                totalAccounts = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM ACCOUNT", Integer.class);
-            } catch (Exception e) {
-                kesaLogger.warn("계정 통계 조회 실패: " + e.getMessage(), "HomeController");
-            }
+            // 사용자 통계
+            Map<String, Object> userStats = getUserStats();
+            stats.put("userStats", userStats);
 
-            try {
-                totalUsers = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER_INFO", Integer.class);
-            } catch (Exception e) {
-                kesaLogger.warn("사용자 통계 조회 실패: " + e.getMessage(), "HomeController");
-            }
-
-            try {
-                totalTransactions = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM TRANSACTION", Integer.class);
-            } catch (Exception e) {
-                kesaLogger.warn("거래 통계 조회 실패: " + e.getMessage(), "HomeController");
-            }
-
-            stats.put("totalAccounts", totalAccounts);
-            stats.put("totalUsers", totalUsers);
-            stats.put("totalTransactions", totalTransactions);
-            stats.put("activeSessions", 5); // 임시 값
+            // 시스템 통계
+            Map<String, Object> systemStats = getSystemStats();
+            stats.put("systemStats", systemStats);
 
         } catch (Exception e) {
-            kesaLogger.warn("업무 통계 조회 실패: " + e.getMessage(), "HomeController");
-            stats.put("totalAccounts", 0);
-            stats.put("totalUsers", 0);
-            stats.put("totalTransactions", 0);
-            stats.put("activeSessions", 0);
+            logger.error("업무별 통계 조회 중 오류: " + e.getMessage());
+            kesaLogger.error("업무별 통계 조회 중 오류: " + e.getMessage(), "HomeController");
+            
+            // 기본값 설정
+            stats.put("accountStats", getDefaultAccountStats());
+            stats.put("userStats", getDefaultUserStats());
+            stats.put("systemStats", getDefaultSystemStats());
         }
 
         logger.info("=== HomeController.getBusinessStats END ===");
+        return stats;
+    }
+
+    /**
+     * 계정 통계 조회
+     */
+    private Map<String, Object> getAccountStats() {
+        logger.info("=== HomeController.getAccountStats START ===");
+        Map<String, Object> accountStats = new HashMap<>();
+
+        try {
+            // NewKBData 생성하여 계정 목록 조회
+            NewKBData kbData = new NewKBData();
+            NewGenericDto inputDto = kbData.getInputGenericDto();
+            
+            // 전체 계정 조회를 위한 파라미터 설정
+            inputDto.put("searchKeyword", "");
+            inputDto.put("pageNumber", 1);
+            inputDto.put("pageSize", 1000); // 충분히 큰 값으로 설정
+            
+            // 계정 조회 서비스 호출
+            NewKBData result = accountReadService.execute(kbData);
+            
+            if (result != null && result.getOutputGenericDto() != null) {
+                Object accountListObj = result.getOutputGenericDto().using(NewGenericDto.OUTDATA).get("AccountPDTO");
+                
+                if (accountListObj instanceof List) {
+                    @SuppressWarnings("unchecked")
+                    List<AccountPDTO> accountList = (List<AccountPDTO>) accountListObj;
+                    
+                    int totalAccounts = accountList.size();
+                    int activeAccounts = 0;
+                    int inactiveAccounts = 0;
+                    
+                    for (AccountPDTO account : accountList) {
+                        if ("ACTIVE".equals(account.getAccountStatus())) {
+                            activeAccounts++;
+                        } else {
+                            inactiveAccounts++;
+                        }
+                    }
+                    
+                    accountStats.put("totalAccounts", totalAccounts);
+                    accountStats.put("activeAccounts", activeAccounts);
+                    accountStats.put("inactiveAccounts", inactiveAccounts);
+                    accountStats.put("lastUpdate", LocalDateTime.now().format(
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                } else {
+                    accountStats = getDefaultAccountStats();
+                }
+            } else {
+                accountStats = getDefaultAccountStats();
+            }
+            
+        } catch (Exception e) {
+            logger.error("계정 통계 조회 중 오류: " + e.getMessage());
+            kesaLogger.error("계정 통계 조회 중 오류: " + e.getMessage(), "HomeController");
+            accountStats = getDefaultAccountStats();
+        }
+
+        logger.info("=== HomeController.getAccountStats END ===");
+        return accountStats;
+    }
+
+    /**
+     * 기본 계정 통계
+     */
+    private Map<String, Object> getDefaultAccountStats() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalAccounts", 0);
+        stats.put("activeAccounts", 0);
+        stats.put("inactiveAccounts", 0);
+        stats.put("lastUpdate", LocalDateTime.now().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        return stats;
+    }
+
+    /**
+     * 사용자 통계 조회
+     */
+    private Map<String, Object> getUserStats() {
+        logger.info("=== HomeController.getUserStats START ===");
+        Map<String, Object> userStats = new HashMap<>();
+
+        try {
+            int totalUsers = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER_INFO", Integer.class);
+            userStats.put("totalUsers", totalUsers);
+            userStats.put("lastUpdate", LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        } catch (Exception e) {
+            logger.error("사용자 통계 조회 중 오류: " + e.getMessage());
+            kesaLogger.error("사용자 통계 조회 중 오류: " + e.getMessage(), "HomeController");
+            userStats.put("totalUsers", 0);
+            userStats.put("lastUpdate", LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+
+        logger.info("=== HomeController.getUserStats END ===");
+        return userStats;
+    }
+
+    /**
+     * 기본 사용자 통계
+     */
+    private Map<String, Object> getDefaultUserStats() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalUsers", 0);
+        stats.put("lastUpdate", LocalDateTime.now().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        return stats;
+    }
+
+    /**
+     * 시스템 통계 조회
+     */
+    private Map<String, Object> getSystemStats() {
+        logger.info("=== HomeController.getSystemStats START ===");
+        Map<String, Object> systemStats = new HashMap<>();
+
+        try {
+            // 활성 세션 수 조회
+            int activeSessions = 5; // 임시 값
+            systemStats.put("activeSessions", activeSessions);
+            systemStats.put("lastUpdate", LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        } catch (Exception e) {
+            logger.error("시스템 통계 조회 중 오류: " + e.getMessage());
+            kesaLogger.error("시스템 통계 조회 중 오류: " + e.getMessage(), "HomeController");
+            systemStats.put("activeSessions", 0);
+            systemStats.put("lastUpdate", LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+
+        logger.info("=== HomeController.getSystemStats END ===");
+        return systemStats;
+    }
+
+    /**
+     * 기본 시스템 통계
+     */
+    private Map<String, Object> getDefaultSystemStats() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("activeSessions", 0);
+        stats.put("lastUpdate", LocalDateTime.now().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         return stats;
     }
 
@@ -252,23 +522,21 @@ public class HomeController {
 
         List<Map<String, Object>> accountSubMenus = new ArrayList<>();
 
-        Map<String, Object> createAccount = new HashMap<>();
-        createAccount.put("title", "계정 생성");
-        createAccount.put("url", "/mbc/account/create");
-        createAccount.put("icon", "fas fa-plus-circle");
-        accountSubMenus.add(createAccount);
+        Map<String, Object> apiTest = new HashMap<>();
+        apiTest.put("title", "API 테스트");
+        apiTest.put("url", "/web/account-test");
+        apiTest.put("icon", "fas fa-code");
+        apiTest.put("method", "GET");
+        apiTest.put("description", "계정관리 API를 테스트합니다");
+        accountSubMenus.add(apiTest);
 
-        Map<String, Object> listAccount = new HashMap<>();
-        listAccount.put("title", "계정 목록");
-        listAccount.put("url", "/mbc/account/list");
-        listAccount.put("icon", "fas fa-list");
-        accountSubMenus.add(listAccount);
-
-        Map<String, Object> readAccount = new HashMap<>();
-        readAccount.put("title", "계정 조회");
-        readAccount.put("url", "/mbc/account/read");
-        readAccount.put("icon", "fas fa-search");
-        accountSubMenus.add(readAccount);
+        Map<String, Object> accountManagement = new HashMap<>();
+        accountManagement.put("title", "계정 관리");
+        accountManagement.put("url", "/web/account-test");
+        accountManagement.put("icon", "fas fa-user-cog");
+        accountManagement.put("method", "GET");
+        accountManagement.put("description", "계정 생성, 조회, 수정, 삭제");
+        accountSubMenus.add(accountManagement);
 
         accountMenu.put("subMenus", accountSubMenus);
         menus.add(accountMenu);
@@ -287,12 +555,14 @@ public class HomeController {
         createUser.put("title", "사용자 등록");
         createUser.put("url", "/mbc/user/create");
         createUser.put("icon", "fas fa-user-plus");
+        createUser.put("method", "GET");
         userSubMenus.add(createUser);
 
         Map<String, Object> listUser = new HashMap<>();
         listUser.put("title", "사용자 목록");
         listUser.put("url", "/mbc/user/list");
         listUser.put("icon", "fas fa-list");
+        listUser.put("method", "GET");
         userSubMenus.add(listUser);
 
         userMenu.put("subMenus", userSubMenus);
@@ -312,12 +582,14 @@ public class HomeController {
         database.put("title", "데이터베이스");
         database.put("url", "/mbc/h2-console");
         database.put("icon", "fas fa-database");
+        database.put("method", "GET");
         systemSubMenus.add(database);
 
         Map<String, Object> monitoring = new HashMap<>();
         monitoring.put("title", "시스템 모니터링");
         monitoring.put("url", "/mbc/monitoring");
         monitoring.put("icon", "fas fa-chart-line");
+        monitoring.put("method", "GET");
         systemSubMenus.add(monitoring);
 
         systemMenu.put("subMenus", systemSubMenus);
@@ -337,12 +609,14 @@ public class HomeController {
         accountReport.put("title", "계정 통계");
         accountReport.put("url", "/mbc/report/account");
         accountReport.put("icon", "fas fa-chart-pie");
+        accountReport.put("method", "GET");
         reportSubMenus.add(accountReport);
 
         Map<String, Object> userReport = new HashMap<>();
         userReport.put("title", "사용자 통계");
         userReport.put("url", "/mbc/report/user");
         userReport.put("icon", "fas fa-chart-area");
+        userReport.put("method", "GET");
         reportSubMenus.add(userReport);
 
         reportMenu.put("subMenus", reportSubMenus);

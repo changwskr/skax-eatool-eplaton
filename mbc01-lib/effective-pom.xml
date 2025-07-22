@@ -6128,8 +6128,7 @@
     <testOutputDirectory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\mbc01-lib\target\test-classes</testOutputDirectory>
     <resources>
       <resource>
-        <targetPath>runtime</targetPath>
-        <directory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\mbc01-lib\runtime</directory>
+        <directory>d:\Zdata-20240805\MyProject\skax-eatool-eplaton-master\mbc01-lib\src\main\resources</directory>
       </resource>
     </resources>
     <testResources>

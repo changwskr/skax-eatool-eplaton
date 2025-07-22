@@ -64,6 +64,12 @@ public class PCAccount implements NewIProcessComponent {
 			return null;
 		}
 		
+		// dcAccount null 체크 추가
+		if (dcAccount == null) {
+			logger.error("=== PCAccount.getAccount - dcAccount is null ===");
+			throw new NewBusinessException("B0000001", "DCAccount is not injected");
+		}
+		
 		AccountDDTO dDto = dcAccount.getAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
 		logger.info("=== PCAccount.getAccount END ===");
 		return NewObjectUtil.copyForClass(AccountPDTO.class, dDto);
@@ -95,6 +101,12 @@ public class PCAccount implements NewIProcessComponent {
 			return;
 		}
 		
+		// dcAccount null 체크 추가
+		if (dcAccount == null) {
+			logger.error("=== PCAccount.updateAccount - dcAccount is null ===");
+			throw new NewBusinessException("B0000001", "DCAccount is not injected");
+		}
+		
 		dcAccount.updateAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
 		logger.info("=== PCAccount.updateAccount END ===");
 	}
@@ -117,6 +129,12 @@ public class PCAccount implements NewIProcessComponent {
 			logger.warn("=== PCAccount.deleteAccount - accountPDTO is null ===");
 			logger.info("=== PCAccount.deleteAccount END ===");
 			return;
+		}
+		
+		// dcAccount null 체크 추가
+		if (dcAccount == null) {
+			logger.error("=== PCAccount.deleteAccount - dcAccount is null ===");
+			throw new NewBusinessException("B0000001", "DCAccount is not injected");
 		}
 		
 		dcAccount.deleteAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
@@ -147,6 +165,12 @@ public class PCAccount implements NewIProcessComponent {
 			logger.warn("=== PCAccount.createAccount - accountPDTO is null ===");
 			logger.info("=== PCAccount.createAccount END ===");
 			return;
+		}
+		
+		// dcAccount null 체크 추가
+		if (dcAccount == null) {
+			logger.error("=== PCAccount.createAccount - dcAccount is null ===");
+			throw new NewBusinessException("B0000001", "DCAccount is not injected");
 		}
 		
 		// TODO: Implement account creation logic
@@ -193,6 +217,12 @@ public class PCAccount implements NewIProcessComponent {
 			logger.warn("=== PCAccount.getListAccount - accountPDTO is null ===");
 			logger.info("=== PCAccount.getListAccount END ===");
 			return new ArrayList<>();
+		}
+		
+		// dcAccount null 체크 추가
+		if (dcAccount == null) {
+			logger.error("=== PCAccount.getListAccount - dcAccount is null ===");
+			throw new NewBusinessException("B0000001", "DCAccount is not injected");
 		}
 		
 		List<AccountDDTO> dDtoList = dcAccount.getListAccount(NewObjectUtil.copyForClass(AccountDDTO.class, accountPDTO));
