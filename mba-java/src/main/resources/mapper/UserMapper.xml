@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.skax.eatool.mba.mapper.UserMapper">
+
+    <!-- 사용자 DTO 결과 매핑 -->
+    <resultMap id="UserResultMap" type="com.skax.eatool.mba.as.dto.UserDto">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="full_name" property="fullName" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="department" property="department" jdbcType="VARCHAR"/>
+        <result column="position" property="position" jdbcType="VARCHAR"/>
+        <result column="role" property="role" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 기본 사용자 조회 컬럼 -->
+    <sql id="Base_Column_List">
+        id, username, password, email, full_name, phone, department, position, role, status, 
+        created_at, updated_at
+    </sql>
+
+    <!-- 사용자 목록 조회 -->
+    <select id="selectUserList" resultMap="UserResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 사용자 총 개수 조회 -->
+    <select id="selectUserCount" resultType="Long">
+        SELECT COUNT(*) FROM users
+    </select>
+
+    <!-- 사용자 ID로 조회 -->
+    <select id="selectUserById" parameterType="Long" resultMap="UserResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users
+        WHERE id = #{userId}
+    </select>
+
+    <!-- 사용자명으로 조회 -->
+    <select id="selectUserByUsername" parameterType="String" resultMap="UserResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <!-- 이메일로 조회 -->
+    <select id="selectUserByEmail" parameterType="String" resultMap="UserResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <!-- 사용자 검색 -->
+    <select id="searchUsers" resultMap="UserResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users
+        <where>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchField == 'username'">
+                        AND username LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchField == 'email'">
+                        AND email LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchField == 'fullName'">
+                        AND full_name LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchField == 'department'">
+                        AND department LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (username LIKE CONCAT('%', #{keyword}, '%')
+                        OR email LIKE CONCAT('%', #{keyword}, '%')
+                        OR full_name LIKE CONCAT('%', #{keyword}, '%')
+                        OR department LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 검색된 사용자 총 개수 -->
+    <select id="searchUserCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM users
+        <where>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchField == 'username'">
+                        AND username LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchField == 'email'">
+                        AND email LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchField == 'fullName'">
+                        AND full_name LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchField == 'department'">
+                        AND department LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (username LIKE CONCAT('%', #{keyword}, '%')
+                        OR email LIKE CONCAT('%', #{keyword}, '%')
+                        OR full_name LIKE CONCAT('%', #{keyword}, '%')
+                        OR department LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!-- 사용자 생성 -->
+    <insert id="insertUser" parameterType="com.skax.eatool.mba.as.dto.UserDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (
+            username, password, email, full_name, phone, department, position, role, status, created_at, updated_at
+        ) VALUES (
+            #{username}, #{password}, #{email}, #{fullName}, #{phone}, #{department}, #{position}, #{role}, #{status}, 
+            NOW(), NOW()
+        )
+    </insert>
+
+    <!-- 사용자 수정 -->
+    <update id="updateUser" parameterType="com.skax.eatool.mba.as.dto.UserDto">
+        UPDATE users
+        <set>
+            <if test="email != null">email = #{email},</if>
+            <if test="fullName != null">full_name = #{fullName},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="department != null">department = #{department},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="status != null">status = #{status},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 사용자 삭제 -->
+    <delete id="deleteUser" parameterType="Long">
+        DELETE FROM users WHERE id = #{userId}
+    </delete>
+
+    <!-- 사용자명 중복 체크 -->
+    <select id="checkUsernameExists" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM users WHERE username = #{username}
+    </select>
+
+    <!-- 이메일 중복 체크 -->
+    <select id="checkEmailExists" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM users WHERE email = #{email}
+    </select>
+
+    <!-- 부서별 사용자 목록 조회 -->
+    <select id="selectUsersByDepartment" resultMap="UserResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users
+        WHERE department = #{department}
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 역할별 사용자 목록 조회 -->
+    <select id="selectUsersByRole" resultMap="UserResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users
+        WHERE role = #{role}
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 상태별 사용자 목록 조회 -->
+    <select id="selectUsersByStatus" resultMap="UserResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users
+        WHERE status = #{status}
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+</mapper> 

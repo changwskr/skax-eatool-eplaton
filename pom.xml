@@ -20,6 +20,7 @@
         <module>mbc01-lib</module>
         <module>mbc01-java</module>
         <module>mbc-java</module>
+        <module>mba-java</module>
     </modules>
 
     <properties>
@@ -92,6 +93,12 @@
             <dependency>
                 <groupId>com.skax.eatool</groupId>
                 <artifactId>mbc-java</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.skax.eatool</groupId>
+                <artifactId>mba-java</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

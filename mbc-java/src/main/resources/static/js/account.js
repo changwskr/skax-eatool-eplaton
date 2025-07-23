@@ -5,7 +5,7 @@
 
 class AccountManager {
     constructor() {
-        this.apiBaseUrl = '/api/account';
+        this.apiBaseUrl = '/api/accounts';
         this.currentPage = 1;
         this.pageSize = 10;
         this.init();
@@ -92,12 +92,14 @@ class AccountManager {
 
     async loadAccountStats() {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/stats`);
-            const result = await response.json();
-            
-            if (result.success) {
-                this.renderAccountStats(result.data);
-            }
+            // 기본 통계 표시 (API가 없으므로 기본값 사용)
+            const defaultStats = {
+                totalAccounts: 0,
+                activeAccounts: 0,
+                totalBalance: 0,
+                averageBalance: 0
+            };
+            this.renderAccountStats(defaultStats);
         } catch (error) {
             console.error('통계 로딩 실패:', error);
         }
@@ -230,7 +232,7 @@ class AccountManager {
 
     async showDetailModal(accountNumber) {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/detail/${accountNumber}`);
+            const response = await fetch(`${this.apiBaseUrl}/${accountNumber}`);
             const result = await response.json();
             
             if (result.success) {
@@ -255,7 +257,7 @@ class AccountManager {
 
     async showUpdateModal(accountNumber) {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/detail/${accountNumber}`);
+            const response = await fetch(`${this.apiBaseUrl}/${accountNumber}`);
             const result = await response.json();
             
             if (result.success) {
@@ -294,7 +296,7 @@ class AccountManager {
                 identificationNumber: formData.get('identificationNumber')
             };
             
-            const response = await fetch(`${this.apiBaseUrl}/create`, {
+            const response = await fetch(`${this.apiBaseUrl}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -332,12 +334,12 @@ class AccountManager {
             };
             
             const accountNumber = formData.get('accountNumber');
-            const response = await fetch(`${this.apiBaseUrl}/update`, {
-                method: 'POST',
+            const response = await fetch(`${this.apiBaseUrl}/${accountNumber}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({...accountData, accountNumber: accountNumber})
+                body: JSON.stringify(accountData)
             });
             
             const result = await response.json();
@@ -361,16 +363,11 @@ class AccountManager {
         }
         
         try {
-            const accountData = {
-                accountNumber: accountNumber
-            };
-            
-            const response = await fetch(`${this.apiBaseUrl}/delete`, {
-                method: 'POST',
+            const response = await fetch(`${this.apiBaseUrl}/${accountNumber}`, {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(accountData)
+                }
             });
             
             const result = await response.json();

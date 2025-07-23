@@ -109,7 +109,38 @@ public class HomeController {
         }
 
         logger.info("=== HomeController.showAccountTestPage END ===");
-        return "web/accountas-test";
+        return "web/account/test";
+    }
+
+    /**
+     * 계정 관리 페이지
+     */
+    @GetMapping("/account-management")
+    public String showAccountManagementPage(Model model) {
+        logger.info("=== HomeController.showAccountManagementPage START ===");
+        kesaLogger.info("계정 관리 페이지 요청", "HomeController");
+
+        try {
+            // 현재 시간
+            String currentTime = LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss"));
+            model.addAttribute("currentTime", currentTime);
+
+            // API 엔드포인트 정보
+            Map<String, Object> apiInfo = new HashMap<>();
+            apiInfo.put("baseUrl", "/api/accounts");
+            apiInfo.put("endpoints", getAccountApiEndpoints());
+            
+            model.addAttribute("apiInfo", apiInfo);
+
+            kesaLogger.info("계정 관리 페이지 데이터 로드 완료", "HomeController");
+
+        } catch (Exception e) {
+            kesaLogger.error("계정 관리 페이지 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.showAccountManagementPage END ===");
+        return "account/account-management";
     }
 
     /**
@@ -597,7 +628,7 @@ public class HomeController {
 
         Map<String, Object> accountManagement = new HashMap<>();
         accountManagement.put("title", "계정 관리");
-        accountManagement.put("url", "/web/account-test");
+        accountManagement.put("url", "/web/account-management");
         accountManagement.put("icon", "fas fa-user-cog");
         accountManagement.put("method", "GET");
         accountManagement.put("description", "계정 생성, 조회, 수정, 삭제");

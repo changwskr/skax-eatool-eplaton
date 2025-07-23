@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 프로퍼티 정의 -->
+    <property name="LOG_PATH" value="logs"/>
+    <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive"/>
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <property name="LOG_PATTERN_COLOR" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n"/>
+
+    <!-- 콘솔 출력 설정 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN_COLOR}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 파일 출력 설정 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/mba-application.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/mba-application.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 에러 로그 파일 설정 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/mba-error.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/mba-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- SQL 로그 파일 설정 -->
+    <appender name="SQL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/mba-sql.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/mba-sql.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 보안 로그 파일 설정 -->
+    <appender name="SECURITY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/mba-security.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/mba-security.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 프로파일별 설정 -->
+    <springProfile name="dev">
+        <!-- 개발 환경: 콘솔과 파일 모두 출력 -->
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+        
+        <!-- MBA 애플리케이션 로그 -->
+        <logger name="com.skax.eatool.mba" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
+        
+        <!-- Spring Security 로그 -->
+        <logger name="org.springframework.security" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="SECURITY_FILE"/>
+        </logger>
+        
+        <!-- SQL 로그 -->
+        <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="SQL_FILE"/>
+        </logger>
+        
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="SQL_FILE"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="prod">
+        <!-- 운영 환경: 파일만 출력 -->
+        <root level="INFO">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+        
+        <!-- MBA 애플리케이션 로그 -->
+        <logger name="com.skax.eatool.mba" level="INFO" additivity="false">
+            <appender-ref ref="FILE"/>
+        </logger>
+        
+        <!-- Spring Security 로그 -->
+        <logger name="org.springframework.security" level="WARN" additivity="false">
+            <appender-ref ref="SECURITY_FILE"/>
+        </logger>
+        
+        <!-- SQL 로그 비활성화 -->
+        <logger name="org.hibernate.SQL" level="WARN" additivity="false">
+            <appender-ref ref="SQL_FILE"/>
+        </logger>
+    </springProfile>
+
+    <!-- 기본 설정 (프로파일이 지정되지 않은 경우) -->
+    <springProfile name="!dev,!prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+        
+        <!-- MBA 애플리케이션 로그 -->
+        <logger name="com.skax.eatool.mba" level="INFO" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
+    </springProfile>
+
+    <!-- 공통 로거 설정 -->
+    <!-- Spring Framework 로그 -->
+    <logger name="org.springframework" level="INFO"/>
+    
+    <!-- Hibernate 로그 -->
+    <logger name="org.hibernate" level="INFO"/>
+    
+    <!-- Tomcat 로그 -->
+    <logger name="org.apache.tomcat" level="INFO"/>
+    
+    <!-- 기타 라이브러리 로그 -->
+    <logger name="org.apache" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+</configuration> 
