@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         body {
@@ -354,6 +356,32 @@
             </div>
         </div>
 
+        <!-- 실시간 차트 섹션 -->
+        <div class="system-info">
+            <h3>📈 실시간 차트</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="chart-container" style="height: 300px; position: relative;">
+                        <canvas id="homeAccountChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="chart-info">
+                        <h5>계정 타입별 분포</h5>
+                        <p>실시간으로 업데이트되는 계정 통계 차트입니다.</p>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm btn-primary" onclick="loadHomeAccountStatistics()">
+                                <i class="fas fa-sync-alt"></i> 새로고침
+                            </button>
+                            <a href="/web/report-management" class="btn btn-sm btn-success">
+                                <i class="fas fa-chart-bar"></i> 상세 보고서
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 업무별 네비게이션 -->
         <div class="navigation-section">
             <h3>🎯 업무별 네비게이션</h3>
@@ -559,12 +587,108 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('SKAX-EATOOL 홈화면 로드됨');
             
+            // Chart.js 로드 확인
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js 로드 확인됨:', Chart.version);
+                // 홈화면 로드 시 계정 통계 차트 로드
+                loadHomeAccountStatistics();
+            } else {
+                console.error('Chart.js가 로드되지 않았습니다!');
+            }
+            
             // 한글 인코딩 문제 확인 및 수정
             setTimeout(fixKoreanEncoding, 500);
             
             // 3초 후 다시 한번 확인
             setTimeout(fixKoreanEncoding, 3000);
         });
+
+        // 홈화면용 계정 통계 로드
+        function loadHomeAccountStatistics() {
+            console.log('홈화면 계정 통계 로드 시작');
+            
+            fetch('/api/report/account/statistics')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('홈화면 계정 통계 데이터:', data);
+                    
+                    if (data.success) {
+                        // 통계 카드 업데이트
+                        updateHomeStatsCards(data.data);
+                        // 간단한 차트 생성 (옵션)
+                        createHomeAccountChart(data.data);
+                    }
+                })
+                .catch(error => {
+                    console.error('홈화면 계정 통계 로드 중 오류:', error);
+                });
+        }
+
+        // 홈화면 통계 카드 업데이트
+        function updateHomeStatsCards(data) {
+            const summaryData = data.summaryData || data;
+            
+            // 계정 통계 카드 업데이트
+            const totalAccountsElement = document.querySelector('.info-item:nth-child(1) .info-value');
+            const activeAccountsElement = document.querySelector('.info-item:nth-child(2) .info-value');
+            const inactiveAccountsElement = document.querySelector('.info-item:nth-child(3) .info-value');
+            
+            if (totalAccountsElement) totalAccountsElement.textContent = summaryData.totalCount || 0;
+            if (activeAccountsElement) activeAccountsElement.textContent = summaryData.activeCount || 0;
+            if (inactiveAccountsElement) inactiveAccountsElement.textContent = summaryData.inactiveCount || 0;
+            
+            // 업데이트 시간 표시
+            const updateTimeElement = document.querySelector('.stats-update-time span:last-child');
+            if (updateTimeElement) {
+                const now = new Date();
+                updateTimeElement.textContent = now.toLocaleString('ko-KR');
+            }
+        }
+
+        // 홈화면용 간단한 계정 차트 생성 (옵션)
+        function createHomeAccountChart(data) {
+            const summaryData = data.summaryData || data;
+            
+            // 차트를 표시할 canvas 요소가 있다면 차트 생성
+            const chartCanvas = document.getElementById('homeAccountChart');
+            if (chartCanvas && summaryData.typeStatistics) {
+                const ctx = chartCanvas.getContext('2d');
+                
+                const labels = summaryData.typeStatistics.map(item => item.account_type || 'Unknown');
+                const values = summaryData.typeStatistics.map(item => item.count || 0);
+                
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: ['#4facfe', '#00f2fe', '#667eea'],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            title: {
+                                display: true,
+                                text: '계정 타입별 분포'
+                            }
+                        }
+                    }
+                });
+            }
+        }
     </script>
 </body>
 </html> 

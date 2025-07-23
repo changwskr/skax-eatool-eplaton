@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 통계 - SKAX-EATOOL</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            border: none;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .stat-card p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .btn-custom {
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 1rem 0;
+        }
+        
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            border: none;
+            font-weight: 600;
+        }
+        
+        .table td {
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .badge-custom {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="fas fa-chart-area"></i> 사용자 통계</h1>
+                    <p class="mb-0">사용자 관련 통계 정보를 확인하세요</p>
+                </div>
+                <div>
+                    <a href="/web/home" class="btn btn-outline-light btn-custom me-2">
+                        <i class="fas fa-home"></i> 홈으로 이동
+                    </a>
+                    <a href="/web/report-management" class="btn btn-outline-light btn-custom">
+                        <i class="fas fa-chart-bar"></i> 보고서 관리
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 통계 카드 섹션 -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 id="userTotal">-</h3>
+                            <p>전체 사용자</p>
+                        </div>
+                        <i class="fas fa-users fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 id="activeUsers">-</h3>
+                            <p>활성 사용자</p>
+                        </div>
+                        <i class="fas fa-user-check fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 id="inactiveUsers">-</h3>
+                            <p>비활성 사용자</p>
+                        </div>
+                        <i class="fas fa-user-times fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 새로고침 버튼 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="loadUserStatistics()">
+                            <i class="fas fa-sync-alt"></i> 통계 새로고침
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 사용자 통계 결과 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-area"></i> 사용자 통계 결과</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="loading" id="userLoading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">사용자 통계를 불러오는 중...</p>
+                        </div>
+                        
+                        <div class="error-message" id="userError">
+                            <!-- 오류 메시지가 여기에 표시됩니다 -->
+                        </div>
+                        
+                        <div id="userContent" style="display: none;">
+                            <!-- 사용자 통계 차트 -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="chart-container">
+                                        <canvas id="userStatusChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="chart-container">
+                                        <canvas id="userRoleChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 사용자 통계 테이블 -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>구분</th>
+                                            <th>수량</th>
+                                            <th>비율</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="userStatsTable">
+                                        <!-- 동적으로 생성됨 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // 전역 변수
+        let userCharts = {};
+        
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 사용자 통계 화면 로드됨 ===');
+            
+            try {
+                // Chart.js 로드 확인
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js가 로드되지 않았습니다!');
+                    showError('Chart.js 라이브러리가 로드되지 않았습니다. 차트를 표시할 수 없습니다.');
+                    return;
+                } else {
+                    console.log('Chart.js 로드 확인됨:', Chart.version);
+                }
+                
+                // HTML 요소 존재 확인
+                const userContent = document.getElementById('userContent');
+                const userStatusChart = document.getElementById('userStatusChart');
+                const userRoleChart = document.getElementById('userRoleChart');
+                
+                console.log('HTML 요소 확인:');
+                console.log('- userContent:', userContent);
+                console.log('- userStatusChart:', userStatusChart);
+                console.log('- userRoleChart:', userRoleChart);
+                
+                // 페이지 로드 시 자동으로 사용자 통계 로드
+                loadUserStatistics();
+                
+            } catch (error) {
+                console.error('페이지 로드 시 오류 발생:', error);
+                showError('페이지 로드 중 오류가 발생했습니다: ' + error.message);
+            }
+        });
+        
+        /**
+         * 사용자 통계 로드
+         */
+        function loadUserStatistics() {
+            console.log('사용자 통계 로드 시작');
+            
+            try {
+                showLoading();
+                hideError();
+                
+                fetch('/api/report/user/statistics')
+                    .then(response => {
+                        console.log('사용자 통계 API 응답:', response);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('사용자 통계 데이터:', data);
+                        console.log('사용자 통계 데이터 구조:', JSON.stringify(data, null, 2));
+                        
+                        if (data.success) {
+                            console.log('사용자 통계 데이터.data:', data.data);
+                            console.log('사용자 통계 데이터.data.summaryData:', data.data.summaryData);
+                            
+                            // 올바른 데이터 구조로 전달
+                            displayUserStatistics(data.data);
+                            updateUserTotal(data.data);
+                        } else {
+                            console.error('사용자 통계 로드 실패:', data.message);
+                            showError(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('사용자 통계 로드 중 오류:', error);
+                        showError('사용자 통계를 불러오는 중 오류가 발생했습니다: ' + error.message);
+                    })
+                    .finally(() => {
+                        hideLoading();
+                    });
+            } catch (error) {
+                console.error('사용자 통계 로드 함수 실행 중 오류:', error);
+                showError('사용자 통계 로드 함수 실행 중 오류가 발생했습니다: ' + error.message);
+                hideLoading();
+            }
+        }
+        
+        /**
+         * 사용자 통계 표시
+         */
+        function displayUserStatistics(data) {
+            console.log('=== 사용자 통계 표시 시작 ===');
+            console.log('전체 데이터:', data);
+            console.log('데이터 타입:', typeof data);
+            console.log('데이터 키들:', Object.keys(data));
+            
+            // API 응답 구조에 맞게 데이터 추출
+            const summaryData = data.summaryData || data;
+            console.log('사용할 통계 데이터:', summaryData);
+            console.log('summaryData 타입:', typeof summaryData);
+            console.log('summaryData 키들:', Object.keys(summaryData));
+            
+            if (!summaryData) {
+                console.warn('사용자 통계 데이터가 없습니다.');
+                showError('사용자 통계 데이터가 없습니다.');
+                return;
+            }
+            
+            // 각 필드별 상세 로깅
+            console.log('totalCount:', summaryData.totalCount);
+            console.log('activeCount:', summaryData.activeCount);
+            console.log('inactiveCount:', summaryData.inactiveCount);
+            console.log('roleStatistics:', summaryData.roleStatistics);
+            console.log('statusStatistics:', summaryData.statusStatistics);
+            
+            // 상태별 차트 생성
+            console.log('상태별 차트 생성 시작');
+            createUserStatusChart(summaryData);
+            
+            // 역할별 차트 생성
+            console.log('역할별 차트 생성 시작');
+            createUserRoleChart(summaryData);
+            
+            // 통계 테이블 생성
+            console.log('통계 테이블 생성 시작');
+            createUserStatsTable(summaryData);
+            
+            // 콘텐츠 표시
+            const contentElement = document.getElementById('userContent');
+            if (contentElement) {
+                contentElement.style.display = 'block';
+                console.log('사용자 콘텐츠 표시됨');
+            } else {
+                console.error('userContent 요소를 찾을 수 없습니다.');
+            }
+            
+            console.log('=== 사용자 통계 표시 완료 ===');
+        }
+        
+        /**
+         * 사용자 상태별 차트 생성
+         */
+        function createUserStatusChart(data) {
+            console.log('=== 사용자 상태별 차트 생성 시작 ===');
+            console.log('입력 데이터:', data);
+            
+            try {
+                // Chart.js 확인
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js가 로드되지 않았습니다!');
+                    return;
+                }
+                
+                const canvas = document.getElementById('userStatusChart');
+                if (!canvas) {
+                    console.error('userStatusChart canvas 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('userStatusChart canvas context를 가져올 수 없습니다.');
+                    return;
+                }
+                
+                // 기존 차트가 있으면 제거
+                if (userCharts.statusChart) {
+                    userCharts.statusChart.destroy();
+                }
+                
+                const totalCount = data.totalCount || 0;
+                const activeCount = data.activeCount || 0;
+                const inactiveCount = data.inactiveCount || 0;
+                
+                console.log('차트 데이터 - totalCount:', totalCount, 'activeCount:', activeCount, 'inactiveCount:', inactiveCount);
+                
+                userCharts.statusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['활성', '비활성'],
+                        datasets: [{
+                            data: [activeCount, inactiveCount],
+                            backgroundColor: ['#28a745', '#dc3545'],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            title: {
+                                display: true,
+                                text: '사용자 상태별 분포'
+                            }
+                        }
+                    }
+                });
+                
+                console.log('사용자 상태별 차트 생성 완료');
+            } catch (error) {
+                console.error('사용자 상태별 차트 생성 중 오류:', error);
+                console.error('오류 스택:', error.stack);
+            }
+        }
+        
+        /**
+         * 사용자 역할별 차트 생성
+         */
+        function createUserRoleChart(data) {
+            console.log('=== 사용자 역할별 차트 생성 시작 ===');
+            console.log('입력 데이터:', data);
+            
+            try {
+                const canvas = document.getElementById('userRoleChart');
+                if (!canvas) {
+                    console.error('userRoleChart canvas 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('userRoleChart canvas context를 가져올 수 없습니다.');
+                    return;
+                }
+                
+                // 기존 차트가 있으면 제거
+                if (userCharts.roleChart) {
+                    userCharts.roleChart.destroy();
+                }
+                
+                const roleStats = data.roleStatistics || [];
+                console.log('역할별 통계 데이터:', roleStats);
+                console.log('역할별 통계 데이터 길이:', roleStats.length);
+                
+                if (roleStats.length === 0) {
+                    console.warn('역할별 통계 데이터가 없습니다.');
+                    return;
+                }
+                
+                // 각 항목별 상세 로깅
+                roleStats.forEach((item, index) => {
+                    console.log(`역할 통계 ${index}:`, item);
+                    console.log(`  - role: ${item.role}`);
+                    console.log(`  - count: ${item.count}`);
+                });
+                
+                // API 응답 구조에 맞게 키 이름 수정
+                const labels = roleStats.map(item => item.role || item.USER_ROLE || 'Unknown');
+                const values = roleStats.map(item => item.count || 0);
+                
+                console.log('차트 라벨:', labels);
+                console.log('차트 값:', values);
+                
+                userCharts.roleChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '사용자 수',
+                            data: values,
+                            backgroundColor: '#667eea',
+                            borderColor: '#764ba2',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: '사용자 역할별 분포'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                
+                console.log('사용자 역할별 차트 생성 완료');
+            } catch (error) {
+                console.error('사용자 역할별 차트 생성 중 오류:', error);
+                console.error('오류 스택:', error.stack);
+            }
+        }
+        
+        /**
+         * 사용자 통계 테이블 생성
+         */
+        function createUserStatsTable(data) {
+            console.log('=== 사용자 통계 테이블 생성 시작 ===');
+            console.log('입력 데이터:', data);
+            
+            try {
+                const tableBody = document.getElementById('userStatsTable');
+                if (!tableBody) {
+                    console.error('userStatsTable 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                tableBody.innerHTML = '';
+                console.log('테이블 본문 초기화 완료');
+                
+                const totalCount = data.totalCount || 0;
+                const activeCount = data.activeCount || 0;
+                const inactiveCount = data.inactiveCount || 0;
+                
+                console.log('테이블 데이터 - totalCount:', totalCount, 'activeCount:', activeCount, 'inactiveCount:', inactiveCount);
+                
+                // 전체 사용자
+                addTableRow(tableBody, '전체 사용자', totalCount, '100%');
+                
+                // 활성 사용자
+                const activeRatio = totalCount > 0 ? ((activeCount / totalCount) * 100).toFixed(1) : '0';
+                addTableRow(tableBody, '활성 사용자', activeCount, activeRatio + '%');
+                
+                // 비활성 사용자
+                const inactiveRatio = totalCount > 0 ? ((inactiveCount / totalCount) * 100).toFixed(1) : '0';
+                addTableRow(tableBody, '비활성 사용자', inactiveCount, inactiveRatio + '%');
+                
+                // 역할별 통계
+                const roleStats = data.roleStatistics || [];
+                console.log('역할별 통계 데이터:', roleStats);
+                console.log('역할별 통계 데이터 길이:', roleStats.length);
+                
+                roleStats.forEach((item, index) => {
+                    console.log(`역할 통계 ${index}:`, item);
+                    // API 응답 구조에 맞게 키 이름 수정
+                    const roleName = item.role || item.USER_ROLE || 'Unknown';
+                    const count = item.count || 0;
+                    const ratio = totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : '0';
+                    console.log(`  - roleName: ${roleName}, count: ${count}, ratio: ${ratio}%`);
+                    addTableRow(tableBody, roleName + ' 사용자', count, ratio + '%');
+                });
+                
+                console.log('사용자 통계 테이블 생성 완료');
+            } catch (error) {
+                console.error('사용자 통계 테이블 생성 중 오류:', error);
+                console.error('오류 스택:', error.stack);
+            }
+        }
+        
+        /**
+         * 테이블에 행 추가
+         */
+        function addTableRow(tableBody, label, value, ratio) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${label}</td>
+                <td><strong>${value}</strong></td>
+                <td><span class="badge bg-primary">${ratio}</span></td>
+            `;
+            tableBody.appendChild(row);
+        }
+        
+        /**
+         * 사용자 통계 카드 업데이트
+         */
+        function updateUserTotal(data) {
+            const summaryData = data.summaryData || data;
+            
+            const totalElement = document.getElementById('userTotal');
+            const activeElement = document.getElementById('activeUsers');
+            const inactiveElement = document.getElementById('inactiveUsers');
+            
+            if (totalElement) totalElement.textContent = summaryData.totalCount || 0;
+            if (activeElement) activeElement.textContent = summaryData.activeCount || 0;
+            if (inactiveElement) inactiveElement.textContent = summaryData.inactiveCount || 0;
+        }
+        
+        /**
+         * 로딩 표시
+         */
+        function showLoading() {
+            const loadingElement = document.getElementById('userLoading');
+            if (loadingElement) {
+                loadingElement.style.display = 'block';
+            }
+        }
+        
+        /**
+         * 로딩 숨김
+         */
+        function hideLoading() {
+            const loadingElement = document.getElementById('userLoading');
+            if (loadingElement) {
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        /**
+         * 오류 메시지 표시
+         */
+        function showError(message) {
+            const errorElement = document.getElementById('userError');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+        }
+        
+        /**
+         * 오류 메시지 숨김
+         */
+        function hideError() {
+            const errorElement = document.getElementById('userError');
+            if (errorElement) {
+                errorElement.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

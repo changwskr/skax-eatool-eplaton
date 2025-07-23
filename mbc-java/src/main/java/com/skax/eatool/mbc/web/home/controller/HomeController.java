@@ -169,6 +169,28 @@ public class HomeController {
     }
 
     /**
+     * 사용자 통계 전용 페이지 표시
+     */
+    @GetMapping("/user-statistics")
+    public String showUserStatisticsPage(Model model) {
+        logger.info("=== HomeController.showUserStatisticsPage START ===");
+        kesaLogger.info("사용자 통계 페이지 요청", "HomeController");
+
+        try {
+            model.addAttribute("currentTime", LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss")));
+
+            kesaLogger.info("사용자 통계 페이지 데이터 로드 완료", "HomeController");
+
+        } catch (Exception e) {
+            kesaLogger.error("사용자 통계 페이지 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.showUserStatisticsPage END ===");
+        return "report/user-statistics";
+    }
+
+    /**
      * 계정관리 API 엔드포인트 정보 반환
      */
     @GetMapping("/api-info/account/endpoints")
@@ -652,16 +674,18 @@ public class HomeController {
 
         Map<String, Object> accountReport = new HashMap<>();
         accountReport.put("title", "계정 통계");
-        accountReport.put("url", "/api/report/account/statistics");
+        accountReport.put("url", "/web/report-management");
         accountReport.put("icon", "fas fa-chart-pie");
         accountReport.put("method", "GET");
+        accountReport.put("description", "계정 관련 통계 차트 및 분석");
         reportSubMenus.add(accountReport);
 
         Map<String, Object> userReport = new HashMap<>();
         userReport.put("title", "사용자 통계");
-        userReport.put("url", "/api/report/user/statistics");
+        userReport.put("url", "/web/user-statistics");
         userReport.put("icon", "fas fa-chart-area");
         userReport.put("method", "GET");
+        userReport.put("description", "사용자 관련 통계 차트 및 분석");
         reportSubMenus.add(userReport);
 
         reportMenu.put("subMenus", reportSubMenus);

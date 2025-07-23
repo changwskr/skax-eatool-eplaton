@@ -142,27 +142,34 @@
             </div>
         </div>
 
-        <!-- 탭 네비게이션 -->
-        <ul class="nav nav-tabs" id="reportTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab">
-                    <i class="fas fa-chart-pie"></i> 계정 통계
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="user-tab" data-bs-toggle="tab" data-bs-target="#user" type="button" role="tab">
-                    <i class="fas fa-chart-area"></i> 사용자 통계
-                </button>
-            </li>
-        </ul>
-
-        <!-- 탭 콘텐츠 -->
-        <div class="tab-content" id="reportTabContent">
-            <!-- 계정 통계 탭 -->
-            <div class="tab-pane fade show active" id="account" role="tabpanel">
+        <!-- 통계 버튼 섹션 -->
+        <div class="row mb-4">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-chart-pie"></i> 계정 통계</h5>
+                        <h5 class="mb-0"><i class="fas fa-chart-bar"></i> 통계 조회</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex gap-3">
+                            <button type="button" class="btn btn-primary btn-lg" id="accountStatsBtn" onclick="loadAccountStatistics()">
+                                <i class="fas fa-chart-pie"></i> 계정 통계 조회
+                            </button>
+                            <button type="button" class="btn btn-success btn-lg" id="userStatsBtn" onclick="loadUserStatistics()">
+                                <i class="fas fa-chart-area"></i> 사용자 통계 조회
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 통계 결과 섹션 -->
+        <div class="row">
+            <!-- 계정 통계 결과 -->
+            <div class="col-12" id="accountStatsSection" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-pie"></i> 계정 통계 결과</h5>
                     </div>
                     <div class="card-body">
                         <div class="loading" id="accountLoading">
@@ -207,11 +214,11 @@
                 </div>
             </div>
 
-            <!-- 사용자 통계 탭 -->
-            <div class="tab-pane fade" id="user" role="tabpanel">
+            <!-- 사용자 통계 결과 -->
+            <div class="col-12" id="userStatsSection" style="display: none;">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-chart-area"></i> 사용자 통계</h5>
+                        <h5 class="mb-0"><i class="fas fa-chart-area"></i> 사용자 통계 결과</h5>
                     </div>
                     <div class="card-body">
                         <div class="loading" id="userLoading">
@@ -268,15 +275,42 @@
         
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('보고서 관리 화면 로드됨');
+            console.log('=== 보고서 관리 화면 로드됨 ===');
             
-            // 계정 통계 로드
-            loadAccountStatistics();
-            
-            // 탭 변경 이벤트 리스너
-            document.getElementById('user-tab').addEventListener('click', function() {
-                loadUserStatistics();
-            });
+            try {
+                // Chart.js 로드 확인
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js가 로드되지 않았습니다!');
+                    alert('Chart.js 라이브러리가 로드되지 않았습니다. 차트를 표시할 수 없습니다.');
+                    return;
+                } else {
+                    console.log('Chart.js 로드 확인됨:', Chart.version);
+                }
+                
+                // HTML 요소 존재 확인
+                const accountContent = document.getElementById('accountContent');
+                const userContent = document.getElementById('userContent');
+                const accountStatusChart = document.getElementById('accountStatusChart');
+                const accountTypeChart = document.getElementById('accountTypeChart');
+                
+                console.log('HTML 요소 확인:');
+                console.log('- accountContent:', accountContent);
+                console.log('- userContent:', userContent);
+                console.log('- accountStatusChart:', accountStatusChart);
+                console.log('- accountTypeChart:', accountTypeChart);
+                
+                // 요소 존재 여부를 확인
+                console.log('HTML 요소 확인:\n' +
+                      'accountContent: ' + (accountContent ? '존재' : '없음') + '\n' +
+                      'accountStatusChart: ' + (accountStatusChart ? '존재' : '없음') + '\n' +
+                      'accountTypeChart: ' + (accountTypeChart ? '존재' : '없음'));
+                
+                console.log('페이지 로드 완료. 버튼을 클릭하여 통계를 조회하세요.');
+                
+            } catch (error) {
+                console.error('페이지 로드 시 오류 발생:', error);
+                alert('페이지 로드 중 오류가 발생했습니다: ' + error.message);
+            }
         });
         
         /**
@@ -285,34 +319,51 @@
         function loadAccountStatistics() {
             console.log('계정 통계 로드 시작');
             
-            showLoading('account');
-            
-            fetch('/api/report/account/statistics')
-                .then(response => {
-                    console.log('계정 통계 API 응답:', response);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('계정 통계 데이터:', data);
-                    console.log('계정 통계 데이터 구조:', JSON.stringify(data, null, 2));
-                    
-                    if (data.success) {
-                        console.log('계정 통계 데이터.data:', data.data);
-                        console.log('계정 통계 데이터.data.summaryData:', data.data.summaryData);
-                        displayAccountStatistics(data.data);
-                        updateAccountTotal(data.data);
-                    } else {
-                        console.error('계정 통계 로드 실패:', data.message);
-                        showError('account', data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('계정 통계 로드 중 오류:', error);
-                    showError('account', '계정 통계를 불러오는 중 오류가 발생했습니다.');
-                })
-                .finally(() => {
-                    hideLoading('account');
-                });
+            try {
+                // 다른 섹션 숨기기
+                document.getElementById('userStatsSection').style.display = 'none';
+                
+                // 계정 통계 섹션 표시
+                document.getElementById('accountStatsSection').style.display = 'block';
+                
+                showLoading('account');
+                
+                fetch('/api/report/account/statistics')
+                    .then(response => {
+                        console.log('계정 통계 API 응답:', response);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('계정 통계 데이터:', data);
+                        console.log('계정 통계 데이터 구조:', JSON.stringify(data, null, 2));
+                        
+                        if (data.success) {
+                            console.log('계정 통계 데이터.data:', data.data);
+                            console.log('계정 통계 데이터.data.summaryData:', data.data.summaryData);
+                            
+                            // 올바른 데이터 구조로 전달
+                            displayAccountStatistics(data.data);
+                            updateAccountTotal(data.data);
+                        } else {
+                            console.error('계정 통계 로드 실패:', data.message);
+                            showError('account', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('계정 통계 로드 중 오류:', error);
+                        showError('account', '계정 통계를 불러오는 중 오류가 발생했습니다: ' + error.message);
+                    })
+                    .finally(() => {
+                        hideLoading('account');
+                    });
+            } catch (error) {
+                console.error('계정 통계 로드 함수 실행 중 오류:', error);
+                showError('account', '계정 통계 로드 함수 실행 중 오류가 발생했습니다: ' + error.message);
+                hideLoading('account');
+            }
         }
         
         /**
@@ -321,63 +372,103 @@
         function loadUserStatistics() {
             console.log('사용자 통계 로드 시작');
             
-            showLoading('user');
-            
-            fetch('/api/report/user/statistics')
-                .then(response => {
-                    console.log('사용자 통계 API 응답:', response);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('사용자 통계 데이터:', data);
-                    console.log('사용자 통계 데이터 구조:', JSON.stringify(data, null, 2));
-                    
-                    if (data.success) {
-                        console.log('사용자 통계 데이터.data:', data.data);
-                        console.log('사용자 통계 데이터.data.summaryData:', data.data.summaryData);
-                        displayUserStatistics(data.data);
-                        updateUserTotal(data.data);
-                    } else {
-                        console.error('사용자 통계 로드 실패:', data.message);
-                        showError('user', data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('사용자 통계 로드 중 오류:', error);
-                    showError('user', '사용자 통계를 불러오는 중 오류가 발생했습니다.');
-                })
-                .finally(() => {
-                    hideLoading('user');
-                });
+            try {
+                // 다른 섹션 숨기기
+                document.getElementById('accountStatsSection').style.display = 'none';
+                
+                // 사용자 통계 섹션 표시
+                document.getElementById('userStatsSection').style.display = 'block';
+                
+                showLoading('user');
+                
+                fetch('/api/report/user/statistics')
+                    .then(response => {
+                        console.log('사용자 통계 API 응답:', response);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('사용자 통계 데이터:', data);
+                        console.log('사용자 통계 데이터 구조:', JSON.stringify(data, null, 2));
+                        
+                        if (data.success) {
+                            console.log('사용자 통계 데이터.data:', data.data);
+                            console.log('사용자 통계 데이터.data.summaryData:', data.data.summaryData);
+                            
+                            // 올바른 데이터 구조로 전달
+                            displayUserStatistics(data.data);
+                            updateUserTotal(data.data);
+                        } else {
+                            console.error('사용자 통계 로드 실패:', data.message);
+                            showError('user', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('사용자 통계 로드 중 오류:', error);
+                        showError('user', '사용자 통계를 불러오는 중 오류가 발생했습니다: ' + error.message);
+                    })
+                    .finally(() => {
+                        hideLoading('user');
+                    });
+            } catch (error) {
+                console.error('사용자 통계 로드 함수 실행 중 오류:', error);
+                showError('user', '사용자 통계 로드 함수 실행 중 오류가 발생했습니다: ' + error.message);
+                hideLoading('user');
+            }
         }
         
         /**
          * 계정 통계 표시
          */
         function displayAccountStatistics(data) {
-            console.log('계정 통계 표시 시작:', data);
+            console.log('=== 계정 통계 표시 시작 ===');
+            console.log('전체 데이터:', data);
+            console.log('데이터 타입:', typeof data);
+            console.log('데이터 키들:', Object.keys(data));
             
             // API 응답 구조에 맞게 데이터 추출
             // data.summaryData가 있으면 사용하고, 없으면 data 자체를 사용
             const summaryData = data.summaryData || data;
             console.log('사용할 통계 데이터:', summaryData);
+            console.log('summaryData 타입:', typeof summaryData);
+            console.log('summaryData 키들:', Object.keys(summaryData));
             
             if (!summaryData) {
                 console.warn('계정 통계 데이터가 없습니다.');
                 return;
             }
             
-            // 상태별 차트 생성
+            // 각 필드별 상세 로깅
+            console.log('totalCount:', summaryData.totalCount);
+            console.log('activeCount:', summaryData.activeCount);
+            console.log('inactiveCount:', summaryData.inactiveCount);
+            console.log('typeStatistics:', summaryData.typeStatistics);
+            console.log('statusStatistics:', summaryData.statusStatistics);
+            
+            // 상태별 차트 생성 - summaryData를 직접 전달
+            console.log('상태별 차트 생성 시작');
             createAccountStatusChart(summaryData);
             
-            // 타입별 차트 생성
+            // 타입별 차트 생성 - summaryData를 직접 전달
+            console.log('타입별 차트 생성 시작');
             createAccountTypeChart(summaryData);
             
-            // 통계 테이블 생성
+            // 통계 테이블 생성 - summaryData를 직접 전달
+            console.log('통계 테이블 생성 시작');
             createAccountStatsTable(summaryData);
             
             // 콘텐츠 표시
-            document.getElementById('accountContent').style.display = 'block';
+            const contentElement = document.getElementById('accountContent');
+            if (contentElement) {
+                contentElement.style.display = 'block';
+                console.log('계정 콘텐츠 표시됨');
+            } else {
+                console.error('accountContent 요소를 찾을 수 없습니다.');
+            }
+            
+            console.log('=== 계정 통계 표시 완료 ===');
         }
         
         /**
@@ -413,106 +504,157 @@
          * 계정 상태별 차트 생성
          */
         function createAccountStatusChart(data) {
-            console.log('계정 상태별 차트 생성 시작:', data);
+            console.log('=== 계정 상태별 차트 생성 시작 ===');
+            console.log('입력 데이터:', data);
             
-            const ctx = document.getElementById('accountStatusChart').getContext('2d');
-            
-            // 기존 차트가 있으면 제거
-            if (accountCharts.statusChart) {
-                accountCharts.statusChart.destroy();
-            }
-            
-            const totalCount = data.totalCount || 0;
-            const activeCount = data.activeCount || 0;
-            const inactiveCount = data.inactiveCount || 0;
-            
-            console.log('차트 데이터 - totalCount:', totalCount, 'activeCount:', activeCount, 'inactiveCount:', inactiveCount);
-            
-            accountCharts.statusChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['활성', '비활성'],
-                    datasets: [{
-                        data: [activeCount, inactiveCount],
-                        backgroundColor: ['#28a745', '#dc3545'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: '계정 상태별 분포'
+            try {
+                // Chart.js 확인
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js가 로드되지 않았습니다!');
+                    return;
+                }
+                
+                const canvas = document.getElementById('accountStatusChart');
+                if (!canvas) {
+                    console.error('accountStatusChart canvas 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('accountStatusChart canvas context를 가져올 수 없습니다.');
+                    return;
+                }
+                
+                // 기존 차트가 있으면 제거
+                if (accountCharts.statusChart) {
+                    accountCharts.statusChart.destroy();
+                }
+                
+                const totalCount = data.totalCount || 0;
+                const activeCount = data.activeCount || 0;
+                const inactiveCount = data.inactiveCount || 0;
+                
+                console.log('차트 데이터 - totalCount:', totalCount, 'activeCount:', activeCount, 'inactiveCount:', inactiveCount);
+                
+                accountCharts.statusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['활성', '비활성'],
+                        datasets: [{
+                            data: [activeCount, inactiveCount],
+                            backgroundColor: ['#28a745', '#dc3545'],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            title: {
+                                display: true,
+                                text: '계정 상태별 분포'
+                            }
                         }
                     }
-                }
-            });
-            
-            console.log('계정 상태별 차트 생성 완료');
+                });
+                
+                console.log('계정 상태별 차트 생성 완료');
+            } catch (error) {
+                console.error('계정 상태별 차트 생성 중 오류:', error);
+                console.error('오류 스택:', error.stack);
+            }
         }
         
         /**
          * 계정 타입별 차트 생성
          */
         function createAccountTypeChart(data) {
-            console.log('계정 타입별 차트 생성 시작:', data);
+            console.log('=== 계정 타입별 차트 생성 시작 ===');
+            console.log('입력 데이터:', data);
             
-            const ctx = document.getElementById('accountTypeChart').getContext('2d');
-            
-            // 기존 차트가 있으면 제거
-            if (accountCharts.typeChart) {
-                accountCharts.typeChart.destroy();
-            }
-            
-            const typeStats = data.typeStatistics || [];
-            console.log('타입별 통계 데이터:', typeStats);
-            
-            // API 응답 구조에 맞게 키 이름 수정
-            const labels = typeStats.map(item => item.account_type || item.ACCOUNT_TYPE || 'Unknown');
-            const values = typeStats.map(item => item.count || 0);
-            
-            console.log('차트 라벨:', labels);
-            console.log('차트 값:', values);
-            
-            accountCharts.typeChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '계정 수',
-                        data: values,
-                        backgroundColor: '#4facfe',
-                        borderColor: '#00f2fe',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: '계정 타입별 분포'
-                        }
+            try {
+                const canvas = document.getElementById('accountTypeChart');
+                if (!canvas) {
+                    console.error('accountTypeChart canvas 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('accountTypeChart canvas context를 가져올 수 없습니다.');
+                    return;
+                }
+                
+                // 기존 차트가 있으면 제거
+                if (accountCharts.typeChart) {
+                    accountCharts.typeChart.destroy();
+                }
+                
+                const typeStats = data.typeStatistics || [];
+                console.log('타입별 통계 데이터:', typeStats);
+                console.log('타입별 통계 데이터 길이:', typeStats.length);
+                
+                if (typeStats.length === 0) {
+                    console.warn('타입별 통계 데이터가 없습니다.');
+                    return;
+                }
+                
+                // 각 항목별 상세 로깅
+                typeStats.forEach((item, index) => {
+                    console.log(`타입 통계 ${index}:`, item);
+                    console.log(`  - account_type: ${item.account_type}`);
+                    console.log(`  - count: ${item.count}`);
+                });
+                
+                // API 응답 구조에 맞게 키 이름 수정
+                const labels = typeStats.map(item => item.account_type || item.ACCOUNT_TYPE || 'Unknown');
+                const values = typeStats.map(item => item.count || 0);
+                
+                console.log('차트 라벨:', labels);
+                console.log('차트 값:', values);
+                
+                accountCharts.typeChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '계정 수',
+                            data: values,
+                            backgroundColor: '#4facfe',
+                            borderColor: '#00f2fe',
+                            borderWidth: 1
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: '계정 타입별 분포'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
-            
-            console.log('계정 타입별 차트 생성 완료');
+                });
+                
+                console.log('계정 타입별 차트 생성 완료');
+            } catch (error) {
+                console.error('계정 타입별 차트 생성 중 오류:', error);
+                console.error('오류 스택:', error.stack);
+            }
         }
         
         /**
@@ -625,41 +767,56 @@
          * 계정 통계 테이블 생성
          */
         function createAccountStatsTable(data) {
-            console.log('계정 통계 테이블 생성 시작:', data);
+            console.log('=== 계정 통계 테이블 생성 시작 ===');
+            console.log('입력 데이터:', data);
             
-            const tableBody = document.getElementById('accountStatsTable');
-            tableBody.innerHTML = '';
-            
-            const totalCount = data.totalCount || 0;
-            const activeCount = data.activeCount || 0;
-            const inactiveCount = data.inactiveCount || 0;
-            
-            console.log('테이블 데이터 - totalCount:', totalCount, 'activeCount:', activeCount, 'inactiveCount:', inactiveCount);
-            
-            // 전체 계정
-            addTableRow(tableBody, '전체 계정', totalCount, '100%');
-            
-            // 활성 계정
-            const activeRatio = totalCount > 0 ? ((activeCount / totalCount) * 100).toFixed(1) : '0';
-            addTableRow(tableBody, '활성 계정', activeCount, activeRatio + '%');
-            
-            // 비활성 계정
-            const inactiveRatio = totalCount > 0 ? ((inactiveCount / totalCount) * 100).toFixed(1) : '0';
-            addTableRow(tableBody, '비활성 계정', inactiveCount, inactiveRatio + '%');
-            
-            // 타입별 통계
-            const typeStats = data.typeStatistics || [];
-            console.log('타입별 통계 데이터:', typeStats);
-            
-            typeStats.forEach(item => {
-                // API 응답 구조에 맞게 키 이름 수정
-                const typeName = item.account_type || item.ACCOUNT_TYPE || 'Unknown';
-                const count = item.count || 0;
-                const ratio = totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : '0';
-                addTableRow(tableBody, typeName + ' 계정', count, ratio + '%');
-            });
-            
-            console.log('계정 통계 테이블 생성 완료');
+            try {
+                const tableBody = document.getElementById('accountStatsTable');
+                if (!tableBody) {
+                    console.error('accountStatsTable 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                tableBody.innerHTML = '';
+                console.log('테이블 본문 초기화 완료');
+                
+                const totalCount = data.totalCount || 0;
+                const activeCount = data.activeCount || 0;
+                const inactiveCount = data.inactiveCount || 0;
+                
+                console.log('테이블 데이터 - totalCount:', totalCount, 'activeCount:', activeCount, 'inactiveCount:', inactiveCount);
+                
+                // 전체 계정
+                addTableRow(tableBody, '전체 계정', totalCount, '100%');
+                
+                // 활성 계정
+                const activeRatio = totalCount > 0 ? ((activeCount / totalCount) * 100).toFixed(1) : '0';
+                addTableRow(tableBody, '활성 계정', activeCount, activeRatio + '%');
+                
+                // 비활성 계정
+                const inactiveRatio = totalCount > 0 ? ((inactiveCount / totalCount) * 100).toFixed(1) : '0';
+                addTableRow(tableBody, '비활성 계정', inactiveCount, inactiveRatio + '%');
+                
+                // 타입별 통계
+                const typeStats = data.typeStatistics || [];
+                console.log('타입별 통계 데이터:', typeStats);
+                console.log('타입별 통계 데이터 길이:', typeStats.length);
+                
+                typeStats.forEach((item, index) => {
+                    console.log(`타입 통계 ${index}:`, item);
+                    // API 응답 구조에 맞게 키 이름 수정
+                    const typeName = item.account_type || item.ACCOUNT_TYPE || 'Unknown';
+                    const count = item.count || 0;
+                    const ratio = totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : '0';
+                    console.log(`  - typeName: ${typeName}, count: ${count}, ratio: ${ratio}%`);
+                    addTableRow(tableBody, typeName + ' 계정', count, ratio + '%');
+                });
+                
+                console.log('계정 통계 테이블 생성 완료');
+            } catch (error) {
+                console.error('계정 통계 테이블 생성 중 오류:', error);
+                console.error('오류 스택:', error.stack);
+            }
         }
         
         /**
