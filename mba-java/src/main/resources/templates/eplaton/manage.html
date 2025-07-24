@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPlaton Framework 관리</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            padding: 2rem 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+        }
+
+        .btn-info {
+            background: linear-gradient(45deg, #17a2b8, #6f42c1);
+            border: none;
+        }
+
+        .response-area {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 2px solid #e9ecef;
+        }
+
+        .response-area pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-success {
+            background-color: #28a745;
+        }
+
+        .status-error {
+            background-color: #dc3545;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1><i class="fas fa-cogs"></i> EPlaton Framework 관리</h1>
+            <p>EPlaton 비즈니스 프레임워크 실행 및 모니터링</p>
+        </div>
+
+        <!-- 기본 설정 카드 -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-cog"></i> 기본 설정</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="bankCode" class="form-label">은행 코드</label>
+                            <input type="text" class="form-control" id="bankCode" th:value="${defaultBankCode}" placeholder="001">
+                        </div>
+                        <div class="mb-3">
+                            <label for="branchCode" class="form-label">지점 코드</label>
+                            <input type="text" class="form-control" id="branchCode" th:value="${defaultBranchCode}" placeholder="001">
+                        </div>
+                        <div class="mb-3">
+                            <label for="userId" class="form-label">사용자 ID</label>
+                            <input type="text" class="form-control" id="userId" th:value="${defaultUserId}" placeholder="USER001">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="systemName" class="form-label">시스템명</label>
+                            <input type="text" class="form-control" id="systemName" th:value="${defaultSystemName}" placeholder="CashCard">
+                        </div>
+                        <div class="mb-3">
+                            <label for="actionName" class="form-label">액션명</label>
+                            <input type="text" class="form-control" id="actionName" th:value="${defaultActionName}" placeholder="CashCardBizAction">
+                        </div>
+                        <div class="mb-3">
+                            <label for="operationName" class="form-label">오퍼레이션명</label>
+                            <input type="text" class="form-control" id="operationName" th:value="${defaultOperationName}" placeholder="COMMO1000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API 실행 카드 -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-play"></i> API 실행</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="operationMethod" class="form-label">오퍼레이션 메서드</label>
+                            <input type="text" class="form-control" id="operationMethod" th:value="${defaultOperationMethod}" placeholder="getCardInfo">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="reqName" class="form-label">요청명</label>
+                            <input type="text" class="form-control" id="reqName" th:value="${defaultReqName}" placeholder="CardInfoRequest">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="requestData" class="form-label">요청 데이터 (JSON)</label>
+                            <textarea class="form-control" id="requestData" rows="3" placeholder='{"cardNumber": "1234567890"}'></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary me-2" onclick="executeOperation()">
+                            <i class="fas fa-play"></i> 실행
+                        </button>
+                        <button type="button" class="btn btn-success me-2" onclick="executeReadOnly()">
+                            <i class="fas fa-eye"></i> 읽기 전용 실행
+                        </button>
+                        <button type="button" class="btn btn-info me-2" onclick="routeToAction()">
+                            <i class="fas fa-route"></i> 액션 라우팅
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="healthCheck()">
+                            <i class="fas fa-heartbeat"></i> 상태 확인
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 응답 영역 -->
+                <div class="response-area" id="responseArea" style="display: none;">
+                    <h5><i class="fas fa-arrow-down"></i> 응답 결과</h5>
+                    <div id="responseContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상태 모니터링 카드 -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-chart-line"></i> 상태 모니터링</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="status-indicator status-success" id="apiStatus"></div>
+                            <h5>API 상태</h5>
+                            <p id="apiStatusText">정상</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="status-indicator status-success" id="tcfStatus"></div>
+                            <h5>TCF 상태</h5>
+                            <p id="tcfStatusText">정상</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="status-indicator status-success" id="bizActionStatus"></div>
+                            <h5>비즈니스 액션</h5>
+                            <p id="bizActionStatusText">정상</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="status-indicator status-success" id="overallStatus"></div>
+                            <h5>전체 상태</h5>
+                            <p id="overallStatusText">정상</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // API 실행 함수
+        function executeOperation() {
+            const requestData = buildRequestData();
+            callApi('/mba/eplaton/api/execute', requestData, '실행');
+        }
+
+        // 읽기 전용 실행 함수
+        function executeReadOnly() {
+            const requestData = buildRequestData();
+            callApi('/mba/eplaton/api/execute-readonly', requestData, '읽기 전용 실행');
+        }
+
+        // 액션 라우팅 함수
+        function routeToAction() {
+            const requestData = buildRequestData();
+            callApi('/mba/eplaton/api/route-action', requestData, '액션 라우팅');
+        }
+
+        // 상태 확인 함수
+        function healthCheck() {
+            callApi('/mba/eplaton/api/health', {}, '상태 확인');
+        }
+
+        // 요청 데이터 구성
+        function buildRequestData() {
+            return {
+                common: {
+                    bankCode: document.getElementById('bankCode').value,
+                    branchCode: document.getElementById('branchCode').value,
+                    userId: document.getElementById('userId').value
+                },
+                systemName: document.getElementById('systemName').value,
+                actionName: document.getElementById('actionName').value,
+                operationName: document.getElementById('operationName').value,
+                operationMethod: document.getElementById('operationMethod').value,
+                reqName: document.getElementById('reqName').value,
+                request: parseRequestData()
+            };
+        }
+
+        // 요청 데이터 파싱
+        function parseRequestData() {
+            const requestDataText = document.getElementById('requestData').value;
+            if (!requestDataText) return {};
+            
+            try {
+                return JSON.parse(requestDataText);
+            } catch (e) {
+                console.error('JSON 파싱 오류:', e);
+                return { rawData: requestDataText };
+            }
+        }
+
+        // API 호출 함수
+        function callApi(endpoint, data, operationName) {
+            const responseArea = document.getElementById('responseArea');
+            const responseContent = document.getElementById('responseContent');
+            
+            responseArea.style.display = 'block';
+            responseContent.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">요청 처리 중...</p></div>';
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                responseContent.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-check"></i> ${operationName} 성공</h6>
+                    </div>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+                updateStatus('success');
+            })
+            .catch(error => {
+                responseContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle"></i> ${operationName} 실패</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                updateStatus('error');
+            });
+        }
+
+        // 상태 업데이트
+        function updateStatus(status) {
+            const indicators = document.querySelectorAll('.status-indicator');
+            const texts = document.querySelectorAll('[id$="StatusText"]');
+            
+            indicators.forEach(indicator => {
+                indicator.className = 'status-indicator';
+                if (status === 'success') {
+                    indicator.classList.add('status-success');
+                } else {
+                    indicator.classList.add('status-error');
+                }
+            });
+
+            texts.forEach(text => {
+                text.textContent = status === 'success' ? '정상' : '오류';
+            });
+        }
+
+        // 페이지 로드 시 상태 확인
+        document.addEventListener('DOMContentLoaded', function() {
+            healthCheck();
+        });
+    </script>
+</body>
+</html> 
