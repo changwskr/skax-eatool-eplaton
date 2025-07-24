@@ -76,3 +76,4 @@ application-local.properties
 dist/
 build/
 out/ 
+/.metadata/

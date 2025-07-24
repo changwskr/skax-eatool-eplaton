@@ -1,0 +1,40 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: apigateway-service
+  
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true    
+      # ========================================
+      # 라우팅 설정은 FilterConfig.java에서 처리
+      # ========================================
+
+# ========================================
+# JWT 토큰 설정
+# ========================================
+token:
+  secret: user_token_secret_key_for_jwt_validation
+
+# ========================================
+# Management 설정
+# ========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true 

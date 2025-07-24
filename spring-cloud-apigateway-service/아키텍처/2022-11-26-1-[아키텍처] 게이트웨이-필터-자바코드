@@ -1,0 +1,47 @@
+● 게이트웨이 역할정의
+    client ----- spring cloud gateway ----- first service
+    
+    가. gateway handler mapping 역할을 한다.
+    	클라이언트의 요청정보를 참고하여 서비스 정보로 라우팅 정보 관리한다.
+    	이중 predicate 영역에서 분기조건이 관리된다.
+	나. 필터 정보를 가지고 있다.
+		- PreFilter
+			(필터를 적용하는 방법은) Property로 작업도 가능하고 Java Code로 작업도 가능하다. 
+		- PostFilter    	
+    	
+● (학습) 필터적용 - 1 - 자바코드로 적용
+	- FilterConfig 코딩 - RouteLocator 필터를 적용한다.
+	  여기서 필터를 이용해서 리퀘스트헤더와 리스폰스 헤더에 필터를 이용해서 정보를 주입한다.
+	  (1) 작업
+	@Configuration
+	public class FilterConfig {
+		@Bean
+    	public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
+    	        return builder.routes()
+        		// 이런 서비스가 들어오면 이렇게 처리하겠다.
+        				// 패스설정은 다음과 같다.
+                .route(r -> r.path("/first-service/**")
+                						// 리퀘스트 헤더에 다음의 정보를 넣어 주겠다.
+                            .filters(f -> f.addRequestHeader("first-request", "first-request-header")
+                            									// 리스폰스 헤더에 다음의 정보를 넣어 주겠다.
+                                                  .addResponseHeader("first-response", "first-response-header"))
+                            	// 다음의 uri로 넘기겠다.
+                            .uri("http://localhost:8081"))    	
+    	}
+    }
+    (2) 작업 - controller에서 필터에서 적용한 값이 올라오는 지 확인한다.
+
+	FirstServiceController.java
+	
+    @GetMapping("/message")
+    public String message(@RequestHeader("first-request") String header) {
+        log.info("---->>>" + header);
+        return "Hello World in First Service.";
+    }
+    
+	
+● (테스트) 필터
+	http://localhost:8000/first-service/message
+	http://localhost:8000/first-service/welcome
+	
+		         

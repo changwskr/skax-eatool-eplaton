@@ -1,0 +1,51 @@
+●(학습) LoggingFilter를 적용한다.
+   필터의 우선순위도 변경가능하다.
+
+필터 수행순서는 다음과 같다.   
+Gatway Client -> Gateway Handler -> Global Filter -> Customer Filter -> Logging Filter -> Second Service
+                       <-                            <-                     <-                          <-                       <-
+호출순서는 이렇게 된다.      
+ 
+그런데 이 호출 순서를 바꿀도 있는데 이것은 자바코드에서
+Ordered.HIGHEST_PRECEDENCE 이렇게 선언하면 최우선 순위가 된다.       
+Ordered.LOWEST_PRECEDENCE 최하위 순위
+
+● application.xml
+        - id: second-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/second-service/**
+          filters:
+            - AddRequestHeader=second-request, second-request-header2
+            - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter
+            - name: LoggingFilter  <<<<<<<<<<<<<
+              args:
+                baseMessage: Hi, there. <<<<<<<<<<<<<<<<
+                preLogger: true  <<<<<<<<<<<<<<<
+                postLogger: true                              <<<<<<<<<<<<<<
+                
+● 자바
+public class LoggingFilter extends AbstractGatewayFilterFactory<LoggingFilter.Config> {
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    public LoggingFilter() {
+        super(Config.class);
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
+
+		Ordered.LOWEST_PRECEDENCE);
+    }
+        @Data
+    public static class Config {
+        private String baseMessage;
+        private boolean preLogger;
+        private boolean postLogger;
+    }
+}
+
+● (테스트) 필터
+	http://localhost:8000/second-service/check
+
+    

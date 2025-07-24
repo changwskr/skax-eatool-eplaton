@@ -21,6 +21,7 @@
         <module>mbc01-java</module>
         <module>mbc-java</module>
         <module>mba-java</module>
+        <module>spring-cloud-apigateway-service</module>
     </modules>
 
     <properties>
@@ -30,6 +31,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.boot.version>2.7.18</spring.boot.version>
         <spring.version>5.3.31</spring.version>
+        <spring.cloud.version>2021.0.8</spring.cloud.version>
         <java.version>11</java.version>
     </properties>
 
@@ -49,6 +51,15 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
                 <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Cloud BOM -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring.cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -99,6 +110,12 @@
             <dependency>
                 <groupId>com.skax.eatool</groupId>
                 <artifactId>mba-java</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.skax.eatool</groupId>
+                <artifactId>spring-cloud-apigateway-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

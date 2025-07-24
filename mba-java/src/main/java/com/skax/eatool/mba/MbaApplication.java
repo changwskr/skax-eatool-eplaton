@@ -2,11 +2,11 @@ package com.skax.eatool.mba;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLoggerFactory;
 import org.slf4j.Logger;
@@ -22,12 +22,9 @@ import org.slf4j.LoggerFactory;
  * @version 1.0.0
  * @since 2024
  */
-@SpringBootApplication(exclude = {
-        HibernateJpaAutoConfiguration.class,
-        JpaRepositoriesAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
-})
+@SpringBootApplication
+@EnableDiscoveryClient
+@EnableJpaRepositories(basePackages = "com.skax.eatool.mba.dc.usermgmtdc.repository")
 @ComponentScan(basePackages = {
         "com.skax.eatool.mba.as",
         "com.skax.eatool.mba.dc",

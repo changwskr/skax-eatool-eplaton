@@ -1,6 +1,8 @@
 package com.skax.eatool.mbc.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -9,20 +11,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 웹 설정 클래스
+ * MBC 웹 설정 클래스
  * 
- * 프로그램명: WebConfig.java
- * 설명: 웹 관련 설정을 담당하는 설정 클래스
- * 작성일: 2024-01-01
- * 작성자: SKAX Project Team
+ * Gateway 환경에서 MBC 서비스의 웹 관련 설정을 담당합니다.
  * 
  * 주요 기능:
- * - 정적 리소스 처리 설정
- * - 컨트롤러 우선 처리 설정
- * - CORS 설정
- * - 인터셉터 설정
+ * - 정적 리소스 처리 설정 (Gateway 경로 고려)
+ * - CORS 설정 (API Gateway와의 통신)
+ * - 인터셉터 설정 (필요시)
  * 
- * @version 1.0
+ * Gateway 환경 특성:
+ * - 모든 요청은 /mbc/ 경로로 시작
+ * - 정적 리소스는 Gateway를 통해 접근
+ * - 컨트롤러가 직접 요청 처리
+ * 
+ * @author SKAX Project Team
+ * @version 1.0.0
+ * @since 2024
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -57,9 +62,14 @@ public class WebConfig implements WebMvcConfigurer {
                     .addResourceLocations("classpath:/static/images/")
                     .setCachePeriod(3600);
 
-            // Swagger UI 리소스
+            // Swagger UI 리소스 (OpenAPI 3.0)
             registry.addResourceHandler("/swagger-ui/**")
-                    .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+                    .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/")
+                    .setCachePeriod(0);
+            
+            // Swagger UI 추가 리소스
+            registry.addResourceHandler("/swagger-ui.html")
+                    .addResourceLocations("classpath:/META-INF/resources/")
                     .setCachePeriod(0);
 
             // H2 Console 리소스
@@ -129,5 +139,13 @@ public class WebConfig implements WebMvcConfigurer {
         }
         
         logger.info("=== WebConfig.addInterceptors END ===");
+    }
+
+    /**
+     * RestTemplate Bean
+     */
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

@@ -1,0 +1,99 @@
+server:
+  port: 8000
+#===========================================================
+spring:
+  application:
+    name: apigateway-service
+  #-------
+  # (실수로 cloud가 삭제되어 에러가 났음-너무힘들었음) 1126    
+  cloud:
+    uri: http://127.0.0.1:8888
+    name: ecommerce    
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true    
+      routes:
+        - id: first-service
+          uri: http://localhost:8081
+#          uri: lb://MY-FIRST-SERVICE           
+          predicates:
+            - Path=/first-service/**
+          filters:
+#            - AddRequestHeader=first-request, first-request-header2
+#            - AddResponseHeader=first-response, first-response-header2       
+              - CustomFilter     
+        - id: second-service
+          uri: http://localhost:8082
+#          uri: lb://MY-SECOND-SERVICE      
+          predicates:
+            - Path=/second-service/**
+          filters:
+#            - AddRequestHeader=second-request, second-request-header2
+#            - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true                             
+        - id: third-service
+          uri: http://localhost:8083
+#          uri: lb://MY-THIRD-SERVICE          
+          predicates:
+            - Path=/third-service/**
+          filters:
+#            - AddRequestHeader=third-request, third-request-header2
+#            - AddResponseHeader=third-response, third-response-header2
+            - CustomFilter     
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalog-service/**
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
+  #-----
+  # rabbitmq 막음 2022-11-26
+  # 에러가 많이남...
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: guest
+#    password: guest
+#===========================================================
+eureka:
+  instance:
+    hostname: localhost    
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+# =================================================================
+token:
+  secret: user_token
+# =================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh, info, metrics, prometheus                  
+
+            

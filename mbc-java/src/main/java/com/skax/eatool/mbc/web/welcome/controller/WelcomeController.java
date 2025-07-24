@@ -32,7 +32,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/mbc/as")
+@RequestMapping("/as")
 public class WelcomeController {
 
     private final NewIKesaLogger logger = NewKesaLogHelper.getBiz();

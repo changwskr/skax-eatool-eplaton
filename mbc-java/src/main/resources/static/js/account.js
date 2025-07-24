@@ -5,7 +5,7 @@
 
 class AccountManager {
     constructor() {
-        this.apiBaseUrl = '/api/accounts';
+        this.apiBaseUrl = '/mbc/api/accounts';
         this.currentPage = 1;
         this.pageSize = 10;
         this.init();

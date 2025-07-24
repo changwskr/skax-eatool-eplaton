@@ -1,0 +1,35 @@
+
+application.xml 파일에서 
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie # 헤더에 있는 쿠키정보는 제거하자
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+predicates와 filter에서 /user-service처리를 해주어 따라서 소스에서 @RequestMapping("/user-service")은 명시하지 않아도 된다. @RequestMapping("/")
+
+spring:
+  application:
+    name: apigateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie # 헤더에 있는 쿠키정보는 제거하자
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}

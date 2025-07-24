@@ -1,0 +1,21 @@
+
+거래추적을 위해서 필요한 작업
+
+● application.xml
+	(httptrace) 추가
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh, info, metrics, prometheus
+                      
+● 프로그램
+	(httpTraceRepository()) 추가
+	public class ApigatewayServiceApplication {
+	
+	    @Bean
+	    public HttpTraceRepository httpTraceRepository() {
+	        return new InMemoryHttpTraceRepository();
+	    }
+	}
+	

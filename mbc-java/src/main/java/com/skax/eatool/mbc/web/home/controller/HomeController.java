@@ -30,7 +30,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("/web/admin")
 public class HomeController {
     
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -63,6 +63,11 @@ public class HomeController {
             // 업무별 통계
             Map<String, Object> businessStats = getBusinessStats();
             model.addAttribute("businessStats", businessStats);
+            
+            // 개별 통계도 별도로 추가 (템플릿 호환성을 위해)
+            model.addAttribute("accountStats", businessStats.get("accountStats"));
+            model.addAttribute("userStats", businessStats.get("userStats"));
+            model.addAttribute("systemStats", businessStats.get("systemStats"));
 
             // 최근 활동
             List<Map<String, Object>> recentActivities = getRecentActivities();
@@ -76,6 +81,7 @@ public class HomeController {
 
         } catch (Exception e) {
             kesaLogger.error("웹 홈화면 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+            logger.error("웹 홈화면 데이터 로드 중 오류: ", e);
             // 기본값 설정
             setDefaultValues(model);
         }
@@ -144,6 +150,40 @@ public class HomeController {
     }
 
     /**
+     * 계정 생성 페이지
+     */
+    @GetMapping("/account/create")
+    public String showAccountCreatePage(Model model) {
+        logger.info("=== HomeController.showAccountCreatePage START ===");
+        kesaLogger.info("계정 생성 페이지 요청", "HomeController");
+
+        try {
+            // 현재 시간
+            String currentTime = LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss"));
+            model.addAttribute("currentTime", currentTime);
+
+            // API 엔드포인트 정보
+            Map<String, Object> apiInfo = new HashMap<>();
+            apiInfo.put("baseUrl", "/api/accounts");
+            apiInfo.put("endpoints", getAccountApiEndpoints());
+            
+            model.addAttribute("apiInfo", apiInfo);
+            model.addAttribute("pageTitle", "계정 생성");
+            model.addAttribute("apiEndpoint", "/api/accounts");
+            model.addAttribute("controllerName", "HomeController");
+
+            kesaLogger.info("계정 생성 페이지 데이터 로드 완료", "HomeController");
+
+        } catch (Exception e) {
+            kesaLogger.error("계정 생성 페이지 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.showAccountCreatePage END ===");
+        return "web/account/create";
+    }
+
+    /**
      * 사용자 관리 페이지
      */
     @GetMapping("/user-management")
@@ -169,6 +209,78 @@ public class HomeController {
 
         logger.info("=== HomeController.showUserManagementPage END ===");
         return "user/user-management";
+    }
+
+    /**
+     * 사용자 생성 페이지
+     */
+    @GetMapping("/user/create")
+    public String showUserCreatePage(Model model) {
+        logger.info("=== HomeController.showUserCreatePage START ===");
+        kesaLogger.info("사용자 생성 페이지 요청", "HomeController");
+
+        try {
+            // 현재 시간
+            String currentTime = LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss"));
+            model.addAttribute("currentTime", currentTime);
+
+            // API 엔드포인트 정보
+            Map<String, Object> apiInfo = new HashMap<>();
+            apiInfo.put("baseUrl", "/api/user");
+            apiInfo.put("endpoints", getUserApiEndpoints());
+            
+            model.addAttribute("apiInfo", apiInfo);
+            model.addAttribute("pageTitle", "사용자 생성");
+            model.addAttribute("apiEndpoint", "/api/user/create");
+            model.addAttribute("controllerName", "HomeController");
+
+            kesaLogger.info("사용자 생성 페이지 데이터 로드 완료", "HomeController");
+
+        } catch (Exception e) {
+            kesaLogger.error("사용자 생성 페이지 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.showUserCreatePage END ===");
+        return "web/user/create";
+    }
+
+    /**
+     * 모니터링 대시보드 페이지
+     */
+    @GetMapping("/monitoring/dashboard")
+    public String showMonitoringDashboard(Model model) {
+        logger.info("=== HomeController.showMonitoringDashboard START ===");
+        kesaLogger.info("모니터링 대시보드 페이지 요청", "HomeController");
+
+        try {
+            // 현재 시간
+            String currentTime = LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss"));
+            model.addAttribute("currentTime", currentTime);
+
+            // 시스템 정보
+            Map<String, Object> systemInfo = getSystemInfo();
+            model.addAttribute("systemInfo", systemInfo);
+
+            // 모니터링 데이터
+            Map<String, Object> monitoringData = new HashMap<>();
+            monitoringData.put("cpuUsage", "45%");
+            monitoringData.put("memoryUsage", "62%");
+            monitoringData.put("diskUsage", "78%");
+            monitoringData.put("networkStatus", "정상");
+            monitoringData.put("databaseStatus", "정상");
+            monitoringData.put("applicationStatus", "정상");
+            model.addAttribute("monitoringData", monitoringData);
+
+            kesaLogger.info("모니터링 대시보드 페이지 데이터 로드 완료", "HomeController");
+
+        } catch (Exception e) {
+            kesaLogger.error("모니터링 대시보드 페이지 데이터 로드 중 오류: " + e.getMessage(), "HomeController");
+        }
+
+        logger.info("=== HomeController.showMonitoringDashboard END ===");
+        return "web/monitoring/dashboard";
     }
     
     /**
@@ -859,11 +971,15 @@ public class HomeController {
         model.addAttribute("systemInfo", systemInfo);
 
         Map<String, Object> businessStats = new HashMap<>();
-        businessStats.put("totalAccounts", 0);
-        businessStats.put("totalUsers", 0);
-        businessStats.put("totalTransactions", 0);
-        businessStats.put("activeSessions", 0);
+        businessStats.put("accountStats", getDefaultAccountStats());
+        businessStats.put("userStats", getDefaultUserStats());
+        businessStats.put("systemStats", getDefaultSystemStats());
         model.addAttribute("businessStats", businessStats);
+        
+        // 개별 통계도 별도로 추가
+        model.addAttribute("accountStats", getDefaultAccountStats());
+        model.addAttribute("userStats", getDefaultUserStats());
+        model.addAttribute("systemStats", getDefaultSystemStats());
 
         model.addAttribute("recentActivities", getDefaultActivities());
         model.addAttribute("navigationMenus", getNavigationMenus());

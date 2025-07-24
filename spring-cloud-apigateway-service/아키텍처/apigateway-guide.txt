@@ -1,0 +1,40 @@
+
+1) 환경 파일 전파
+	(post)http://localhost:8000/actuator/refresh
+	(post)http://localhost:8000/actuator/busrefresh
+	(post)http://localhost:8000/user-service/actuator/busrefresh
+	
+	http://localhost:8000/user-service/actuator/health
+	http://localhost:8888/ecommerce/default
+	http://localhost:8888/ecommerce/dev
+
+2) 헬스체킹	
+http://localhost:8000/user-service/health_check
+http://localhost:8000/order-service/health_check
+http://localhost:8000/catalog-service/health_check
+http://localhost:8000/user-service/actuator/health
+
+3) 환경정보 변경확인
+   3-1) 환경파일 변경 (2022-11-17-spring-cloud-config-native-repository/application.yml)
+   token:
+	  expiration_time: 86400000
+	  secret: user_token_native_application_changed_#1 (변경)
+   
+   3-2) 현재 환경파일 접근 서비스명을 확인한다.
+	http://localhost:8888/config-service/default
+	
+	#-- user-service, gateway는 다음의 서비스정보로 환경정보 패치한다. 그래서 config-service다.	
+	spring:
+	  cloud:
+	    config:
+	      uri: http://127.0.0.1:8888
+	      name: config-service
+
+   3-3) 변경된 파일 정보를 mqbus를 통해서 전파된 정보를 sub한다. (pub/sub)
+            actuator를 통해서 관리된다.
+   (post) http://localhost:8000/user-service/actuator/busrefresh
+   
+     >>>메시지 출력
+         DiscoveryClient_USER-SERVICE/SKCC20N00280:user-service:1a9da68428423e949f814794584dceae - registration status: 204
+      
+	

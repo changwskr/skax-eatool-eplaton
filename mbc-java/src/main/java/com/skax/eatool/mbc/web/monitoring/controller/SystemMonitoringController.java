@@ -30,7 +30,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/mbc/monitoring")
+@RequestMapping("/monitoring")
 @Tag(name = "System Monitoring", description = "시스템 모니터링 API")
 public class SystemMonitoringController {
     

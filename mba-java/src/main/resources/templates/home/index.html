@@ -11,57 +11,143 @@
             padding: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+        .welcome-title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        .welcome-subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .navigation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        .nav-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        .nav-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: white;
         }
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
+        .nav-card.user-management .nav-card-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
         }
-        .logo {
-            font-size: 2.5em;
-            font-weight: bold;
+        .nav-card.account-management .nav-card-icon {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        .nav-card.report-system .nav-card-icon {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        .nav-card.system-monitoring .nav-card-icon {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+        .nav-card-title {
+            font-size: 1.3em;
+            font-weight: 600;
             color: #333;
+            margin-bottom: 10px;
+        }
+        .nav-card-description {
+            color: #666;
+            line-height: 1.6;
             margin-bottom: 20px;
         }
-        .subtitle {
-            font-size: 1.2em;
-            color: #666;
-            margin-bottom: 30px;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        .info-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-        }
-        .info-card h3 {
-            margin: 0 0 10px 0;
-            color: #333;
-            font-size: 1.1em;
-        }
-        .info-card p {
+        .nav-card-features {
+            list-style: none;
+            padding: 0;
             margin: 0;
-            color: #666;
+        }
+        .nav-card-features li {
+            padding: 5px 0;
+            color: #555;
+            font-size: 0.9em;
+        }
+        .nav-card-features li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .quick-actions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+        .quick-actions h3 {
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
         }
         .button-group {
             display: flex;
             gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 30px;
         }
         .btn {
             padding: 12px 24px;
@@ -71,69 +157,175 @@
             font-weight: 500;
             transition: all 0.3s ease;
             cursor: pointer;
+            color: white;
         }
         .btn-primary {
-            background: #667eea;
-            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         .btn-primary:hover {
-            background: #5a6fd8;
+            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
+        .system-info {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
+        .system-info h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
         }
-        .status {
-            display: inline-block;
-            padding: 8px 16px;
-            background: #28a745;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin: 10px 0;
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            text-align: center;
+        }
+        .info-card h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1.1em;
+        }
+        .info-card p {
+            margin: 0;
+            color: #666;
+        }
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 40px;
+            padding: 20px;
+        }
+        @media (max-width: 768px) {
+            .navigation-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .welcome-title {
+                font-size: 2em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">MBA</div>
-        <div class="subtitle">Master Business Application</div>
-        <div class="status">시스템 정상 운영 중</div>
-        
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>버전</h3>
-                <p th:text="${version}">1.0.0</p>
-            </div>
-            <div class="info-card">
-                <h3>현재 시간</h3>
-                <p th:text="${#temporals.format(currentTime, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 00:00:00</p>
-            </div>
-            <div class="info-card">
-                <h3>서버 포트</h3>
-                <p>8081</p>
-            </div>
-            <div class="info-card">
-                <h3>데이터베이스</h3>
-                <p>H2 (인메모리)</p>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">MBA</div>
+            <div class="status">시스템 정상 운영 중</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Master Business Application</h1>
+            <p class="welcome-subtitle">통합 비즈니스 관리 시스템에 오신 것을 환영합니다</p>
+        </div>
+
+        <div class="quick-actions">
+            <h3>빠른 접근</h3>
+            <div class="button-group">
+                <a href="/mba/swagger-ui.html" class="btn btn-primary">API 문서</a>
+                <a href="/mba/h2-console" class="btn btn-primary">데이터베이스</a>
+                <a href="/mba/actuator/health" class="btn btn-primary">시스템 상태</a>
+                <a href="/mba/actuator/info" class="btn btn-primary">시스템 정보</a>
             </div>
         </div>
-        
-        <div class="button-group">
-            <a href="/mba/dashboard" class="btn btn-primary">대시보드</a>
-            <a href="/mba/swagger-ui.html" class="btn btn-secondary">API 문서</a>
-            <a href="/mba/h2-console" class="btn btn-secondary">데이터베이스</a>
-            <a href="/mba/actuator/health" class="btn btn-secondary">상태 확인</a>
+
+        <div class="navigation-grid">
+            <div class="nav-card user-management" onclick="location.href='/mba/user-management'">
+                <div class="nav-card-icon">👥</div>
+                <div class="nav-card-title">사용자 관리</div>
+                <div class="nav-card-description">
+                    사용자 계정 생성, 수정, 삭제 및 권한 관리
+                </div>
+                <ul class="nav-card-features">
+                    <li>사용자 등록 및 정보 관리</li>
+                    <li>권한 및 역할 설정</li>
+                    <li>사용자 상태 관리</li>
+                    <li>사용자 활동 로그</li>
+                </ul>
+            </div>
+
+            <div class="nav-card account-management" onclick="location.href='/mba/account-management'">
+                <div class="nav-card-icon">💰</div>
+                <div class="nav-card-title">계정 관리</div>
+                <div class="nav-card-description">
+                    계정 정보 관리 및 재무 데이터 처리
+                </div>
+                <ul class="nav-card-features">
+                    <li>계정 정보 조회 및 수정</li>
+                    <li>재무 데이터 관리</li>
+                    <li>계정 상태 모니터링</li>
+                    <li>거래 내역 관리</li>
+                </ul>
+            </div>
+
+            <div class="nav-card report-system" onclick="location.href='/mba/report-management'">
+                <div class="nav-card-icon">📊</div>
+                <div class="nav-card-title">리포트 시스템</div>
+                <div class="nav-card-description">
+                    다양한 비즈니스 리포트 생성 및 분석
+                </div>
+                <ul class="nav-card-features">
+                    <li>사용자 통계 리포트</li>
+                    <li>비즈니스 성과 분석</li>
+                    <li>데이터 시각화</li>
+                    <li>리포트 스케줄링</li>
+                </ul>
+            </div>
+
+            <div class="nav-card system-monitoring" onclick="location.href='/mba/monitoring'">
+                <div class="nav-card-icon">🔍</div>
+                <div class="nav-card-title">시스템 모니터링</div>
+                <div class="nav-card-description">
+                    시스템 성능 및 상태 실시간 모니터링
+                </div>
+                <ul class="nav-card-features">
+                    <li>시스템 성능 대시보드</li>
+                    <li>실시간 알림</li>
+                    <li>로그 분석</li>
+                    <li>리소스 사용량 모니터링</li>
+                </ul>
+            </div>
         </div>
-        
-        <div style="margin-top: 30px; color: #666; font-size: 0.9em;">
-            <p>© 2024 SKAX. All rights reserved.</p>
+
+        <div class="system-info">
+            <h3>시스템 정보</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>버전</h4>
+                    <p th:text="${version}">1.0.0</p>
+                </div>
+                <div class="info-card">
+                    <h4>현재 시간</h4>
+                    <p th:text="${#temporals.format(currentTime, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 00:00:00</p>
+                </div>
+                <div class="info-card">
+                    <h4>서버 포트</h4>
+                    <p>8081</p>
+                </div>
+                <div class="info-card">
+                    <h4>데이터베이스</h4>
+                    <p>H2 (인메모리)</p>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2024 SKAX. All rights reserved.</p>
     </div>
 </body>
 </html> 

@@ -50,19 +50,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * 뷰 컨트롤러 설정
+     * 
+     * Gateway 환경에서는 API Gateway가 라우팅을 담당하므로
+     * 각 서비스의 컨트롤러가 직접 요청을 처리합니다.
+     * 따라서 뷰 컨트롤러 설정은 필요하지 않습니다.
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // 기본 페이지 리다이렉트
-        registry.addRedirectViewController("/", "/mba/home");
-        
-        // MBA 홈 페이지
-        registry.addViewController("/mba/home").setViewName("home/index");
-        
-        // 로그인 페이지
-        registry.addViewController("/mba/login").setViewName("auth/login");
-        
-        // 대시보드 페이지
-        registry.addViewController("/mba/dashboard").setViewName("dashboard/index");
+        // Gateway 환경에서는 컨트롤러가 직접 처리하므로 뷰 컨트롤러 설정 제거
+        // 예: /mba/home -> HomeController가 직접 처리
+        // 예: /mba/auth/login -> AuthController가 직접 처리
     }
 } 

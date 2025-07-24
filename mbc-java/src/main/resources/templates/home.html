@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKAX-EATOOL - 홈</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            padding: 2rem 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.3rem;
+        }
+
+        .current-time {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .current-time h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .current-time p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .system-info {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .system-info h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-normal {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .navigation-section {
+            margin-bottom: 3rem;
+        }
+
+        .navigation-section h3 {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .menu-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .menu-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .menu-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .menu-description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .submenu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .submenu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .submenu-link:hover {
+            background: #f8f9fa;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .submenu-icon {
+            width: 20px;
+            margin-right: 0.5rem;
+            color: #667eea;
+        }
+
+        .recent-activities {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .recent-activities h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .activity-date {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 헤더 섹션 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-home"></i> SKAX-EATOOL 홈</h2>
+                    <p class="mb-0">현재 시간: <span th:text="${currentTime}">2024년 01월 01일 00:00:00</span></p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-info-circle"></i> 시스템 정보</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>시스템명:</strong> <span th:text="${systemInfo.systemName}">SKAX-EATOOL</span></li>
+                                <li><strong>버전:</strong> <span th:text="${systemInfo.version}">2.0.0</span></li>
+                                <li><strong>환경:</strong> <span th:text="${systemInfo.environment}">개발환경</span></li>
+                                <li><strong>데이터베이스:</strong> <span th:text="${systemInfo.databaseStatus}">정상</span></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-link"></i> 빠른 링크</h5>
+                            <div class="d-grid gap-2">
+                                <a href="/mbc/web/admin/user-management" class="btn btn-primary">
+                                    <i class="fas fa-users"></i> 사용자 관리
+                                </a>
+                                <a href="/mbc/web/admin/report-management" class="btn btn-success">
+                                    <i class="fas fa-chart-bar"></i> 보고서 관리
+                                </a>
+                                <a href="/mbc/h2-console" class="btn btn-info" target="_blank">
+                                    <i class="fas fa-database"></i> 데이터베이스
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 업무별 통계 -->
+    <div class="system-info">
+        <h3>📊 업무별 통계</h3>
+        <div class="info-grid">
+            <!-- 계정 통계 -->
+            <div class="info-item">
+                <div class="info-label">전체 계정</div>
+                <div class="info-value" th:text="${businessStats.accountStats.totalAccounts}">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">활성 계정</div>
+                <div class="info-value" th:text="${businessStats.accountStats.activeAccounts}">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">비활성 계정</div>
+                <div class="info-value" th:text="${businessStats.accountStats.inactiveAccounts}">0</div>
+            </div>
+            <!-- 사용자 통계 -->
+            <div class="info-item">
+                <div class="info-label">전체 사용자</div>
+                <div class="info-value" th:text="${businessStats.userStats.totalUsers}">0</div>
+            </div>
+            <!-- 시스템 통계 -->
+            <div class="info-item">
+                <div class="info-label">활성 세션</div>
+                <div class="info-value" th:text="${businessStats.systemStats.activeSessions}">0</div>
+            </div>
+        </div>
+        <!-- 통계 업데이트 시간 -->
+        <div class="stats-update-time" style="margin-top: 1rem; text-align: center; color: #666; font-size: 0.9rem;">
+            <span>마지막 업데이트: </span>
+            <span th:text="${businessStats.accountStats.lastUpdate}">2024-01-01 00:00:00</span>
+        </div>
+    </div>
+
+    <!-- 실시간 차트 섹션 -->
+    <div class="system-info">
+        <h3>📈 실시간 차트</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-container" style="height: 300px; position: relative;">
+                    <canvas id="homeAccountChart"></canvas>
+                </div>
+                <div class="chart-info mt-3">
+                    <h5>계정 타입별 분포</h5>
+                    <p>실시간으로 업데이트되는 계정 통계 차트입니다.</p>
+                    <div class="chart-actions">
+                        <button class="btn btn-sm btn-primary" onclick="loadHomeAccountStatistics()">
+                            <i class="fas fa-sync-alt"></i> 새로고침
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="toggleAutoRefresh()" id="autoRefreshBtn">
+                            <i class="fas fa-play"></i> 자동 새로고침 시작
+                        </button>
+                        <a href="/mbc/web/admin/report-management" class="btn btn-sm btn-info">
+                            <i class="fas fa-chart-bar"></i> 상세 보고서
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container" style="height: 300px; position: relative;">
+                    <canvas id="homeSystemChart"></canvas>
+                </div>
+                <div class="chart-info mt-3">
+                    <h5>시스템 리소스 사용률</h5>
+                    <p>실시간 시스템 리소스 모니터링 차트입니다.</p>
+                    <div class="chart-actions">
+                        <button class="btn btn-sm btn-primary" onclick="loadSystemStatistics()">
+                            <i class="fas fa-sync-alt"></i> 새로고침
+                        </button>
+                        <a href="/mbc/monitoring/health" class="btn btn-sm btn-warning">
+                            <i class="fas fa-heartbeat"></i> 시스템 상태
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 업무별 네비게이션 -->
+    <div class="navigation-section">
+        <h3>🎯 업무별 네비게이션</h3>
+        <div class="menu-grid">
+            <!-- 계정 관리 메뉴 -->
+            <div class="menu-card" th:each="menu : ${navigationMenus}">
+                <div class="menu-header">
+                    <div class="menu-icon" th:style="'background: ' + ${menu.color}">
+                        <i th:class="${menu.icon}"></i>
+                    </div>
+                    <div class="menu-title" th:text="${menu.title}">계정 관리</div>
+                </div>
+                <div class="menu-description" th:text="${menu.description}">계정 생성, 조회, 수정, 삭제</div>
+                <ul class="submenu-list">
+                    <li class="submenu-item" th:each="submenu : ${menu.subMenus}">
+                        <a th:href="${submenu.url}" class="submenu-link"
+                           th:data-method="${submenu.method}"
+                           th:data-url="${submenu.url}"
+                           onclick="handleMenuClick(event, this.getAttribute('data-method'), this.getAttribute('data-url'))">
+                            <i th:class="${submenu.icon} + ' submenu-icon'"></i>
+                            <span th:text="${submenu.title}">계정 생성</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Swagger/OpenAPI 업무별 네비게이션 카드 추가 -->
+            <div class="menu-card">
+                <div class="menu-header">
+                    <div class="menu-icon" style="background: #4db6ac;">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="menu-title">API 문서 (Swagger)</div>
+                </div>
+                <div class="menu-description">업무별 REST API 명세 및 테스트</div>
+                <ul class="submenu-list">
+                    <li class="submenu-item">
+                        <a href="/mbc/swagger-ui/index.html" class="submenu-link" target="_blank">
+                            <i class="fas fa-link submenu-icon"></i>
+                            <span>MBC 메인 API</span>
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/ksa/swagger-ui.html" class="submenu-link" target="_blank">
+                            <i class="fas fa-link submenu-icon"></i>
+                            <span>KSA 도메인 API</span>
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/kji/swagger-ui.html" class="submenu-link" target="_blank">
+                            <i class="fas fa-link submenu-icon"></i>
+                            <span>KJI 도메인 API</span>
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/mbc01/swagger-ui.html" class="submenu-link" target="_blank">
+                            <i class="fas fa-link submenu-icon"></i>
+                            <span>MBC01 공통 API</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- AccountAS 테스트 업무별 네비게이션 카드 추가 -->
+            <div class="menu-card">
+                <div class="menu-header">
+                    <div class="menu-icon" style="background: #ff6b6b;">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="menu-title">AccountAS 테스트</div>
+                </div>
+                <div class="menu-description">계정 생성 서비스 테스트 및 검증</div>
+                <ul class="submenu-list">
+                    <li class="submenu-item">
+                        <a href="/mbc/accountas/test" class="submenu-link">
+                            <i class="fas fa-play submenu-icon"></i>
+                            <span>계정 생성 테스트</span>
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/mbc/accountas/test" class="submenu-link">
+                            <i class="fas fa-vial submenu-icon"></i>
+                            <span>서비스 검증</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 최근 활동 -->
+    <div class="recent-activities">
+        <h3>📊 최근 활동</h3>
+        <div th:if="${#lists.isEmpty(recentActivities)}" style="text-align: center; padding: 40px; color: #666;">
+            <p>아직 활동 내역이 없습니다.</p>
+        </div>
+        <div th:each="activity : ${recentActivities}" class="activity-item">
+            <div class="activity-icon" th:text="${activity.type != null ? (activity.type == 'USER' ? '👤' : '📝') : '📊'}">👤</div>
+            <div class="activity-content">
+                <div class="activity-title" th:text="${activity.name != null ? activity.name : activity.USER_NAME}">사용자명</div>
+                <div class="activity-date" th:text="${activity.date != null ? activity.date : activity.CREATED_DATE}">2024-01-01</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <div class="footer">
+        <p>&copy; 2024 SKAX-EATOOL. All rights reserved.</p>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // 메뉴 클릭 처리
+    function handleMenuClick(event, method, url) {
+        // GET 메서드가 아닌 경우 기본 동작 방지
+        if (method !== 'GET') {
+            event.preventDefault();
+            alert('이 기능은 API 테스트 페이지에서 사용할 수 있습니다.\n' + url + '로 이동합니다.');
+            window.location.href = '/mbc/web/account-test';
+            return;
+        }
+
+        // GET 메서드인 경우 정상적으로 링크 이동
+        return true;
+    }
+
+    // 페이지 로드 시 현재 시간 업데이트
+    function updateCurrentTime() {
+        const now = new Date();
+        const timeString = now.toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+
+        const timeElement = document.getElementById('current-time');
+        if (timeElement) {
+            timeElement.textContent = timeString;
+        }
+    }
+
+    // 1초마다 시간 업데이트
+    setInterval(updateCurrentTime, 1000);
+    updateCurrentTime(); // 초기 실행
+
+    // 한글 인코딩 확인 및 수정
+    function fixKoreanEncoding() {
+        // 최근 활동 항목들의 한글 텍스트 확인
+        const activityTitles = document.querySelectorAll('.activity-title');
+        activityTitles.forEach((title, index) => {
+            const originalText = title.textContent;
+            console.log(`활동 ${index + 1} 원본 텍스트:`, originalText);
+
+            // 한글이 깨진 경우 복구 시도
+            if (originalText.includes('') || originalText.length === 0) {
+                console.warn(`활동 ${index + 1}에서 한글 인코딩 문제 발견`);
+
+                // 기본 한글 텍스트로 복구
+                const defaultTexts = [
+                    '관리자 계정 생성',
+                    '테스트 계정 생성',
+                    '시스템 업데이트',
+                    '사용자 등록',
+                    '데이터베이스 연결'
+                ];
+
+                if (index < defaultTexts.length) {
+                    title.textContent = defaultTexts[index];
+                    console.log(`활동 ${index + 1} 텍스트 복구:`, defaultTexts[index]);
+                }
+            }
+        });
+
+        // 메뉴 항목들의 한글 텍스트 확인
+        const menuTitles = document.querySelectorAll('.menu-title');
+        menuTitles.forEach((title, index) => {
+            const originalText = title.textContent;
+            console.log(`메뉴 ${index + 1} 원본 텍스트:`, originalText);
+
+            if (originalText.includes('') || originalText.length === 0) {
+                console.warn(`메뉴 ${index + 1}에서 한글 인코딩 문제 발견`);
+
+                const defaultMenuTexts = [
+                    '계정 관리',
+                    '사용자 관리',
+                    '시스템 관리',
+                    '보고서'
+                ];
+
+                if (index < defaultMenuTexts.length) {
+                    title.textContent = defaultMenuTexts[index];
+                    console.log(`메뉴 ${index + 1} 텍스트 복구:`, defaultMenuTexts[index]);
+                }
+            }
+        });
+    }
+
+    // 전역 변수
+    let autoRefreshInterval = null;
+    let isAutoRefreshEnabled = false;
+    let homeAccountChart = null;
+    let homeSystemChart = null;
+
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('SKAX-EATOOL 홈화면 로드됨');
+
+        // Chart.js 로드 확인
+        if (typeof Chart !== 'undefined') {
+            console.log('Chart.js 로드 확인됨:', Chart.version);
+            // 홈화면 로드 시 차트들 로드
+            loadHomeAccountStatistics();
+            loadSystemStatistics();
+        } else {
+            console.error('Chart.js가 로드되지 않았습니다!');
+        }
+
+        // 한글 인코딩 문제 확인 및 수정
+        setTimeout(fixKoreanEncoding, 500);
+
+        // 3초 후 다시 한번 확인
+        setTimeout(fixKoreanEncoding, 3000);
+    });
+
+    // 홈화면용 계정 통계 로드
+    function loadHomeAccountStatistics() {
+        console.log('홈화면 계정 통계 로드 시작');
+
+        fetch('/mbc/api/report/account/statistics')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('홈화면 계정 통계 데이터:', data);
+
+                if (data.success) {
+                    // 통계 카드 업데이트
+                    updateHomeStatsCards(data.data);
+                    // 간단한 차트 생성 (옵션)
+                    createHomeAccountChart(data.data);
+                }
+            })
+            .catch(error => {
+                console.error('홈화면 계정 통계 로드 중 오류:', error);
+            });
+    }
+
+    // 홈화면 통계 카드 업데이트
+    function updateHomeStatsCards(data) {
+        const summaryData = data.summaryData || data;
+
+        // 계정 통계 카드 업데이트
+        const totalAccountsElement = document.querySelector('.info-item:nth-child(1) .info-value');
+        const activeAccountsElement = document.querySelector('.info-item:nth-child(2) .info-value');
+        const inactiveAccountsElement = document.querySelector('.info-item:nth-child(3) .info-value');
+
+        if (totalAccountsElement) totalAccountsElement.textContent = summaryData.totalCount || 0;
+        if (activeAccountsElement) activeAccountsElement.textContent = summaryData.activeCount || 0;
+        if (inactiveAccountsElement) inactiveAccountsElement.textContent = summaryData.inactiveCount || 0;
+
+        // 업데이트 시간 표시
+        const updateTimeElement = document.querySelector('.stats-update-time span:last-child');
+        if (updateTimeElement) {
+            const now = new Date();
+            updateTimeElement.textContent = now.toLocaleString('ko-KR');
+        }
+    }
+
+    // 홈화면용 간단한 계정 차트 생성
+    function createHomeAccountChart(data) {
+        const summaryData = data.summaryData || data;
+
+        // 기존 차트가 있다면 제거
+        if (homeAccountChart) {
+            homeAccountChart.destroy();
+        }
+
+        // 차트를 표시할 canvas 요소가 있다면 차트 생성
+        const chartCanvas = document.getElementById('homeAccountChart');
+        if (chartCanvas) {
+            const ctx = chartCanvas.getContext('2d');
+
+            // 기본 데이터 (API에서 데이터가 없을 경우)
+            const labels = ['활성 계정', '비활성 계정', '대기 계정'];
+            const values = [
+                summaryData.activeCount || 0,
+                summaryData.inactiveCount || 0,
+                (summaryData.totalCount || 0) - (summaryData.activeCount || 0) - (summaryData.inactiveCount || 0)
+            ];
+
+            homeAccountChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: ['#28a745', '#dc3545', '#ffc107'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: '계정 상태별 분포'
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // 시스템 통계 로드
+    function loadSystemStatistics() {
+        console.log('시스템 통계 로드 시작');
+
+        fetch('/mbc/api/system/statistics')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('시스템 통계 데이터:', data);
+                createHomeSystemChart(data);
+            })
+            .catch(error => {
+                console.error('시스템 통계 로드 중 오류:', error);
+                // 오류 시 기본 데이터로 차트 생성
+                createHomeSystemChart({
+                    data: {
+                        systemInfo: {
+                            memoryUsage: Math.random() * 60 + 40,
+                            cpuUsage: Math.random() * 80 + 20,
+                            diskUsage: Math.random() * 50 + 50
+                        }
+                    }
+                });
+            });
+    }
+
+    // 홈화면용 시스템 차트 생성
+    function createHomeSystemChart(data) {
+        // 기존 차트가 있다면 제거
+        if (homeSystemChart) {
+            homeSystemChart.destroy();
+        }
+
+        const chartCanvas = document.getElementById('homeSystemChart');
+        if (chartCanvas) {
+            const ctx = chartCanvas.getContext('2d');
+
+            // 시스템 정보 데이터
+            const systemInfo = data.data?.systemInfo || data.systemInfo || {};
+            const memoryUsage = systemInfo.memoryUsage || Math.random() * 60 + 40;
+            const cpuUsage = systemInfo.cpuUsage || Math.random() * 80 + 20;
+            const diskUsage = systemInfo.diskUsage || Math.random() * 50 + 50;
+
+            homeSystemChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['메모리 사용률', 'CPU 사용률', '디스크 사용률'],
+                    datasets: [{
+                        label: '사용률 (%)',
+                        data: [memoryUsage, cpuUsage, diskUsage],
+                        backgroundColor: ['#007bff', '#28a745', '#ffc107'],
+                        borderColor: ['#0056b3', '#1e7e34', '#e0a800'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: '시스템 리소스 사용률'
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // 자동 새로고침 토글
+    function toggleAutoRefresh() {
+        const btn = document.getElementById('autoRefreshBtn');
+        
+        if (isAutoRefreshEnabled) {
+            // 자동 새로고침 중지
+            clearInterval(autoRefreshInterval);
+            isAutoRefreshEnabled = false;
+            btn.innerHTML = '<i class="fas fa-play"></i> 자동 새로고침 시작';
+            btn.className = 'btn btn-sm btn-success';
+        } else {
+            // 자동 새로고침 시작
+            autoRefreshInterval = setInterval(() => {
+                loadHomeAccountStatistics();
+                loadSystemStatistics();
+            }, 10000); // 10초마다
+            isAutoRefreshEnabled = true;
+            btn.innerHTML = '<i class="fas fa-stop"></i> 자동 새로고침 중지';
+            btn.className = 'btn btn-sm btn-danger';
+        }
+    }
+</script>
+</body>
+</html> 

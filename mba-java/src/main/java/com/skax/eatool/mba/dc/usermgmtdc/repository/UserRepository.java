@@ -139,11 +139,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * @return 사용자 페이지
      */
     @Query("SELECT u FROM UserEntity u WHERE " +
-           "CASE WHEN :field = 'username' THEN LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           "WHEN :field = 'email' THEN LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           "WHEN :field = 'fullName' THEN LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           "WHEN :field = 'department' THEN LOWER(u.department) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           "ELSE FALSE END")
+           "(:field = 'username' AND LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%'))) OR " +
+           "(:field = 'email' AND LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) OR " +
+           "(:field = 'fullName' AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%'))) OR " +
+           "(:field = 'department' AND LOWER(u.department) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     Page<UserEntity> findByFieldAndKeyword(@Param("field") String field, 
                                           @Param("keyword") String keyword, 
                                           Pageable pageable);

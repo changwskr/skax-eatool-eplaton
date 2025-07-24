@@ -1,0 +1,78 @@
+# Spring Cloud API Gateway Docker 환경 설정
+server:
+  port: 8000
+
+spring:
+  application:
+    name: api-gateway-service
+  
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        # MBC 서비스 라우팅
+        - id: mbc-service
+          uri: http://mbc-service:8085
+          predicates:
+            - Path=/mbc/**
+          filters:
+            - StripPrefix=0
+            - AddRequestHeader=mbc-request, mbc-request-header
+            - AddResponseHeader=mbc-response, mbc-response-header
+        
+        # MBA 서비스 라우팅
+        - id: mba-service
+          uri: http://mba-service:8084
+          predicates:
+            - Path=/mba/**
+          filters:
+            - StripPrefix=0
+            - AddRequestHeader=mba-request, mba-request-header
+            - AddResponseHeader=mba-response, mba-response-header
+        
+        # KSA 서비스 라우팅
+        - id: ksa-service
+          uri: http://ksa-service:8083
+          predicates:
+            - Path=/ksa/**
+          filters:
+            - StripPrefix=0
+            - AddRequestHeader=ksa-request, ksa-request-header
+            - AddResponseHeader=ksa-response, ksa-response-header
+        
+        # KJI 서비스 라우팅
+        - id: kji-service
+          uri: http://kji-service:8082
+          predicates:
+            - Path=/kji/**
+          filters:
+            - StripPrefix=0
+            - AddRequestHeader=kji-request, kji-request-header
+            - AddResponseHeader=kji-response, kji-response-header
+
+# Actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  endpoint:
+    health:
+      show-details: always
+
+# 로깅 설정
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 커스텀 설정
+skax:
+  application:
+    name: API Gateway Service
+    version: 1.0.0
+    environment: docker 

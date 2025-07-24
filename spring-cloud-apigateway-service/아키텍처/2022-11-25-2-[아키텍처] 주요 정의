@@ -1,0 +1,51 @@
+● 게이트웨이가 필요한 이유
+	- 인증 및 권한 부여
+	- 서비스 검색 통합
+	- 응답캐싱
+	- 정책, 회로 차단기 및 QoS 다시 시도
+	- 속도 제한
+	- 부하 분산
+	- 로깅 추적 상관 관계
+	- IP 허용 목록 관리
+
+● spring-cloud에서 MSA 간 통신을 위해 사용하는 아키텍처는
+	- RestTemplate 방식
+		RestRemplate restTemplate = new RestTemplate();
+		restTemplate.getForObject("httpL//localhost:8080/", User.class, 200)
+	- Fegign Client 방식
+		@FegignClient("stores")
+		public interface StoreClient {
+			@RequestMapping(method=RequestMethod.GET, value="/stores")
+			List<store> getStores();
+		}
+	두가지 존재
+	
+● 초창기 로드밸런서의 특징은
+리본의 경우에는 Client side 로드밸런서였다.
+리본은 서비스의 이름으로 호출하고 health_check도 했다.
+최근 로드밸런서와는 맞지 않다.
+요즘은 게이트웨이에서 사용한다.
+어째든 장점은 서비스명으로 로드밸런스가 되었고 지금은 사용안한다.
+
+● Zuul 구현
+게이트웨이다.
+클라이언는 zuul에게 전달하고 zuul이 직접 서비스와 연계한다.
+Zuul도 스프링 2.4 부터는 maintence 상태가 되었다.
+
+● 대체 솔루션
+	- Hystrix ~ Resilience4j
+	- Hystrix Dashboard ~ Micrometer Monitoring System
+	- Ribbon ~ Spring cloud loadbalacer
+	- Zuul ~ Spring Cloud Gateway
+	
+만약 대체 솔루션을 사용하고 싶다면 spring-cloud 버전을 하위버전으로 다운그레이드 하면 된다.
+	
+	
+
+
+
+
+
+
+
+	

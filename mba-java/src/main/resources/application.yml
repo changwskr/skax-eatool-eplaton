@@ -1,7 +1,7 @@
 # MBA (Master Business Application) Configuration
 spring:
   application:
-    name: mba-application
+    name: MBA-SERVICE
   
   profiles:
     active: dev
@@ -43,17 +43,28 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Seoul
-    default-property-inclusion: non_null
+    default-property-inclusion: NON_NULL
 
 # Server Configuration
 server:
-  port: 8081
+  port: 8084
   servlet:
     context-path: /mba
   compression:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
     min-response-size: 1024
+
+# Eureka Client Configuration (비활성화)
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    enabled: false
 
 # Logging Configuration
 logging:

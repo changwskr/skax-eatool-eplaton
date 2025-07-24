@@ -1,0 +1,152 @@
+server:
+  port: 8000
+#===========================================================
+spring:
+  application:
+    name: apigateway-service
+  #-------
+  cloud:
+    uri: http://127.0.0.1:8888
+    name: ecommerce    
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true    
+      routes:
+      # 참고로 라우팅에서 어떻게 라우팅하라는 조건매칭을 predicates에서 처리한다.
+      # 예로 /user-service/login 이고 POST이면 유레카에 등록된 lb://USER-SERVICE을 요청하라는 조건이다.  
+      #   RewritePath=/user-service/(?<segment>.*), /$\{segment} 의 의미는 
+      #   만약 요청을 http://localhost:8000/user-service/welcome이라고 한다고 했을때
+      #   실제 전달값은 http://localhost:8000/welcome 만 전달하겠다는 말이다.
+      #   즉 패턴은 /user-service/(?<segment>.*) 여기에서 /user-service/(?< key >.*) 중 key를 제외하고 이것만 전달하겠다는 의미이다. /$\{segment}      
+        - id: first-service
+#          uri: http://localhost:8081 # 기존 방식
+          uri: lb://MY-FIRST-SERVICE    # 유레카 적용이후 방식
+          predicates:
+            - Path=/first-service/**
+          filters:
+            - AddRequestHeader=first-request, first-request-header2
+            - AddResponseHeader=first-response, first-response-header2       
+            - CustomFilter     
+        - id: second-service
+#          uri: http://localhost:8082
+          uri: lb://MY-SECOND-SERVICE      
+          predicates:
+            - Path=/second-service/**
+          filters:
+            - AddRequestHeader=second-request, second-request-header2
+            - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true                             
+        - id: third-service
+#          uri: http://localhost:8083
+          uri: lb://MY-THIRD-SERVICE          
+          predicates:
+            - Path=/third-service/**
+          filters:
+            - AddRequestHeader=third-request, third-request-header2
+            - AddResponseHeader=third-response, third-response-header2
+            - CustomFilter     
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie # 헤더에 있는 쿠키정보는 제거하자
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+          # --- 기존방식이 아래것으로 바꿈... 언제 login 적용이후
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/users
+#            - Method=POST                    
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+      # ---
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}            
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
+            
+        # ---
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalog-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/catalog-service/(?<segment>.*), /$\{segment}            
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalog-service/**
+
+  #-----
+  # rabbitmq 막음 2022-11-26
+  # 에러가 많이남...
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+#===========================================================
+eureka:
+  instance:
+    hostname: localhost    
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+# =================================================================
+# 2022-11-27-D- Config-Sever 적용으로 막음
+#token:
+#  secret: user_token
+# =================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh, info, metrics, prometheus                  
+
+            

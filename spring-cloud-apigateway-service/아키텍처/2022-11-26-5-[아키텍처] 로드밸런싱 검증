@@ -1,0 +1,25 @@
+● (학습)
+서비스를 여러개 기동해서 게이트웨이에서 로드밸런싱이 되는지 확인하자
+● (환경)
+	- 마이크로서비스를 실행할수 있는 방법
+		- VM option를 이용해서 이클립스에서 기동하는 방법
+		- mvn spring-boot:run 
+		- mvn spring-boot:run -Dspring-boot.run.jvnArguements='-Dserver.port=9999'
+		- 도스명령창에서 java -jar -Dserver.port=9999 ./target/first-service**.jar
+		 	(mvn clean compile package)
+		- application.xml에서 랜덤포트 적용해서 이클립스에서 직접 수행
+			server.port=0
+● (자바)
+first-service의 컨트롤로에 관련 포트를 확인하는 로직을 추가하자
+
+    @GetMapping("/check")
+    public String check(HttpServletRequest request) {
+    	// 이렇게 하면 호출시 로드밸런싱 되는지 확인가능하다.
+        return String.format("Hi, there. This is a message from First Service on PORT %s"
+                , env.getProperty("local.server.port"));
+    }
+			
+● (테스트) 필터
+	http://localhost:8000/second-service/check
+	http://localhost:8000/first-service/check (여러번 계속호출해야 포트변경 확인 )
+                		 	

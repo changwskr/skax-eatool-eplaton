@@ -3,7 +3,7 @@
 # ========================================
 
 server:
-  port: 8081
+  port: 8085
   servlet:
     context-path: /mbc
 
@@ -47,7 +47,7 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Seoul
-    default-property-inclusion: non_null
+    default-property-inclusion: NON_NULL
     serialization:
       write-dates-as-timestamps: false
 

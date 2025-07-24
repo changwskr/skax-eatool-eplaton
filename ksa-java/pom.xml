@@ -80,7 +80,16 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.skax.eatool.ksa.KsaApplication</mainClass>
+                    <layout>JAR</layout>
+                    <executable>true</executable>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             
             <plugin>

@@ -1,0 +1,89 @@
+● 사전작업
+	- 필터-자바코드에서 필터 적용을 위해 application.xml에서 막았던 cloud 라우팅 영역을 해제한다.
+	
+● 작업순서
+	
+	(application.xml) 
+	1) 정의필터
+	- AddRequestHeader=first-request, first-request-header2
+	- AddResponseHeader=first-response, first-response-header2
+	추가한다.
+	이것을 보면 FileterConfig 에서 추가한 내용이다.
+	여기서 추가한 필터는 세가지를 적용했다. 리퀘스트 헤더, 리스폰서 헤더, 커스텀 필터이다.
+	참고로 Custom 필터에 대한 코드는 CustomFilter.java에 정의된다.
+	
+		routes:
+        - id: first-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/first-service/**
+          filters:
+            - AddRequestHeader=first-request, first-request-header2 <<<<<<<<<<<<<
+            - AddResponseHeader=first-response, first-response-header2  <<<<<<<<<<<<<<<<<
+            - CustomFilter
+	2) 공통필터 적용
+	  cloud:
+	    gateway:
+	      default-filters:
+	        - name: GlobalFilter
+	          args:
+	            baseMessage: Spring Cloud Gateway Global Filter
+	            preLogger: true
+	            postLogger: true    
+	-> GlobalFilter.java 에서 이렇게 사용된다.
+			            
+		            return chain.filter(exchange).then(Mono.fromRunnable(()->{
+            	
+                if (config.isPostLogger()) {
+                    log.info("#### Global Filter End: response code -> {}", response.getStatusCode());
+                    System.out.println("########################## - GlobalFilter.apply()--middle[" + config + "]");
+                }
+                System.out.println("\n POST LOGGING ***************************************");
+                System.out.println("########################## - GlobalFilter.apply()--end[" + "]");
+            }));
+        });
+        
+            public static class Config {
+        		private String baseMessage;
+        		private boolean preLogger;
+        		private boolean postLogger;
+    		}
+        
+		
+	3) 커스텀 필터 적용
+	인증, 변환, 로깅 다양하게 활용가능하다.
+	
+	gateway:
+      routes:
+        - id: first-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/first-service/**
+          filters:
+            - AddRequestHeader=first-request, first-request-header2
+            - AddResponseHeader=first-response, first-response-header2       
+            - CustomFilter     
+            	
+	자바파일은 다음과 같다.
+	반드시 AbstractGatewayFilterFactory을 상속받아서 사용해야 된다. apply에서 작동할 내용을 기술한다.
+	
+public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Config> {
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    public CustomFilter() {
+        super(Config.class);
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
+        // Custom Pre Filter
+        return (exchange, chain) -> {
+
+
+	> 작업 FirstServiceController에 check 컨트롤러 추가
+    @GetMapping("/check")
+    public String check(HttpServletRequest request) {
+
+● (테스트) 필터
+	http://localhost:8000/first-service/check
+
+			

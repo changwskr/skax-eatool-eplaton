@@ -36,7 +36,7 @@
 <div class="container">
     <h1 class="mb-4 text-center">🔧 AccountAS 계정 생성 테스트</h1>
     
-    <form method="post" th:action="@{/accountas/test}" class="mb-4">
+            <form method="post" th:action="@{/mbc/accountas/test}" class="mb-4">
         <div class="mb-3">
             <label for="accountId" class="form-label">계정 ID</label>
             <input type="text" class="form-control" id="accountId" name="accountId" 
@@ -66,8 +66,8 @@
             <button type="submit" class="btn btn-primary me-md-2">
                 🚀 테스트 실행
             </button>
-            <a href="/web/home" class="btn btn-secondary">
-                🏠 홈으로
+            <a href="/mbc/web/home" class="btn btn-secondary">
+                <i class="fas fa-home"></i> 홈으로
             </a>
         </div>
     </form>

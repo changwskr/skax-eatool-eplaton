@@ -3,11 +3,9 @@
 # ========================================
 
 server:
-  port: 8080
-  # context-path 제거 - URL 중복 방지
-  # servlet:
-  #   context-path: /mbc
+  port: 8085
   servlet:
+    context-path: /mbc
     encoding:
       charset: UTF-8
       force: true

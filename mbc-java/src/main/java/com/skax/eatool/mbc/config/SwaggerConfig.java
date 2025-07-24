@@ -50,8 +50,11 @@ public class SwaggerConfig {
                                                                 .url("https://www.kbstar.com/license")))
                                 .servers(Arrays.asList(
                                                 new Server()
-                                                                .url("http://localhost:8080")
-                                                                .description("개발 서버"),
+                                                                .url("http://localhost:8000/mbc")
+                                                                .description("Gateway 개발 서버"),
+                                                new Server()
+                                                                .url("http://localhost:8085")
+                                                                .description("직접 접근 개발 서버"),
                                                 new Server()
                                                                 .url("https://api.mbc.kbstar.com")
                                                                 .description("운영 서버")));

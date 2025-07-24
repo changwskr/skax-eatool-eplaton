@@ -1,0 +1,41 @@
+
+우리는 User-Service의 로그인 시점에 JWT 토큰을 생성하는 작업을 진행했다.
+그럼 이 토큰에 대한 검증을 API 게이트웨이에서도 밸리데이션 부분이 필요할 것이다.
+우리는 User-Service에서 로그인을 진행할때 토큰을 생성하고 헤더에 토컨을 추가 했다. 
+저장 토큰형식은 Bearer이다.
+
+● API Gateway service에 Spring Security와 JWT Token 사용 추가
+	- (구현 클래스) AuthorizationHeaderFilter
+						public GatewayFilter apply(Config config) {
+							여기에서 JWT가 헤더에 존재하고 유효한지 확인한다.
+						}
+
+● 어떤 거래에서 토큰이 필요할 것인지 정의한다.
+	자, 생각해보자 모든 거래에 토큰을 적용할 필요는 없다.
+	가입, 로그인의 경우에는 토큰을 적용할 필요가 없다. 즉 인증필터 적용이 필요없다는 말이다.
+	이외 다른 GET 방식의 거래에 대해서 인증필터를 적용한다.		
+	- 인증이 필요한 거래
+		GET
+	- 인증이 필요없는 거래
+		가입, 로그인
+
+	- 토큰에 대한 키값은 
+		application.xml에서 관리한다.
+		
+		
+(application.xml)
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+	token:
+	  secret: user_token
+            
+				
+	
+		

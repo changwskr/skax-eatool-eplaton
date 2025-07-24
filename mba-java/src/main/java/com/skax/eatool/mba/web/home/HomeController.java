@@ -22,20 +22,63 @@ import java.util.Map;
  * @since 2024
  */
 @Controller
-@RequestMapping("/mba/home")
 @Tag(name = "Home", description = "홈 페이지 관련 API")
 public class HomeController {
 
     /**
      * 홈 페이지 표시
      */
-    @GetMapping("")
+    @GetMapping({"/", "/home"})
     @Operation(summary = "홈 페이지", description = "MBA 애플리케이션 홈 페이지를 표시합니다.")
     public String home(Model model) {
         model.addAttribute("title", "MBA - Master Business Application");
         model.addAttribute("currentTime", LocalDateTime.now());
         model.addAttribute("version", "1.0.0");
         return "home/index";
+    }
+
+    /**
+     * 사용자 관리 페이지
+     */
+    @GetMapping("/user-management")
+    @Operation(summary = "사용자 관리", description = "사용자 관리 페이지를 표시합니다.")
+    public String userManagement(Model model) {
+        model.addAttribute("title", "사용자 관리 - MBA");
+        model.addAttribute("currentTime", LocalDateTime.now());
+        return "user/user-management";
+    }
+
+    /**
+     * 계정 관리 페이지
+     */
+    @GetMapping("/account-management")
+    @Operation(summary = "계정 관리", description = "계정 관리 페이지를 표시합니다.")
+    public String accountManagement(Model model) {
+        model.addAttribute("title", "계정 관리 - MBA");
+        model.addAttribute("currentTime", LocalDateTime.now());
+        return "account/account-management";
+    }
+
+    /**
+     * 리포트 관리 페이지
+     */
+    @GetMapping("/report-management")
+    @Operation(summary = "리포트 관리", description = "리포트 관리 페이지를 표시합니다.")
+    public String reportManagement(Model model) {
+        model.addAttribute("title", "리포트 관리 - MBA");
+        model.addAttribute("currentTime", LocalDateTime.now());
+        return "report/report-management";
+    }
+
+    /**
+     * 시스템 모니터링 페이지
+     */
+    @GetMapping("/monitoring")
+    @Operation(summary = "시스템 모니터링", description = "시스템 모니터링 페이지를 표시합니다.")
+    public String monitoring(Model model) {
+        model.addAttribute("title", "시스템 모니터링 - MBA");
+        model.addAttribute("currentTime", LocalDateTime.now());
+        return "monitoring/dashboard";
     }
 
     /**

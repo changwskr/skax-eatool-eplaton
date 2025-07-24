@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">시스템 모니터링 - MBA</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+        }
+        .header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s ease;
+        }
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .page-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #43e97b;
+        }
+        .metric-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #43e97b;
+            margin-bottom: 5px;
+        }
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .metric-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+        .status-normal {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .card h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        .feature-list li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-primary {
+            background: #43e97b;
+        }
+        .btn-primary:hover {
+            background: #3dd170;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        .status-info {
+            background: #e8f5e8;
+            border: 1px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .status-info h4 {
+            color: #28a745;
+            margin: 0 0 10px 0;
+        }
+        .status-info p {
+            color: #555;
+            margin: 0;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 1.2em;
+        }
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">MBA - 시스템 모니터링</div>
+            <div class="nav-links">
+                <a href="/mba">홈</a>
+                <a href="/mba/user-management">사용자 관리</a>
+                <a href="/mba/account-management">계정 관리</a>
+                <a href="/mba/report-management">리포트</a>
+                <a href="/mba/monitoring">모니터링</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <h1 class="page-title">시스템 모니터링 대시보드</h1>
+        
+        <div class="status-info">
+            <h4>시스템 상태</h4>
+            <p>모든 시스템이 정상적으로 운영 중입니다. 현재 시간: <span th:text="${#temporals.format(currentTime, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 00:00:00</span></p>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">🖥️</div>
+                <div class="metric-value">98.5%</div>
+                <div class="metric-label">시스템 가용성</div>
+                <div class="metric-status status-normal">정상</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">⚡</div>
+                <div class="metric-value">45ms</div>
+                <div class="metric-label">평균 응답 시간</div>
+                <div class="metric-status status-normal">정상</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">👥</div>
+                <div class="metric-value">156</div>
+                <div class="metric-label">활성 사용자</div>
+                <div class="metric-status status-normal">정상</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">💾</div>
+                <div class="metric-value">67%</div>
+                <div class="metric-label">메모리 사용률</div>
+                <div class="metric-status status-warning">주의</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>시스템 성능 트렌드</h3>
+            <div class="chart-placeholder">
+                📈 실시간 성능 모니터링 차트가 여기에 표시됩니다
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h3>시스템 성능 모니터링</h3>
+                <ul class="feature-list">
+                    <li>CPU, 메모리, 디스크 사용률 모니터링</li>
+                    <li>네트워크 트래픽 및 대역폭 분석</li>
+                    <li>애플리케이션 응답 시간 측정</li>
+                    <li>데이터베이스 성능 모니터링</li>
+                    <li>시스템 리소스 사용량 추적</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>실시간 알림 시스템</h3>
+                <ul class="feature-list">
+                    <li>임계값 기반 자동 알림</li>
+                    <li>이메일, SMS, 웹훅 알림</li>
+                    <li>알림 우선순위 및 그룹화</li>
+                    <li>알림 이력 및 통계</li>
+                    <li>알림 설정 커스터마이징</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>로그 분석 및 관리</h3>
+                <ul class="feature-list">
+                    <li>시스템 로그 수집 및 분석</li>
+                    <li>애플리케이션 로그 모니터링</li>
+                    <li>로그 검색 및 필터링</li>
+                    <li>로그 보관 및 백업</li>
+                    <li>로그 기반 문제 진단</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>보안 모니터링</h3>
+                <ul class="feature-list">
+                    <li>보안 이벤트 감지 및 분석</li>
+                    <li>접근 로그 모니터링</li>
+                    <li>의심스러운 활동 감지</li>
+                    <li>보안 정책 위반 알림</li>
+                    <li>보안 리포트 생성</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/mba/monitoring/performance" class="btn btn-primary">성능 분석</a>
+            <a href="/mba/monitoring/alerts" class="btn btn-primary">알림 관리</a>
+            <a href="/mba/monitoring/logs" class="btn btn-secondary">로그 뷰어</a>
+            <a href="/mba/monitoring/security" class="btn btn-secondary">보안 모니터링</a>
+            <a href="/mba/actuator" class="btn btn-secondary">시스템 정보</a>
+        </div>
+    </div>
+</body>
+</html> 

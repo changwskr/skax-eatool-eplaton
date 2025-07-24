@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +22,27 @@ import java.util.Map;
  * @author SKAX Project Team
  * @version 1.0
  */
-@RestController
+@Controller
 @RequestMapping("/swagger/test")
 @CrossOrigin(origins = "*")
 @Tag(name = "테스트 API", description = "Swagger UI 테스트용 API")
 public class SwaggerTestController {
     private static final Logger logger = LoggerFactory.getLogger(SwaggerTestController.class);
+
+    /**
+     * API 테스트 웹 페이지
+     */
+    @GetMapping("")
+    public String showTestPage(Model model) {
+        logger.info("=== SwaggerTestController.showTestPage START ===");
+        
+        model.addAttribute("title", "API 테스트");
+        model.addAttribute("description", "Swagger UI 테스트용 API들을 테스트할 수 있습니다.");
+        model.addAttribute("baseUrl", "/mbc/swagger/test");
+        
+        logger.info("=== SwaggerTestController.showTestPage END ===");
+        return "web/swagger/test";
+    }
 
     /**
      * 기본 Hello API

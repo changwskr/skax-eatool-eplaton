@@ -122,7 +122,7 @@ public class MbcApplication {
         // 접속 URL 정보
         logger.info("=== 접속 URL ===", "MbcApplication");
         logger.info("- 애플리케이션: http://localhost:" + serverPort, "MbcApplication");
-        logger.info("- Swagger UI: http://localhost:" + serverPort + "/swagger-ui.html", "MbcApplication");
+        logger.info("- Swagger UI: http://localhost:" + serverPort + "/swagger-ui/index.html", "MbcApplication");
         logger.info("- API 문서: http://localhost:" + serverPort + "/v3/api-docs", "MbcApplication");
 
         // 개발 환경인 경우 H2 콘솔 정보 추가

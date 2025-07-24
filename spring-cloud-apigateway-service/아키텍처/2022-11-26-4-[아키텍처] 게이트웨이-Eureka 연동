@@ -1,0 +1,55 @@
+● 호출순서
+게이트웨이 서비스는 유레카 서비스를 통해서 서비스 위치를 확인해서 각 서비스별로 라우팅한다.
+
+● 작업내용
+(application.xml)
+
+(1) 유레카 등록 
+eureka:
+  instance:
+    hostname: localhost    
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+      
+(2) 유레카에 등록된 서비스명으로 라우팅 정보 변경
+MY-FIRST-SERVICE,MY-SECOND-SERVICE 
+  cloud:
+    gateway:
+      routes:
+        - id: first-service
+          uri: lb://MY-FIRST-SERVICE           
+          predicates:
+            - Path=/first-service/**
+          filters:
+            - AddRequestHeader=first-request, first-request-header2
+            - AddResponseHeader=first-response, first-response-header2       
+            - CustomFilter     
+        - id: second-service
+          uri: lb://MY-SECOND-SERVICE      
+          predicates:
+            - Path=/second-service/**
+          filters:
+            - AddRequestHeader=second-request, second-request-header2
+            - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true             
+	(3) first-service, second-service의 기동 포트를 랜덤으로 변경한다.
+		(application.xml)
+		server:
+		  port: 0
+		eureka:
+		  instance:
+		    hostname: localhost
+		    instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}    
+	
+● (테스트) 필터
+	http://localhost:8000/second-service/check
+	http://localhost:8000/first-service/check
+                

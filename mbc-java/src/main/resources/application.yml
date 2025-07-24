@@ -65,13 +65,13 @@ spring:
 
 # Server Configuration
 server:
-  port: 8080
+  port: 8085
   servlet:
     encoding:
       charset: UTF-8
       enabled: true
       force: true
-    context-path: /
+    context-path: /mbc
   # 추가 인코딩 설정
   compression:
     enabled: true
@@ -114,6 +114,8 @@ app:
   data-access:
     type: jdbc # jdbc로 변경
     description: "데이터 접근 방식 설정 (jdbc)"
+
+# Eureka Client Configuration - 제거됨 (연결 오류 방지)
 
 # Swagger/OpenAPI Configuration
 springdoc:
