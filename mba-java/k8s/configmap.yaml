@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mba-config
+  namespace: skax-eatool
+  labels:
+    app: mba
+    component: config
+data:
+  # Application Configuration
+  SPRING_PROFILES_ACTIVE: "prod"
+  SERVER_PORT: "8084"
+  SERVER_SERVLET_CONTEXT_PATH: "/mba"
+  
+  # Database Configuration
+  SPRING_DATASOURCE_URL: "jdbc:h2:mem:mbadb"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.h2.Driver"
+  SPRING_DATASOURCE_USERNAME: "sa"
+  
+  # H2 Console Configuration
+  SPRING_H2_CONSOLE_ENABLED: "true"
+  SPRING_H2_CONSOLE_PATH: "/h2-console"
+  SPRING_H2_CONSOLE_SETTINGS_WEB_ALLOW_OTHERS: "true"
+  
+  # JPA Configuration
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "create-drop"
+  SPRING_JPA_SHOW_SQL: "false"
+  SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "false"
+  SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.H2Dialect"
+  
+  # Thymeleaf Configuration
+  SPRING_THYMELEAF_CACHE: "false"
+  SPRING_THYMELEAF_PREFIX: "classpath:/templates/"
+  SPRING_THYMELEAF_SUFFIX: ".html"
+  SPRING_THYMELEAF_ENCODING: "UTF-8"
+  SPRING_THYMELEAF_MODE: "HTML"
+  
+  # Jackson Configuration
+  SPRING_JACKSON_DATE_FORMAT: "yyyy-MM-dd HH:mm:ss"
+  SPRING_JACKSON_TIME_ZONE: "Asia/Seoul"
+  SPRING_JACKSON_DEFAULT_PROPERTY_INCLUSION: "NON_NULL"
+  
+  # Server Configuration
+  SERVER_COMPRESSION_ENABLED: "true"
+  SERVER_COMPRESSION_MIME_TYPES: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
+  SERVER_COMPRESSION_MIN_RESPONSE_SIZE: "1024"
+  
+  # Eureka Client Configuration (비활성화)
+  EUREKA_CLIENT_ENABLED: "false"
+  EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+  EUREKA_CLIENT_FETCH_REGISTRY: "false"
+  EUREKA_INSTANCE_ENABLED: "false"
+  
+  # Management Configuration
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,env"
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "always"
+  
+  # Swagger/OpenAPI Configuration
+  SPRINGDOC_API_DOCS_PATH: "/v3/api-docs"
+  SPRINGDOC_SWAGGER_UI_PATH: "/swagger-ui.html"
+  SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER: "method"
+  SPRINGDOC_INFO_TITLE: "MBA API Documentation"
+  
+  # MBC Service Configuration
+  MBC_SERVICE_URL: "http://mbc-service:8085"
+  MBC_SERVICE_CONTEXT_PATH: "/mbc"
+  
+  # Application Specific Configuration
+  MBA_APP_NAME: "Master Business Application"
+  MBA_APP_VERSION: "1.0.0"
+  MBA_APP_DESCRIPTION: "마스터 비즈니스 애플리케이션"
+  MBA_SECURITY_JWT_SECRET: "mba-jwt-secret-key-2024"
+  MBA_SECURITY_JWT_EXPIRATION: "86400000"
+  MBA_DATABASE_SCHEMA: "mba_schema"
+  MBA_DATABASE_DATA: "mba_data"
+  
+  # Logging Configuration
+  LOGGING_LEVEL_COM_SKAX_EATOOL_MBA: "INFO"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: "INFO"
+  LOGGING_LEVEL_ORG_HIBERNATE_SQL: "INFO"
+  LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASICBINDER: "INFO"
+  LOGGING_PATTERN_CONSOLE: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  LOGGING_PATTERN_FILE: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  LOGGING_FILE_NAME: "logs/mba-application.log" 

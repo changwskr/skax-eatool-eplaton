@@ -128,7 +128,7 @@
     </insert>
 
     <!-- 시스템 코드 수정 -->
-    <update id="updateSystemCode" parameterType="com.kbstar.mbc.dc.dto.SystemCodeDto">
+    <update id="updateSystemCode" parameterType="com.skax.eatool.mbc.dc.dto.SystemCodeDto">
         UPDATE SYSTEM_CODE
         SET 
             CODE_TYPE = #{codeType},

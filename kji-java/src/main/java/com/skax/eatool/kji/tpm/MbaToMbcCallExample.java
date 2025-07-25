@@ -209,10 +209,13 @@ public class MbaToMbcCallExample implements CommandLineRunner {
     private void demonstrateErrorHandling() {
         logger.info("==================[MbaToMbcCallExample.demonstrateErrorHandling] - 에러 처리 예제");
 
-        // 1. 존재하지 않는 URL 호출
+        // 1. 존재하지 않는 URL 호출 (POST 요청으로 변경)
         try {
-            String invalidUrl = MBC_BASE_URL + "/nonexistent/api";
-            Map<String, Object> response = httpTpsSendRecv.sendGetRequest(invalidUrl);
+            String invalidUrl = MBC_BASE_URL + "/nonexistent/api/test";
+            Map<String, Object> invalidData = new HashMap<>();
+            invalidData.put("test", "data");
+            
+            Map<String, Object> response = httpTpsSendRecv.sendPostRequest(invalidUrl, invalidData);
             logger.info("존재하지 않는 URL 응답: {}", response);
         } catch (TpsException e) {
             logger.info("✅ 예상된 에러 처리됨: {}", e.getMessage());

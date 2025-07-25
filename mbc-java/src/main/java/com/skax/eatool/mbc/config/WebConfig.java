@@ -101,6 +101,7 @@ public class WebConfig implements WebMvcConfigurer {
         logger.info("=== WebConfig.addCorsMappings START ===");
         
         try {
+            // 전체 CORS 설정
             registry.addMapping("/**")
                     .allowedOriginPatterns("*")
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
@@ -108,7 +109,15 @@ public class WebConfig implements WebMvcConfigurer {
                     .allowCredentials(true)
                     .maxAge(3600);
             
-            logger.info("CORS 설정 완료");
+            // EPlaton API 전용 CORS 설정
+            registry.addMapping("/mbc/eplaton/**")
+                    .allowedOriginPatterns("*")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    .allowedHeaders("*")
+                    .allowCredentials(true)
+                    .maxAge(3600);
+            
+            logger.info("CORS 설정 완료 - EPlaton API 포함");
             
         } catch (Exception e) {
             logger.error("CORS 설정 중 오류 발생: " + e.getMessage(), e);

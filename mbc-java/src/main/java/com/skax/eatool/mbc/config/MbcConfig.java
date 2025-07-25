@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * 
  * Spring Boot 기반 설정으로, XML 설정 파일 대신 Java 기반 설정을 사용합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  */
 @Configuration

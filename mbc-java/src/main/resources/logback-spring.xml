@@ -188,12 +188,12 @@
         <logger name="org.hibernate" level="WARN"/>
         
         <!-- MBC 애플리케이션 로그 -->
-        <logger name="com.kbstar.mbc" level="INFO" additivity="false">
+        <logger name="com.skax.eatool.mbc" level="INFO" additivity="false">
             <appender-ref ref="FILE"/>
         </logger>
         
         <!-- 성능 로그 -->
-        <logger name="com.kbstar.mbc.config.SqlPerformanceInterceptor" level="INFO" additivity="false">
+        <logger name="com.skax.eatool.mbc.config.SqlPerformanceInterceptor" level="INFO" additivity="false">
             <appender-ref ref="PERFORMANCE_FILE"/>
         </logger>
     </springProfile>
@@ -206,11 +206,11 @@
     </root>
     
     <!-- 특정 패키지별 로그 레벨 설정 -->
-    <logger name="com.kbstar.mbc.controller" level="DEBUG"/>
-    <logger name="com.kbstar.mbc.service" level="DEBUG"/>
-    <logger name="com.kbstar.mbc.repository" level="DEBUG"/>
-    <logger name="com.kbstar.mbc.config" level="INFO"/>
-    <logger name="com.kbstar.mbc.util" level="DEBUG"/>
+    <logger name="com.skax.eatool.mbc.controller" level="DEBUG"/>
+    <logger name="com.skax.eatool.mbc.service" level="DEBUG"/>
+    <logger name="com.skax.eatool.mbc.repository" level="DEBUG"/>
+    <logger name="com.skax.eatool.mbc.config" level="INFO"/>
+    <logger name="com.skax.eatool.mbc.util" level="DEBUG"/>
     
     <!-- 외부 라이브러리 로그 레벨 설정 -->
     <logger name="org.apache.ibatis" level="INFO"/>

@@ -15,7 +15,7 @@ import java.util.List;
  * 
  * API 문서화를 위한 Swagger 설정을 관리합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */
@@ -33,8 +33,8 @@ public class SwaggerConfig {
                         .description("Master Business Application API Documentation")
                         .version("1.0.0")
                         .contact(new Contact()
-                                .name("KBSTAR")
-                                .email("kbstar@skax.com")
+                                .name("skax.eatool")
+                                .email("skax.eatool@skax.com")
                                 .url("https://www.skax.com"))
                         .license(new License()
                                 .name("MIT License")

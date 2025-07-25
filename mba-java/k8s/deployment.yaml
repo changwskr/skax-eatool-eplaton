@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mba-deployment
+  namespace: skax-eatool
+  labels:
+    app: mba
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mba
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: mba
+        component: backend
+    spec:
+      containers:
+      - name: mba-app
+        image: skax-eatool/mba:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8084
+          name: http
+        - containerPort: 8084
+          name: h2-console
+        envFrom:
+        - configMapRef:
+            name: mba-config
+        - secretRef:
+            name: mba-secret
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /mba/actuator/health
+            port: 8084
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /mba/actuator/health
+            port: 8084
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+      restartPolicy: Always 

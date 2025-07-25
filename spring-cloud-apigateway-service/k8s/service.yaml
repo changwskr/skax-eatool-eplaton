@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: apigateway-service
+  namespace: skax-eatool
+  labels:
+    app: apigateway
+    component: service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: apigateway
+    component: backend 

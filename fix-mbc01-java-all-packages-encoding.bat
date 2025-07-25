@@ -50,13 +50,13 @@ echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/bas
 echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/SAXXMLHandler.java
 echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/XMLCache.java
 echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandler.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandlerFactory.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/utility/StringUtils.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/utility/Dom4jUtil.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/utility/ErrorCheckUtil.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/utility/TrustFormUtil.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/utility/SsnBean.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/foundation/utility/WafErrorUtil.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/foundation/base/XMLHandlerFactory.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/foundation/utility/StringUtils.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/foundation/utility/Dom4jUtil.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/foundation/utility/ErrorCheckUtil.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/foundation/utility/TrustFormUtil.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/foundation/utility/SsnBean.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/foundation/utility/WafErrorUtil.java
 echo.
 
 echo ========================================

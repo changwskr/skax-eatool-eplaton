@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * 메인 애플리케이션 클래스로, Spring Boot 애플리케이션을 시작하고
  * 초기화 과정을 관리합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */
@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
         org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
 })
 @ComponentScan(basePackages = {
-        "com.skax.eatool.mbc.as",
+        "com.skax.eatool.mbc.ac",
         "com.skax.eatool.mbc.dc",
         "com.skax.eatool.mbc.pc",
         "com.skax.eatool.mbc.ic",
-        "com.skax.eatool.mbc.ac",
+        "com.skax.eatool.mbc.as",
         // "com.skax.eatool.mbc.fc", // mbc01-java의 UserServiceImpl 오류 방지를 위해 제거
         "com.skax.eatool.mbc.web",
         "com.skax.eatool.mbc.config",

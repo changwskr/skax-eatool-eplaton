@@ -5,7 +5,7 @@
 [![Java](https://img.shields.io/badge/Java-11-orange.svg)](https://openjdk.java.net/projects/jdk/11/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-green.svg)](https://spring.io/projects/spring-boot)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-KBSTAR%20Internal-red.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-skax.eatool%20Internal-red.svg)](LICENSE)
 
 ---
 
@@ -31,7 +31,7 @@
 - **패키지명**: `com.skax.eatool`
 - **버전**: 1.0.0-SNAPSHOT
 - **기술 스택**: Spring Boot 2.7.18, Java 11, Maven
-- **개발사**: KBSTAR
+- **개발사**: skax.eatool
 
 ### 1.2 프로젝트 목적
 - 엔터프라이즈 아키텍처 도구 플랫폼 제공
@@ -727,18 +727,18 @@ logging:
 - [프로젝트 구조 문서](PROJECT_STRUCTURE.md)
 
 ### 연락처
-- **개발팀**: KBSTAR 개발팀
-- **이메일**: dev@kbstar.com
-- **내부 시스템**: KBSTAR 내부 개발 시스템
+- **개발팀**: skax.eatool 개발팀
+- **이메일**: dev@skax.eatool.com
+- **내부 시스템**: skax.eatool 내부 개발 시스템
 
 ---
 
 ## 📄 라이센스
 
-이 프로젝트는 **KBSTAR 내부 프로젝트**입니다.
+이 프로젝트는 **skax.eatool 내부 프로젝트**입니다.
 
 ---
 
-**SKAX EA Tool Eplaton** - KBSTAR 엔터프라이즈 아키텍처 도구 플랫폼 완전 가이드
+**SKAX EA Tool Eplaton** - skax.eatool 엔터프라이즈 아키텍처 도구 플랫폼 완전 가이드
 
 *마지막 업데이트: 2024년*

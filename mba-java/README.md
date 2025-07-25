@@ -189,8 +189,8 @@ logging:
 
 ## 연락처
 
-- **개발자**: KBSTAR
-- **이메일**: kbstar@skax.com
+- **개발자**: skax.eatool
+- **이메일**: skax.eatool@skax.com
 - **회사**: SKAX
 
 ## 변경 이력

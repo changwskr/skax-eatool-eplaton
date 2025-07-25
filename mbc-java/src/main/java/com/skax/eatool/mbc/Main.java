@@ -6,7 +6,7 @@ package com.skax.eatool.mbc;
  * 이 클래스는 MBC 애플리케이션의 시작점으로,
  * MbcApplication 클래스를 실행합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

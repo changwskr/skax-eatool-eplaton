@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * 마스터 비즈니스 애플리케이션 클래스로, Spring Boot 애플리케이션을 시작하고
  * 초기화 과정을 관리합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

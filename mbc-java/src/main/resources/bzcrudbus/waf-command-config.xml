@@ -40,96 +40,96 @@ type: singleSearch, search, init, save, operate, delete, savensearch
 	</command>
 	
 	<command id="WAF_USER_SAVE" type="save">
-		<service key="UserSave" name="com.kbstar.mbc.waf.UserWAF" element="User" method="save" seq="1" sql_id="user.User"/>
+		<service key="UserSave" name="com.skax.eatool.mbc.waf.UserWAF" element="User" method="save" seq="1" sql_id="user.User"/>
 	</command>
 	
 	<command id="WAF_USER_DELETE" type="delete">
-		<service key="UserDelete" name="com.kbstar.mbc.waf.UserWAF" element="User" method="delete" seq="1" sql_id="user.deleteUser"/>
+		<service key="UserDelete" name="com.skax.eatool.mbc.waf.UserWAF" element="User" method="delete" seq="1" sql_id="user.deleteUser"/>
 	</command>
 	
 	<!-- 계정 관리 WAF 명령어 -->
 	<command id="WAF_ACCOUNT_INIT" type="init">
-		<service key="AccountInit" name="com.kbstar.mbc.waf.AccountWAF" element="Account" method="init" seq="1" sql_id=""/>
-		<service key="AccountCodeList" name="com.kbstar.mbc.waf.AccountWAF" element="AccountCode" method="getCodeList" seq="2" sql_id="common.getCommonCode"/>
+		<service key="AccountInit" name="com.skax.eatool.mbc.waf.AccountWAF" element="Account" method="init" seq="1" sql_id=""/>
+		<service key="AccountCodeList" name="com.skax.eatool.mbc.waf.AccountWAF" element="AccountCode" method="getCodeList" seq="2" sql_id="common.getCommonCode"/>
 	</command>
 	
 	<command id="WAF_ACCOUNT_SEARCH" type="search">
-		<service key="AccountSearch" name="com.kbstar.mbc.waf.AccountWAF" element="Account" method="search" seq="1" sql_id="account.getAccountList"/>
+		<service key="AccountSearch" name="com.skax.eatool.mbc.waf.AccountWAF" element="Account" method="search" seq="1" sql_id="account.getAccountList"/>
 	</command>
 	
 	<command id="WAF_ACCOUNT_SAVE" type="save">
-		<service key="AccountSave" name="com.kbstar.mbc.waf.AccountWAF" element="Account" method="save" seq="1" sql_id="account.Account"/>
+		<service key="AccountSave" name="com.skax.eatool.mbc.waf.AccountWAF" element="Account" method="save" seq="1" sql_id="account.Account"/>
 	</command>
 	
 	<command id="WAF_ACCOUNT_DELETE" type="delete">
-		<service key="AccountDelete" name="com.kbstar.mbc.waf.AccountWAF" element="Account" method="delete" seq="1" sql_id="account.deleteAccount"/>
+		<service key="AccountDelete" name="com.skax.eatool.mbc.waf.AccountWAF" element="Account" method="delete" seq="1" sql_id="account.deleteAccount"/>
 	</command>
 	
 	<!-- 시스템 코드 관리 WAF 명령어 -->
 	<command id="WAF_SYSTEMCODE_INIT" type="init">
-		<service key="SystemCodeInit" name="com.kbstar.mbc.waf.SystemCodeWAF" element="SystemCode" method="init" seq="1" sql_id=""/>
+		<service key="SystemCodeInit" name="com.skax.eatool.mbc.waf.SystemCodeWAF" element="SystemCode" method="init" seq="1" sql_id=""/>
 	</command>
 	
 	<command id="WAF_SYSTEMCODE_SEARCH" type="search">
-		<service key="SystemCodeSearch" name="com.kbstar.mbc.waf.SystemCodeWAF" element="SystemCode" method="search" seq="1" sql_id="systemcode.getSystemCodeList"/>
+		<service key="SystemCodeSearch" name="com.skax.eatool.mbc.waf.SystemCodeWAF" element="SystemCode" method="search" seq="1" sql_id="systemcode.getSystemCodeList"/>
 	</command>
 	
 	<command id="WAF_SYSTEMCODE_SAVE" type="save">
-		<service key="SystemCodeSave" name="com.kbstar.mbc.waf.SystemCodeWAF" element="SystemCode" method="save" seq="1" sql_id="systemcode.SystemCode"/>
+		<service key="SystemCodeSave" name="com.skax.eatool.mbc.waf.SystemCodeWAF" element="SystemCode" method="save" seq="1" sql_id="systemcode.SystemCode"/>
 	</command>
 	
 	<command id="WAF_SYSTEMCODE_DELETE" type="delete">
-		<service key="SystemCodeDelete" name="com.kbstar.mbc.waf.SystemCodeWAF" element="SystemCode" method="delete" seq="1" sql_id="systemcode.deleteSystemCode"/>
+		<service key="SystemCodeDelete" name="com.skax.eatool.mbc.waf.SystemCodeWAF" element="SystemCode" method="delete" seq="1" sql_id="systemcode.deleteSystemCode"/>
 	</command>
 	
 	<!-- 환경 설정 관리 WAF 명령어 -->
 	<command id="WAF_ENVIRONMENT_INIT" type="init">
-		<service key="EnvironmentInit" name="com.kbstar.mbc.waf.EnvironmentWAF" element="Environment" method="init" seq="1" sql_id=""/>
+		<service key="EnvironmentInit" name="com.skax.eatool.mbc.waf.EnvironmentWAF" element="Environment" method="init" seq="1" sql_id=""/>
 	</command>
 	
 	<command id="WAF_ENVIRONMENT_SEARCH" type="search">
-		<service key="EnvironmentSearch" name="com.kbstar.mbc.waf.EnvironmentWAF" element="Environment" method="search" seq="1" sql_id=""/>
+		<service key="EnvironmentSearch" name="com.skax.eatool.mbc.waf.EnvironmentWAF" element="Environment" method="search" seq="1" sql_id=""/>
 	</command>
 	
 	<!-- 대시보드 WAF 명령어 -->
 	<command id="WAF_DASHBOARD_INIT" type="init">
-		<service key="DashboardInit" name="com.kbstar.mbc.waf.DashboardWAF" element="Dashboard" method="init" seq="1" sql_id=""/>
-		<service key="DashboardStats" name="com.kbstar.mbc.waf.DashboardWAF" element="DashboardStats" method="getStats" seq="2" sql_id=""/>
+		<service key="DashboardInit" name="com.skax.eatool.mbc.waf.DashboardWAF" element="Dashboard" method="init" seq="1" sql_id=""/>
+		<service key="DashboardStats" name="com.skax.eatool.mbc.waf.DashboardWAF" element="DashboardStats" method="getStats" seq="2" sql_id=""/>
 	</command>
 	
 	<command id="WAF_DASHBOARD_SEARCH" type="search">
-		<service key="DashboardSearch" name="com.kbstar.mbc.waf.DashboardWAF" element="Dashboard" method="search" seq="1" sql_id=""/>
+		<service key="DashboardSearch" name="com.skax.eatool.mbc.waf.DashboardWAF" element="Dashboard" method="search" seq="1" sql_id=""/>
 	</command>
 	
 	<!-- 보고서 WAF 명령어 -->
 	<command id="WAF_REPORT_INIT" type="init">
-		<service key="ReportInit" name="com.kbstar.mbc.waf.ReportWAF" element="Report" method="init" seq="1" sql_id=""/>
+		<service key="ReportInit" name="com.skax.eatool.mbc.waf.ReportWAF" element="Report" method="init" seq="1" sql_id=""/>
 	</command>
 	
 	<command id="WAF_REPORT_GENERATE" type="operate">
-		<service key="ReportGenerate" name="com.kbstar.mbc.waf.ReportWAF" element="Report" method="generate" seq="1" sql_id=""/>
+		<service key="ReportGenerate" name="com.skax.eatool.mbc.waf.ReportWAF" element="Report" method="generate" seq="1" sql_id=""/>
 	</command>
 	
 	<!-- 시스템 관리 WAF 명령어 -->
 	<command id="WAF_SYSTEM_INIT" type="init">
-		<service key="SystemInit" name="com.kbstar.mbc.waf.SystemWAF" element="System" method="init" seq="1" sql_id=""/>
+		<service key="SystemInit" name="com.skax.eatool.mbc.waf.SystemWAF" element="System" method="init" seq="1" sql_id=""/>
 	</command>
 	
 	<command id="WAF_SYSTEM_SEARCH" type="search">
-		<service key="SystemSearch" name="com.kbstar.mbc.waf.SystemWAF" element="System" method="search" seq="1" sql_id="system.getSystemLog"/>
+		<service key="SystemSearch" name="com.skax.eatool.mbc.waf.SystemWAF" element="System" method="search" seq="1" sql_id="system.getSystemLog"/>
 	</command>
 	
 	<!-- 파일 관리 WAF 명령어 -->
 	<command id="WAF_FILE_UPLOAD" type="operate">
-		<service key="FileUpload" name="com.kbstar.mbc.waf.FileWAF" element="File" method="upload" seq="1" sql_id="common.insertFileInfo"/>
+		<service key="FileUpload" name="com.skax.eatool.mbc.waf.FileWAF" element="File" method="upload" seq="1" sql_id="common.insertFileInfo"/>
 	</command>
 	
 	<command id="WAF_FILE_DOWNLOAD" type="operate">
-		<service key="FileDownload" name="com.kbstar.mbc.waf.FileWAF" element="File" method="download" seq="1" sql_id="common.getFileInfo"/>
+		<service key="FileDownload" name="com.skax.eatool.mbc.waf.FileWAF" element="File" method="download" seq="1" sql_id="common.getFileInfo"/>
 	</command>
 	
 	<command id="WAF_FILE_DELETE" type="delete">
-		<service key="FileDelete" name="com.kbstar.mbc.waf.FileWAF" element="File" method="delete" seq="1" sql_id="common.deleteFileInfo"/>
+		<service key="FileDelete" name="com.skax.eatool.mbc.waf.FileWAF" element="File" method="delete" seq="1" sql_id="common.deleteFileInfo"/>
 	</command>
 	
 </configuration> 

@@ -138,8 +138,8 @@
         
         <!-- 매퍼 패키지 -->
         <package name="com.skax.eatool.mbc.dc.usermgtdc.mapper"/>
-        <package name="com.kbstar.mbc.dc.accountdc.mapper"/>
-        <package name="com.kbstar.mbc.dc.mapper"/>
+        <package name="com.skax.eatool.mbc.dc.accountdc.mapper"/>
+        <package name="com.skax.eatool.mbc.dc.mapper"/>
     </mappers>
     
 </configuration> 

@@ -3,10 +3,10 @@
 <nodes
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
-        xmlns:skax-eatool="http://www.kbstar.com"
-        xmlns:kesa="http://www.kbstar.com/kesa"
-        xmlns:agent="http://www.kbstar.com/kesa/node"
-        xmlns="http://www.kbstar.com/kesa/node"
+        xmlns:skax-eatool="http://www.skax.eatool.com"
+        xmlns:kesa="http://www.skax.eatool.com/kesa"
+        xmlns:agent="http://www.skax.eatool.com/kesa/node"
+        xmlns="http://www.skax.eatool.com/kesa/node"
 >
         <node name="server1" address="127.0.0.1" port="9080" comment="KESA server1"  defaultLogLocation="c:\temp"/>
 

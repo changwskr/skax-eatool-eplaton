@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * MBA 애플리케이션 기본 설정 클래스
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

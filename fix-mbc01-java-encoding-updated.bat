@@ -23,14 +23,14 @@ echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/Paramet
 echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/ParameterTransform.java
 echo.
 echo [Constant 패키지 - 상수 정의 클래스들]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/constant/Constants.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/constant/TCFConstants.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/constant/TCFConstantErrcode.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/constant/Constants.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/constant/TCFConstants.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/constant/TCFConstantErrcode.java
 echo.
 echo [DAO 패키지 - 데이터 액세스 객체 클래스들]
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/dao/DBConnManager.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/dao/CommonDAO.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/dao/IfrsCommonDAO.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/dao/DBConnManager.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/dao/CommonDAO.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/dao/IfrsCommonDAO.java
 echo.
 
 echo 2. 모든 Java 파일의 주석이 UTF-8 인코딩으로 변경되었습니다.

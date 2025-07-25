@@ -24,7 +24,7 @@ public class MainHomeController {
     /**
      * 홈화면 표시 - home.html만 사용
      */
-    @GetMapping({"/home", ""})
+    @GetMapping({"/home", "/web/home", ""})
     public String home(Model model) {
         logger.info("=== MainHomeController.home START ===");
         
@@ -248,9 +248,9 @@ public class MainHomeController {
     }
 
     /**
-     * 실시간 계정 통계 API
+     * 계정 통계 조회 API (간단한 버전)
      */
-    @GetMapping("/api/report/account/statistics")
+    @GetMapping("/api/home/account/statistics")
     @ResponseBody
     public Map<String, Object> getAccountStatistics() {
         logger.info("=== MainHomeController.getAccountStatistics START ===");

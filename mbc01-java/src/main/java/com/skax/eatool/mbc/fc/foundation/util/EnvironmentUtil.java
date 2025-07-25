@@ -15,7 +15,7 @@ import java.util.Properties;
  * 
  * 프로그램 내에서 다양한 환경파일을 읽고 처리하는 유틸리티 메서드들을 제공합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

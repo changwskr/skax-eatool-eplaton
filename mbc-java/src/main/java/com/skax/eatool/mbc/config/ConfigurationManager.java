@@ -16,7 +16,7 @@ import java.util.Properties;
  * 
  * 프로그램 내에서 다양한 환경파일을 동적으로 로드하고 관리하는 클래스입니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

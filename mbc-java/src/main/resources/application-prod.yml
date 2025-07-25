@@ -136,7 +136,7 @@ app:
     version: v1
     base-path: /api/v1
     cors:
-      allowed-origins: "${ALLOWED_ORIGINS:https://mbc.kbstar.com}"
+      allowed-origins: "${ALLOWED_ORIGINS:https://mbc.skax.eatool.com}"
       allowed-methods: "GET,POST,PUT,DELETE"
       allowed-headers: "Content-Type,Authorization"
       

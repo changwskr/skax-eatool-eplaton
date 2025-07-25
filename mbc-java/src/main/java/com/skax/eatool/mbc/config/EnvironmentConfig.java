@@ -14,7 +14,7 @@ import java.util.Arrays;
  * 
  * 프로그램 내에서 다양한 환경파일을 읽고 처리하는 설정 클래스입니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

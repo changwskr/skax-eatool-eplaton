@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 
  * 로그인, 로그아웃 등 인증 관련 페이지를 처리합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

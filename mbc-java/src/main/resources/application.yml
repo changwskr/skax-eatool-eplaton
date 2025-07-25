@@ -6,14 +6,14 @@ spring:
   profiles:
     active: dev # 기본값: dev, prod로 변경 가능
 
-  # Security Configuration
-  security:
-    user:
-      name: admin
-      password: admin
-      roles: ADMIN
-    filter:
-      order: 10
+  # Security Configuration - 개발 환경에서 비활성화
+  # security:
+  #   user:
+  #     name: admin
+  #     password: admin
+  #     roles: ADMIN
+  #   filter:
+  #     order: 10
 
   # Database Configuration
   datasource:

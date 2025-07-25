@@ -20,5 +20,5 @@
 		</dataSource>
 	</transactionManager>
 	
- 	<sqlMap resource="/com/kbstar/mbc/fc/foundation/bzcrudbus/setting/common.sqlmap.xml"/>
+ 	<sqlMap resource="/com/skax.eatool/mbc/fc/foundation/bzcrudbus/setting/common.sqlmap.xml"/>
 </sqlMapConfig>

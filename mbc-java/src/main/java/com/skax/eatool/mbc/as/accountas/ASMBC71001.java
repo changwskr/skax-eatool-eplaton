@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 계정 생성 Application Service
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  */
 @Service

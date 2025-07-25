@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Account Process Component
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  */
 @Component

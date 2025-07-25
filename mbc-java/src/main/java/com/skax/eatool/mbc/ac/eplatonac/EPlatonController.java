@@ -28,8 +28,12 @@ public class EPlatonController {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmmss");
 
-    @Autowired
-    private EPlatonBizDelegateSBBean ePlatonBizDelegateSBBean;
+    // 임시로 의존성 주입 제거 (개발 테스트용)
+    // private final EPlatonBizDelegateSBBean ePlatonBizDelegateSBBean;
+    //
+    // public EPlatonController(EPlatonBizDelegateSBBean ePlatonBizDelegateSBBean) {
+    //     this.ePlatonBizDelegateSBBean = ePlatonBizDelegateSBBean;
+    // }
 
     /**
      * EPlaton 메인 페이지 - 관리 페이지로 리다이렉트
@@ -74,14 +78,12 @@ public class EPlatonController {
         logger.info("==================[EPlatonController.executeOperation START] - Request: {}", requestBody);
 
         try {
-            // Create EPlatonEvent from request
-            EPlatonEvent event = createEPlatonEventFromRequest(requestBody);
-
-            // Execute business delegate operation
-            EPlatonEvent resultEvent = ePlatonBizDelegateSBBean.execute(event);
-
-            // Create response
-            Map<String, Object> response = createResponseFromEvent(resultEvent);
+            // 임시 구현 - 간단한 응답 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "EPlaton execute operation called successfully");
+            response.put("requestData", requestBody);
+            response.put("timestamp", LocalDateTime.now().toString());
 
             logger.info("==================[EPlatonController.executeOperation END] - Success");
             return ResponseEntity.ok(response);
@@ -100,6 +102,30 @@ public class EPlatonController {
     }
 
     /**
+     * Execute EPlaton business delegate operation (GET method for compatibility)
+     * 
+     * @return EPlaton 관리 페이지
+     */
+    @GetMapping("/api/execute")
+    public String executeOperationGetPage(Model model) {
+        logger.info("==================[EPlatonController.executeOperationGetPage START]");
+
+        // 기본 설정값들을 모델에 추가
+        model.addAttribute("defaultBankCode", "001");
+        model.addAttribute("defaultBranchCode", "001");
+        model.addAttribute("defaultUserId", "USER001");
+        model.addAttribute("defaultSystemName", "CashCard");
+        model.addAttribute("defaultActionName", "CashCardBizAction");
+        model.addAttribute("defaultOperationName", "COMMO1000");
+        model.addAttribute("defaultOperationMethod", "getCardInfo");
+        model.addAttribute("defaultReqName", "CardInfoRequest");
+        model.addAttribute("message", "EPlaton API Execute Page");
+
+        logger.info("==================[EPlatonController.executeOperationGetPage END] - Redirecting to manage page");
+        return "eplaton/eplaton-manage";
+    }
+
+    /**
      * Execute read-only EPlaton business delegate operation
      * 
      * @param requestBody Request body containing operation details
@@ -111,14 +137,12 @@ public class EPlatonController {
         logger.info("==================[EPlatonController.executeReadOnlyOperation START] - Request: {}", requestBody);
 
         try {
-            // Create EPlatonEvent from request
-            EPlatonEvent event = createEPlatonEventFromRequest(requestBody);
-
-            // Execute read-only business delegate operation
-            EPlatonEvent resultEvent = ePlatonBizDelegateSBBean.executeReadOnly(event);
-
-            // Create response
-            Map<String, Object> response = createResponseFromEvent(resultEvent);
+            // 임시 구현 - 간단한 응답 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "EPlaton execute-readonly operation called successfully");
+            response.put("requestData", requestBody);
+            response.put("timestamp", LocalDateTime.now().toString());
 
             logger.info("==================[EPlatonController.executeReadOnlyOperation END] - Success");
             return ResponseEntity.ok(response);
@@ -149,14 +173,12 @@ public class EPlatonController {
         logger.info("==================[EPlatonController.routeToAction START] - Request: {}", requestBody);
 
         try {
-            // Create EPlatonEvent from request
-            EPlatonEvent event = createEPlatonEventFromRequest(requestBody);
-
-            // Route to specific business action
-            EPlatonEvent resultEvent = ePlatonBizDelegateSBBean.routeToAction(event);
-
-            // Create response
-            Map<String, Object> response = createResponseFromEvent(resultEvent);
+            // 임시 구현 - 간단한 응답 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "EPlaton route-action operation called successfully");
+            response.put("requestData", requestBody);
+            response.put("timestamp", LocalDateTime.now().toString());
 
             logger.info("==================[EPlatonController.routeToAction END] - Success");
             return ResponseEntity.ok(response);
@@ -179,7 +201,7 @@ public class EPlatonController {
      * 
      * @return ResponseEntity with health status
      */
-    @PostMapping("/api/health")
+    @GetMapping("/api/health")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> healthCheck() {
         logger.info("==================[EPlatonController.healthCheck START]");
@@ -192,6 +214,38 @@ public class EPlatonController {
         response.put("message", "EPlaton Controller is running");
 
         logger.info("==================[EPlatonController.healthCheck END] - Success");
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Health check endpoint (POST method for compatibility)
+     * 
+     * @return ResponseEntity with health status
+     */
+    @PostMapping("/api/health")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> healthCheckPost() {
+        return healthCheck();
+    }
+
+    /**
+     * 간단한 테스트 엔드포인트 - 컨트롤러 등록 확인용
+     * 
+     * @return ResponseEntity with test response
+     */
+    @GetMapping("/api/test")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> testEndpoint() {
+        logger.info("==================[EPlatonController.testEndpoint START]");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "EPlatonController is working!");
+        response.put("timestamp", LocalDateTime.now().toString());
+        response.put("controller", "EPlatonController");
+        response.put("package", "com.skax.eatool.mbc.ac.eplatonac");
+
+        logger.info("==================[EPlatonController.testEndpoint END] - Success");
         return ResponseEntity.ok(response);
     }
 

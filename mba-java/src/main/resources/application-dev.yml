@@ -84,8 +84,8 @@ springdoc:
     description: Master Business Application API Documentation - Development Environment
     version: 1.0.0-dev
     contact:
-      name: KBSTAR
-      email: kbstar@skax.com
+      name: skax.eatool
+      email: skax.eatool@skax.com
 
 # Application Specific Configuration for Development
 mba:

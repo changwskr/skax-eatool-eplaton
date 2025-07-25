@@ -17,7 +17,7 @@ import java.util.Map;
  * 
  * 홈 페이지와 관련된 요청을 처리합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

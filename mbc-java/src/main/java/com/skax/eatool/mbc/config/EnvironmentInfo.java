@@ -7,7 +7,7 @@ import java.util.Arrays;
  * 
  * 환경별 설정 정보를 담는 데이터 전송 객체입니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ksa-deployment
+  namespace: skax-eatool
+  labels:
+    app: ksa
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ksa
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: ksa
+        component: backend
+    spec:
+      containers:
+      - name: ksa-app
+        image: skax-eatool/ksa:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 8080
+          name: h2-console
+        envFrom:
+        - configMapRef:
+            name: ksa-config
+        - secretRef:
+            name: ksa-secret
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /ksa/actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ksa/actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+      restartPolicy: Always 

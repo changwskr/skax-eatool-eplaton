@@ -3,7 +3,7 @@
         xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
         xmlns:skax-eatool="http://www.skax-eatool.com"
         xmlns:kesa="http://www.skax-eatool.com/kesa"
-        xmlns:cache="http://www.kbstar.com/kesa/cache"
-        xmlns="http://www.kbstar.com/kesa/cache">
+        xmlns:cache="http://www.skax.eatool.com/kesa/cache"
+        xmlns="http://www.skax.eatool.com/kesa/cache">
 	<friend instance="server1" address="127.0.0.1" port="30000" />
 </caches>

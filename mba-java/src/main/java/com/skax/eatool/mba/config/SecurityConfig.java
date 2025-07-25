@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * 
  * Spring Security 설정을 관리합니다.
  * 
- * @author KBSTAR
+ * @author skax.eatool
  * @version 1.0.0
  * @since 2024
  */

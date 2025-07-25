@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mbc-deployment
+  namespace: skax-eatool
+  labels:
+    app: mbc
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mbc
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: mbc
+        component: backend
+    spec:
+      containers:
+      - name: mbc-app
+        image: skax-eatool/mbc:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8085
+          name: http
+        - containerPort: 8085
+          name: h2-console
+        envFrom:
+        - configMapRef:
+            name: mbc-config
+        - secretRef:
+            name: mbc-secret
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /mbc/actuator/health
+            port: 8085
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /mbc/actuator/health
+            port: 8085
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+      restartPolicy: Always 

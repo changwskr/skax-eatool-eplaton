@@ -43,11 +43,11 @@ public class SwaggerConfig {
                                                 .version("1.0.0")
                                                 .contact(new Contact()
                                                                 .name("SKAX Project Team")
-                                                                .email("skax@kbstar.com")
-                                                                .url("https://www.kbstar.com"))
+                                                                .email("skax@skax.eatool.com")
+                                                                .url("https://www.skax.eatool.com"))
                                                 .license(new License()
                                                                 .name("KB Star License")
-                                                                .url("https://www.kbstar.com/license")))
+                                                                .url("https://www.skax.eatool.com/license")))
                                 .servers(Arrays.asList(
                                                 new Server()
                                                                 .url("http://localhost:8000/mbc")
@@ -56,7 +56,7 @@ public class SwaggerConfig {
                                                                 .url("http://localhost:8085")
                                                                 .description("직접 접근 개발 서버"),
                                                 new Server()
-                                                                .url("https://api.mbc.kbstar.com")
+                                                                .url("https://api.mbc.skax.com")
                                                                 .description("운영 서버")));
         }
 }

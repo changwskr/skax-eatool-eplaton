@@ -18,9 +18,9 @@ echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/LoaderC
 echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/ActionConfig.java
 echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/CommandObj.java
 echo - mbc01-java/src/com/skax/eatool/mbc/fc/foundation/bzcrudbus/config/ConfigInfo.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ParameterConverter.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ParameterInfo.java
-echo - mbc01-java/src/com/kbstar/mbc/fc/foundation/bzcrudbus/config/ParameterTransform.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/config/ParameterConverter.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/config/ParameterInfo.java
+echo - mbc01-java/src/com/skax.eatool/mbc/fc/foundation/bzcrudbus/config/ParameterTransform.java
 echo.
 
 echo 2. 모든 Java 파일의 주석이 UTF-8 인코딩으로 변경되었습니다.
