@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: skax-eatool
+  labels:
+    name: skax-eatool
+    description: "SKAX EATool Eplaton Application Namespace" 

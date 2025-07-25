@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mbc01-config
+  namespace: skax-eatool
+  labels:
+    app: mbc01
+    component: config
+data:
+  # Application Configuration
+  SPRING_PROFILES_ACTIVE: "prod"
+  SPRING_APPLICATION_NAME: "mbc01-application"
+  
+  # Database Configuration
+  SPRING_DATASOURCE_URL: "jdbc:h2:mem:mbc01db"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.h2.Driver"
+  SPRING_DATASOURCE_USERNAME: "sa"
+  
+  # H2 Console Configuration
+  SPRING_H2_CONSOLE_ENABLED: "true"
+  SPRING_H2_CONSOLE_PATH: "/h2-console"
+  
+  # JPA Configuration
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "create-drop"
+  SPRING_JPA_SHOW_SQL: "false"
+  SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.H2Dialect"
+  SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "false"
+  SPRING_JPA_OPEN_IN_VIEW: "false"
+  
+  # MyBatis Configuration
+  MYBATIS_MAPPER_LOCATIONS: "classpath:sqlmap/*.xml"
+  MYBATIS_TYPE_ALIASES_PACKAGE: "com.skax.eatool.mbc.fc.foundation.dto"
+  MYBATIS_CONFIGURATION_MAP_UNDERSCORE_TO_CAMEL_CASE: "true"
+  MYBATIS_CONFIGURATION_LOG_IMPL: "org.apache.ibatis.logging.stdout.StdOutImpl"
+  
+  # Jackson Configuration
+  SPRING_JACKSON_DATE_FORMAT: "yyyy-MM-dd HH:mm:ss"
+  SPRING_JACKSON_TIME_ZONE: "Asia/Seoul"
+  SPRING_JACKSON_DEFAULT_PROPERTY_INCLUSION: "non_null"
+  
+  # Management Configuration
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics"
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "always"
+  
+  # Application Configuration
+  APP_DATA_ACCESS_TYPE: "mybatis"
+  APP_DATA_ACCESS_DESCRIPTION: "데이터 접근 방식 설정 (mybatis/jpa)"
+  
+  # Logging Configuration
+  LOGGING_LEVEL_COM_SKAX_EATOOL_MBC: "INFO"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: "INFO"
+  LOGGING_LEVEL_ORG_MYBATIS: "INFO"
+  LOGGING_LEVEL_ORG_HIBERNATE: "INFO"
+  LOGGING_PATTERN_CONSOLE: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  LOGGING_PATTERN_FILE: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  LOGGING_FILE_NAME: "logs/mbc01-application.log" 

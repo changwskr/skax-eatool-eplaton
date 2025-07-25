@@ -1,0 +1,62 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: skax-eatool-ingress
+  namespace: skax-eatool
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+  labels:
+    app: skax-eatool
+    component: ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: skax-eatool.local
+    http:
+      paths:
+      - path: /kji
+        pathType: Prefix
+        backend:
+          service:
+            name: kji-service
+            port:
+              number: 8080
+      - path: /ksa
+        pathType: Prefix
+        backend:
+          service:
+            name: ksa-service
+            port:
+              number: 8080
+      - path: /mba
+        pathType: Prefix
+        backend:
+          service:
+            name: mba-service
+            port:
+              number: 8084
+      - path: /mbc
+        pathType: Prefix
+        backend:
+          service:
+            name: mbc-service
+            port:
+              number: 8085
+      - path: /mbc01
+        pathType: Prefix
+        backend:
+          service:
+            name: mbc01-service
+            port:
+              number: 8080
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: apigateway-service
+            port:
+              number: 80 
