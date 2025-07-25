@@ -107,6 +107,9 @@
         .nav-card.eplaton-framework .nav-card-icon {
             background: linear-gradient(135deg, #fa709a, #fee140);
         }
+        .nav-card.mbc-integration .nav-card-icon {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+        }
         .nav-card-title {
             font-size: 1.3em;
             font-weight: 600;
@@ -307,13 +310,27 @@
                 <div class="nav-card-icon">🚀</div>
                 <div class="nav-card-title">EPlaton Framework</div>
                 <div class="nav-card-description">
-                    EPlaton Framework 사용 가이드 및 문서
+                    EPlaton Framework 비즈니스 로직 실행 및 관리
                 </div>
                 <ul class="nav-card-features">
-                    <li>EPlaton Framework 소개</li>
-                    <li>프로젝트 생성 방법</li>
-                    <li>문서 및 예제</li>
-                    <li>FAQ</li>
+                    <li>EPlaton 비즈니스 로직 실행</li>
+                    <li>MBC 서버 연동</li>
+                    <li>HTTP TPS 통신</li>
+                    <li>실시간 모니터링</li>
+                </ul>
+            </div>
+
+            <div class="nav-card mbc-integration" onclick="location.href='/mba/eplaton/mbc-call'">
+                <div class="nav-card-icon">🔗</div>
+                <div class="nav-card-title">MBC 연동</div>
+                <div class="nav-card-description">
+                    MBA에서 MBC 서버로 EPlaton API 호출
+                </div>
+                <ul class="nav-card-features">
+                    <li>MBC EPlaton API 호출</li>
+                    <li>HttpTPSsendrecv 통신</li>
+                    <li>비즈니스 로직 실행</li>
+                    <li>실시간 응답 확인</li>
                 </ul>
             </div>
         </div>

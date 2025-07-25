@@ -50,4 +50,30 @@ logging:
     com.skax.eatool.kji: DEBUG
     org.springframework.security: DEBUG
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n" 
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# HTTP TPS Configuration for HttpTPSsendrecv
+http:
+  tps:
+    connect-timeout: 10000      # 연결 타임아웃 (10초)
+    read-timeout: 30000         # 읽기 타임아웃 (30초)
+    max-retries: 3              # 최대 재시도 횟수
+    retry-delay: 1000           # 재시도 간격 (1초)
+    connection-pool-size: 50    # 커넥션 풀 크기
+    
+    # IP 화이트리스트 설정
+    ip-whitelist:
+      enabled: true             # IP 제한 활성화
+      internal-only: true       # 내부 네트워크만 허용
+      allowed-ips:              # 허용된 IP 목록
+        - "127.0.0.1"           # localhost
+        - "localhost"           # localhost 도메인
+        - "192.168.0.0/16"      # 사설 네트워크 A
+        - "10.0.0.0/8"          # 사설 네트워크 B
+        - "172.16.0.0/12"       # 사설 네트워크 C
+      allowed-domains:          # 허용된 도메인 목록
+        - "localhost"
+        - "*.internal"
+        - "*.local"
+        - "*.dev"
+        - "*.test" 

@@ -70,10 +70,17 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- WebClient for HTTP TPS -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Spring Boot Maven Plugin - 라이브러리로 사용하기 위해 repackage 비활성화 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -82,14 +89,9 @@
                     <mainClass>com.skax.eatool.kji.KjiApplication</mainClass>
                     <layout>JAR</layout>
                     <executable>true</executable>
+                    <!-- 라이브러리로 사용할 때는 repackage를 비활성화 -->
+                    <skip>true</skip>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             
             <plugin>

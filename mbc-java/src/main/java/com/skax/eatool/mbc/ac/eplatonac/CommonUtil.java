@@ -1,4 +1,4 @@
-package com.skax.eatool.mba.ac.eplatonac;
+package com.skax.eatool.mbc.ac.eplatonac;
 
 /**
  * <PRE>
@@ -10,14 +10,13 @@ package com.skax.eatool.mba.ac.eplatonac;
  * @author  : EPlaton Framework Team
  */
 
-import java.util.*;
-import java.text.*;
-import java.net.*;
 import java.io.*;
+import java.net.InetAddress;
 import java.sql.*;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static com.skax.eatool.mbc.fc.foundation.bzcrudbus.foundation.general.CommonUtil.ascToksc;
+import java.util.*;
 
 public class CommonUtil {
 
@@ -175,31 +174,41 @@ public class CommonUtil {
   }
 
   /**
-   * ISO-8859-1(서유럽) → UTF-8 변환
-   * @param str 변환할 문자열
-   * @return UTF-8 문자열
-   * @throws UnsupportedEncodingException
+   * KSC5601로 변환한다
+   *
+   * @param String str
+   * @return String
+   * @exception UnsupportedEncodingException
    */
-  public static final String isoToUtf8(String str) throws UnsupportedEncodingException {
-    if (str == null) return "";
-    return new String(str.getBytes("ISO-8859-1"), "UTF-8");
+  public static final String ascToksc(String str) throws UnsupportedEncodingException {
+
+    if (str == null)
+      return "";
+    return new String(str.getBytes("8859_1"), "KSC5601");
+
   }
 
   /**
-   * EUC-KR(한글) → UTF-8 변환
-   * @param str 변환할 문자열
-   * @return UTF-8 문자열
-   * @throws UnsupportedEncodingException
+   * 8859_1로 변환한다
+   *
+   * @param String str
+   * @return String
+   * @exception UnsupportedEncodingException
    */
-  public static final String eucKrToUtf8(String str) throws UnsupportedEncodingException {
-    if (str == null) return "";
-    return new String(str.getBytes("EUC-KR"), "UTF-8");
+  public static final String kscToasc(String str) throws UnsupportedEncodingException {
+
+    if (str == null)
+      return "";
+    return new String(str.getBytes("KSC5601"), "8859_1");
+
   }
 
   /**
-   * 입력된 String의 종류(영문, 한글, 기타)를 체크한다.
-   * @param data 검사할 문자열
-   * @return 0:영문, 1:한글, 2:기타
+   * 입력된 String의 종류, 영문, 한글, 기타를 체크한다.
+   *
+   * @param String data
+   * @return int
+   *         0인 경우 영문,1인 경우 한글, 2인 경우 기타
    */
   public static final int checkHan(String data) {
     int result = 0;
@@ -208,7 +217,7 @@ public class CommonUtil {
       if (ch >= 0xAC00 && ch <= 0xD7A3) {
         result = 1;
         break;
-      } else if ((ch >= 0x0041 && ch <= 0x005A) || (ch >= 0x0061 && ch <= 0x007A)) {
+      } else if (ch >= 0x0041 && ch <= 0x005A || ch >= 0x0061 && ch <= 0x007A) {
         result = 0;
       } else {
         result = 2;
@@ -218,9 +227,10 @@ public class CommonUtil {
   }
 
   /**
-   * 한글이 포함되어 있는지 체크한다.
-   * @param str 검사할 문자열
-   * @return 한글 포함시 true, 아니면 false
+   * 한글인지 체크한다
+   *
+   * @param String str
+   * @return boolean
    */
   public static final boolean isHanGul(String str) {
     for (int i = 0; i < str.length(); i++) {

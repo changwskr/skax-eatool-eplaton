@@ -29,9 +29,23 @@ public class SecurityConfig {
         try {
             http
                     .authorizeHttpRequests(authorize -> authorize
-                            .anyRequest().permitAll() // 모든 요청 허용
+                            // 공개 접근 가능한 경로
+                            .antMatchers("/", "/home", "/mbc").permitAll()
+                            .antMatchers("/mbc/eplaton/**").permitAll() // EPlaton API 허용
+                            .antMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
+                            .antMatchers("/h2-console/**").permitAll()
+                            .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                            .antMatchers("/actuator/**").permitAll()
+                            // API 엔드포인트
+                            .antMatchers("/api/**").permitAll()
+                            // 기타 모든 요청은 허용 (개발 환경)
+                            .anyRequest().permitAll()
                     )
-                    .csrf(csrf -> csrf.disable())
+                    .csrf(csrf -> csrf
+                            .ignoringAntMatchers("/h2-console/**")
+                            .ignoringAntMatchers("/mbc/eplaton/**") // EPlaton API CSRF 제외
+                            .ignoringAntMatchers("/api/**")
+                    )
                     .headers(headers -> headers
                             .frameOptions().disable() // For H2 console
                     )

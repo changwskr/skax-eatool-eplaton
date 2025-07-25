@@ -98,11 +98,12 @@ springdoc:
     operations-sorter: method
   info:
     title: MBA API Documentation
-    description: Master Business Application API Documentation
-    version: 1.0.0
-    contact:
-      name: KBSTAR
-      email: kbstar@skax.com
+
+# MBC Service Configuration for TPSsendrecv
+mbc:
+  service:
+    url: http://localhost:8085
+    context-path: /mbc
 
 # Application Specific Configuration
 mba:

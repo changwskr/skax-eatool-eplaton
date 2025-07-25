@@ -38,7 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/home", "/auth/login", "/register").permitAll()
                 .antMatchers("/mba/login").permitAll() // 로그인 처리 URL 허용
                 .antMatchers("/mba/auth/login").permitAll() // Gateway를 통한 로그인 페이지 접근 허용
-                .antMatchers("/eplaton/**").permitAll() // EPlaton Framework 접근 허용
+                .antMatchers("/mba/eplaton/**").permitAll() // EPlaton Framework 접근 허용
+                .antMatchers("/mba/eplaton/mbc-call/**").permitAll() // MBC 연동 API 접근 허용
+                .antMatchers("/api/mba-mbc-test/**").permitAll() // MBC 연동 테스트 API 접근 허용
                 .antMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
@@ -67,7 +69,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf()
                 .ignoringAntMatchers("/h2-console/**")
                 .ignoringAntMatchers("/mba/api/**")
-                .ignoringAntMatchers("/eplaton/api/**") // EPlaton API CSRF 제외
+                .ignoringAntMatchers("/mba/eplaton/api/**") // EPlaton API CSRF 제외
+                .ignoringAntMatchers("/mba/eplaton/mbc-call/**") // MBC 연동 API CSRF 제외
+                .ignoringAntMatchers("/api/mba-mbc-test/**") // MBC 연동 테스트 API CSRF 제외
             .and()
             .headers()
                 .frameOptions()

@@ -14,6 +14,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import com.skax.eatool.kji.tpm.*;
+import com.skax.eatool.kji.tpm.HttpTPSsendrecv;
+import com.skax.eatool.kji.tpm.TpsRequest;
+import com.skax.eatool.kji.tpm.TpsResponse;
 
 /**
  * EPlaton Framework Controller
@@ -22,7 +28,7 @@ import java.util.Map;
  * using POST method for all operations.
  */
 @Controller
-@RequestMapping("/eplaton")
+@RequestMapping("/mba/eplaton")
 public class EPlatonController {
 
     private static final Logger logger = LoggerFactory.getLogger(EPlatonController.class);
@@ -31,6 +37,12 @@ public class EPlatonController {
 
     @Autowired
     private EPlatonBizDelegateSBBean ePlatonBizDelegateSBBean;
+    
+    @Autowired
+    private TPSsendrecv tpsSendRecv;
+    
+    @Autowired
+    private HttpTPSsendrecv httpTpsSendRecv;
 
     /**
      * EPlaton 메인 페이지 - 관리 페이지로 리다이렉트
@@ -194,6 +206,495 @@ public class EPlatonController {
 
         logger.info("==================[EPlatonController.healthCheck END] - Success");
         return ResponseEntity.ok(response);
+    }
+
+    // ================== MBC 호출 API 엔드포인트 ==================
+
+    /**
+     * MBC EPlaton API 호출 - 일반 실행
+     * 
+     * @param requestBody 요청 데이터
+     * @return ResponseEntity with MBC operation result
+     */
+    @PostMapping("/api/mbc/execute")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> executeMbcOperation(@RequestBody Map<String, Object> requestBody) {
+        logger.info("==================[EPlatonController.executeMbcOperation START] - Request: {}", requestBody);
+
+        try {
+            // KJI HttpTPSsendrecv를 통해 MBC 호출
+            String mbcUrl = "http://localhost:8085/mbc/eplaton/api/execute";
+            Map<String, Object> mbcResponse = httpTpsSendRecv.sendPostRequest(mbcUrl, requestBody);
+
+            logger.info("==================[EPlatonController.executeMbcOperation END] - MBC Response: {}", mbcResponse);
+            return ResponseEntity.ok(mbcResponse);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.executeMbcOperation ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EMBC001");
+            errorResponse.put("errorMessage", "MBC operation execution failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * MBC EPlaton API 호출 - 읽기 전용 실행
+     * 
+     * @param requestBody 요청 데이터
+     * @return ResponseEntity with MBC operation result
+     */
+    @PostMapping("/api/mbc/execute-readonly")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> executeMbcReadOnlyOperation(@RequestBody Map<String, Object> requestBody) {
+        logger.info("==================[EPlatonController.executeMbcReadOnlyOperation START] - Request: {}", requestBody);
+
+        try {
+            // KJI HttpTPSsendrecv를 통해 MBC 호출
+            String mbcUrl = "http://localhost:8085/mbc/eplaton/api/execute-readonly";
+            Map<String, Object> mbcResponse = httpTpsSendRecv.sendPostRequest(mbcUrl, requestBody);
+
+            logger.info("==================[EPlatonController.executeMbcReadOnlyOperation END] - MBC Response: {}", mbcResponse);
+            return ResponseEntity.ok(mbcResponse);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.executeMbcReadOnlyOperation ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EMBC002");
+            errorResponse.put("errorMessage", "MBC read-only operation execution failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * MBC EPlaton API 호출 - 라우팅 액션
+     * 
+     * @param requestBody 요청 데이터
+     * @return ResponseEntity with MBC operation result
+     */
+    @PostMapping("/api/mbc/route-action")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> routeMbcAction(@RequestBody Map<String, Object> requestBody) {
+        logger.info("==================[EPlatonController.routeMbcAction START] - Request: {}", requestBody);
+
+        try {
+            // KJI HttpTPSsendrecv를 통해 MBC 호출
+            String mbcUrl = "http://localhost:8085/mbc/eplaton/api/route-action";
+            Map<String, Object> mbcResponse = httpTpsSendRecv.sendPostRequest(mbcUrl, requestBody);
+
+            logger.info("==================[EPlatonController.routeMbcAction END] - MBC Response: {}", mbcResponse);
+            return ResponseEntity.ok(mbcResponse);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.routeMbcAction ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EMBC003");
+            errorResponse.put("errorMessage", "MBC route action failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * MBC EPlaton API 호출 - 헬스 체크
+     * 
+     * @return ResponseEntity with MBC health status
+     */
+    @PostMapping("/api/mbc/health")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> checkMbcHealth() {
+        logger.info("==================[EPlatonController.checkMbcHealth START]");
+
+        try {
+            // KJI HttpTPSsendrecv를 통해 MBC 헬스 체크 호출
+            String mbcUrl = "http://localhost:8085/mbc/eplaton/api/health";
+            Map<String, Object> mbcResponse = httpTpsSendRecv.sendGetRequest(mbcUrl);
+
+            logger.info("==================[EPlatonController.checkMbcHealth END] - MBC Response: {}", mbcResponse);
+            return ResponseEntity.ok(mbcResponse);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.checkMbcHealth ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EMBC004");
+            errorResponse.put("errorMessage", "MBC health check failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * MBC 서비스 정보 조회
+     * 
+     * @return ResponseEntity with MBC service information
+     */
+    @GetMapping("/api/mbc/service-info")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getMbcServiceInfo() {
+        logger.info("==================[EPlatonController.getMbcServiceInfo START]");
+
+        try {
+            // KJI HttpTPSsendrecv를 통해 MBC 서비스 정보 조회
+            String mbcUrl = "http://localhost:8085/mbc/eplaton/api/health";
+            Map<String, Object> mbcResponse = httpTpsSendRecv.sendGetRequest(mbcUrl);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("serviceInfo", mbcResponse);
+            response.put("timestamp", LocalDateTime.now().toString());
+
+            logger.info("==================[EPlatonController.getMbcServiceInfo END] - Service Info: {}", mbcResponse);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.getMbcServiceInfo ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EMBC005");
+            errorResponse.put("errorMessage", "Failed to get MBC service info: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ================== 범용 HTTP 호출 API 엔드포인트 ==================
+
+    /**
+     * 범용 HTTP POST 요청 전송
+     * 
+     * @param requestBody 요청 데이터 (targetUrl, requestData 포함)
+     * @return ResponseEntity with HTTP response
+     */
+    @PostMapping("/api/http/post")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> sendHttpPostRequest(@RequestBody Map<String, Object> requestBody) {
+        logger.info("==================[EPlatonController.sendHttpPostRequest START] - Request: {}", requestBody);
+
+        try {
+            String targetUrl = (String) requestBody.get("targetUrl");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> requestData = (Map<String, Object>) requestBody.get("requestData");
+            
+            if (targetUrl == null || targetUrl.trim().isEmpty()) {
+                throw new IllegalArgumentException("targetUrl is required");
+            }
+            
+            if (requestData == null) {
+                requestData = new HashMap<>();
+            }
+
+            // KJI HttpTPSsendrecv를 통해 HTTP POST 요청 전송
+            Map<String, Object> httpResponse = httpTpsSendRecv.sendPostRequest(targetUrl, requestData);
+
+            logger.info("==================[EPlatonController.sendHttpPostRequest END] - Response: {}", httpResponse);
+            return ResponseEntity.ok(httpResponse);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.sendHttpPostRequest ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EHTTP001");
+            errorResponse.put("errorMessage", "HTTP POST request failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * 범용 HTTP GET 요청 전송
+     * 
+     * @param requestBody 요청 데이터 (targetUrl 포함)
+     * @return ResponseEntity with HTTP response
+     */
+    @PostMapping("/api/http/get")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> sendHttpGetRequest(@RequestBody Map<String, Object> requestBody) {
+        logger.info("==================[EPlatonController.sendHttpGetRequest START] - Request: {}", requestBody);
+
+        try {
+            String targetUrl = (String) requestBody.get("targetUrl");
+            
+            if (targetUrl == null || targetUrl.trim().isEmpty()) {
+                throw new IllegalArgumentException("targetUrl is required");
+            }
+
+            // KJI HttpTPSsendrecv를 통해 HTTP GET 요청 전송
+            Map<String, Object> httpResponse = httpTpsSendRecv.sendGetRequest(targetUrl);
+
+            logger.info("==================[EPlatonController.sendHttpGetRequest END] - Response: {}", httpResponse);
+            return ResponseEntity.ok(httpResponse);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.sendHttpGetRequest ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EHTTP002");
+            errorResponse.put("errorMessage", "HTTP GET request failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * 범용 HTTP 요청 전송 (메서드 지정 가능)
+     * 
+     * @param requestBody 요청 데이터 (targetUrl, method, requestData 포함)
+     * @return ResponseEntity with HTTP response
+     */
+    @PostMapping("/api/http/request")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> sendHttpRequest(@RequestBody Map<String, Object> requestBody) {
+        logger.info("==================[EPlatonController.sendHttpRequest START] - Request: {}", requestBody);
+
+        try {
+            String targetUrl = (String) requestBody.get("targetUrl");
+            String method = (String) requestBody.get("method");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> requestData = (Map<String, Object>) requestBody.get("requestData");
+            
+            if (targetUrl == null || targetUrl.trim().isEmpty()) {
+                throw new IllegalArgumentException("targetUrl is required");
+            }
+            
+            if (method == null || method.trim().isEmpty()) {
+                method = "GET";
+            }
+            
+            if (requestData == null) {
+                requestData = new HashMap<>();
+            }
+
+            // KJI HttpTPSsendrecv를 통해 HTTP 요청 전송
+            Map<String, Object> httpResponse = httpTpsSendRecv.sendRequest(targetUrl, method, requestData);
+
+            logger.info("==================[EPlatonController.sendHttpRequest END] - Response: {}", httpResponse);
+            return ResponseEntity.ok(httpResponse);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.sendHttpRequest ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EHTTP003");
+            errorResponse.put("errorMessage", "HTTP request failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * TPSsendrecv 모듈 정보 조회
+     * 
+     * @return ResponseEntity with module information
+     */
+    @GetMapping("/api/module-info")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getModuleInfo() {
+        logger.info("==================[EPlatonController.getModuleInfo START]");
+
+        try {
+            Map<String, Object> moduleInfo = tpsSendRecv.getModuleInfo();
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("moduleInfo", moduleInfo);
+            response.put("timestamp", LocalDateTime.now().toString());
+
+            logger.info("==================[EPlatonController.getModuleInfo END] - Module Info: {}", moduleInfo);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.getModuleInfo ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EMOD001");
+            errorResponse.put("errorMessage", "Failed to get module info: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ================== HttpTPSsendrecv API 엔드포인트 ==================
+
+    /**
+     * HttpTPSsendrecv 모듈 정보 조회
+     * 
+     * @return ResponseEntity with HttpTPSsendrecv module information
+     */
+    @GetMapping("/api/http-tps/module-info")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getHttpTpsModuleInfo() {
+        logger.info("==================[EPlatonController.getHttpTpsModuleInfo START]");
+
+        try {
+            Map<String, Object> moduleInfo = httpTpsSendRecv.getModuleInfo();
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("moduleInfo", moduleInfo);
+            response.put("timestamp", LocalDateTime.now().toString());
+
+            logger.info("==================[EPlatonController.getHttpTpsModuleInfo END] - Module Info: {}", moduleInfo);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.getHttpTpsModuleInfo ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EHTTP001");
+            errorResponse.put("errorMessage", "Failed to get HttpTPSsendrecv module info: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * HttpTPSsendrecv를 사용한 TPS 요청 전송
+     * 
+     * @param requestBody 요청 데이터 (TpsRequest 형식)
+     * @return ResponseEntity with TPS response
+     */
+    @PostMapping("/api/http-tps/send")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> sendTpsRequest(@RequestBody Map<String, Object> requestBody) {
+        logger.info("==================[EPlatonController.sendTpsRequest START] - Request: {}", requestBody);
+
+        try {
+            // Map을 TpsRequest로 변환
+            com.skax.eatool.kji.tpm.TpsRequest tpsRequest = createTpsRequestFromMap(requestBody);
+            
+            // HttpTPSsendrecv를 통해 TPS 요청 전송
+            com.skax.eatool.kji.tpm.TpsResponse tpsResponse = httpTpsSendRecv.send(tpsRequest);
+            
+            // TpsResponse를 Map으로 변환
+            Map<String, Object> response = convertTpsResponseToMap(tpsResponse);
+
+            logger.info("==================[EPlatonController.sendTpsRequest END] - Response: {}", response);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.sendTpsRequest ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EHTTP002");
+            errorResponse.put("errorMessage", "TPS request failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * HttpTPSsendrecv를 사용한 비동기 TPS 요청 전송
+     * 
+     * @param requestBody 요청 데이터 (TpsRequest 형식)
+     * @return ResponseEntity with TPS response
+     */
+    @PostMapping("/api/http-tps/send-async")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> sendTpsRequestAsync(@RequestBody Map<String, Object> requestBody) {
+        logger.info("==================[EPlatonController.sendTpsRequestAsync START] - Request: {}", requestBody);
+
+        try {
+            // Map을 TpsRequest로 변환
+            com.skax.eatool.kji.tpm.TpsRequest tpsRequest = createTpsRequestFromMap(requestBody);
+            
+            // 트랜잭션 ID 생성
+            String txId = "TX_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 8);
+            
+            // HttpTPSsendrecv를 통해 비동기 TPS 요청 전송
+            com.skax.eatool.kji.tpm.TpsResponse tpsResponse = httpTpsSendRecv.sendAsync(tpsRequest, txId).block();
+            
+            if (tpsResponse == null) {
+                throw new RuntimeException("Async request timeout");
+            }
+            
+            // TpsResponse를 Map으로 변환
+            Map<String, Object> response = convertTpsResponseToMap(tpsResponse);
+
+            logger.info("==================[EPlatonController.sendTpsRequestAsync END] - Response: {}", response);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("==================[EPlatonController.sendTpsRequestAsync ERROR] - {}", e.getMessage(), e);
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("errorCode", "EHTTP003");
+            errorResponse.put("errorMessage", "Async TPS request failed: " + e.getMessage());
+            errorResponse.put("timestamp", LocalDateTime.now().toString());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * Map을 TpsRequest로 변환
+     */
+    private com.skax.eatool.kji.tpm.TpsRequest createTpsRequestFromMap(Map<String, Object> requestBody) {
+        com.skax.eatool.kji.tpm.TpsRequest request = new com.skax.eatool.kji.tpm.TpsRequest();
+        
+        if (requestBody.containsKey("targetUrl")) {
+            request.setTargetUrl((String) requestBody.get("targetUrl"));
+        }
+        
+        if (requestBody.containsKey("method")) {
+            request.setMethod((String) requestBody.get("method"));
+        }
+        
+        if (requestBody.containsKey("bodyJson")) {
+            request.setBodyJson((String) requestBody.get("bodyJson"));
+        }
+        
+        if (requestBody.containsKey("headers")) {
+            @SuppressWarnings("unchecked")
+            Map<String, String> headers = (Map<String, String>) requestBody.get("headers");
+            request.setHeaders(headers);
+        }
+        
+        return request;
+    }
+
+    /**
+     * TpsResponse를 Map으로 변환
+     */
+    private Map<String, Object> convertTpsResponseToMap(com.skax.eatool.kji.tpm.TpsResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", response.isSuccess());
+        result.put("statusCode", response.getStatusCode());
+        result.put("body", response.getBody());
+        result.put("headers", response.getHeaders());
+        result.put("txId", response.getTxId());
+        result.put("responseTime", response.getResponseTime());
+        result.put("contentType", response.getContentType());
+        result.put("timestamp", LocalDateTime.now().toString());
+        return result;
     }
 
     /**

@@ -33,7 +33,8 @@ import org.slf4j.LoggerFactory;
         "com.skax.eatool.mba.ac",
         "com.skax.eatool.mba.web",
         "com.skax.eatool.mba.config",
-        "com.skax.eatool.mba.controller"
+        "com.skax.eatool.mba.controller",
+        "com.skax.eatool.kji.tpm"  // kji-java의 tpm 패키지 추가
 }, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*mbc01.*"),
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*UserServiceImpl.*"),

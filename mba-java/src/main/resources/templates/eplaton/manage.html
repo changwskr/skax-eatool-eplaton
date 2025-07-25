@@ -121,12 +121,36 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 헤더 -->
-        <div class="header">
-            <h1><i class="fas fa-cogs"></i> EPlaton Framework 관리</h1>
-            <p>EPlaton 비즈니스 프레임워크 실행 및 모니터링</p>
-        </div>
+            <div class="container">
+            <!-- 헤더 -->
+            <div class="header">
+                <h1><i class="fas fa-cogs"></i> EPlaton Framework 관리</h1>
+                <p>EPlaton 비즈니스 프레임워크 실행 및 모니터링</p>
+            </div>
+
+            <!-- 탭 네비게이션 -->
+            <ul class="nav nav-tabs mb-4" id="eplatonTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="local-tab" data-bs-toggle="tab" data-bs-target="#local" type="button" role="tab">
+                        <i class="fas fa-home"></i> 로컬 API
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="mbc-tab" data-bs-toggle="tab" data-bs-target="#mbc" type="button" role="tab">
+                        <i class="fas fa-exchange-alt"></i> MBC 호출
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="http-tab" data-bs-toggle="tab" data-bs-target="#http" type="button" role="tab">
+                        <i class="fas fa-globe"></i> 범용 HTTP
+                    </button>
+                </li>
+            </ul>
+
+            <!-- 탭 콘텐츠 -->
+            <div class="tab-content" id="eplatonTabContent">
+                <!-- 로컬 API 탭 -->
+                <div class="tab-pane fade show active" id="local" role="tabpanel">
 
         <!-- 기본 설정 카드 -->
         <div class="card">
@@ -257,6 +281,165 @@
                 </div>
             </div>
         </div>
+                </div>
+
+                <!-- MBC 호출 탭 -->
+                <div class="tab-pane fade" id="mbc" role="tabpanel">
+                    <!-- MBC 서비스 정보 카드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-info-circle"></i> MBC 서비스 정보</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">MBC 서비스 URL</label>
+                                        <input type="text" class="form-control" id="mbcServiceUrl" value="http://localhost:8085" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">컨텍스트 경로</label>
+                                        <input type="text" class="form-control" id="mbcContextPath" value="/mbc" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-info" onclick="getMbcServiceInfo()">
+                                <i class="fas fa-sync-alt"></i> 서비스 정보 조회
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MBC API 실행 카드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-play"></i> MBC API 실행</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="mbcOperationMethod" class="form-label">오퍼레이션 메서드</label>
+                                        <input type="text" class="form-control" id="mbcOperationMethod" value="getCardInfo" placeholder="getCardInfo">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="mbcReqName" class="form-label">요청명</label>
+                                        <input type="text" class="form-control" id="mbcReqName" value="CardInfoRequest" placeholder="CardInfoRequest">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="mbcRequestData" class="form-label">요청 데이터 (JSON)</label>
+                                        <textarea class="form-control" id="mbcRequestData" rows="3" placeholder='{"cardNumber": "1234567890"}'></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary me-2" onclick="executeMbcOperation()">
+                                        <i class="fas fa-play"></i> MBC 실행
+                                    </button>
+                                    <button type="button" class="btn btn-success me-2" onclick="executeMbcReadOnly()">
+                                        <i class="fas fa-eye"></i> MBC 읽기 전용
+                                    </button>
+                                    <button type="button" class="btn btn-info me-2" onclick="routeMbcAction()">
+                                        <i class="fas fa-route"></i> MBC 액션 라우팅
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="checkMbcHealth()">
+                                        <i class="fas fa-heartbeat"></i> MBC 상태 확인
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- MBC 응답 영역 -->
+                            <div class="response-area" id="mbcResponseArea" style="display: none;">
+                                <h5><i class="fas fa-arrow-down"></i> MBC 응답 결과</h5>
+                                <div id="mbcResponseContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 범용 HTTP 호출 탭 -->
+                <div class="tab-pane fade" id="http" role="tabpanel">
+                    <!-- 모듈 정보 카드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-info-circle"></i> TPSsendrecv 모듈 정보</h3>
+                        </div>
+                        <div class="card-body">
+                            <button type="button" class="btn btn-info" onclick="getModuleInfo()">
+                                <i class="fas fa-sync-alt"></i> 모듈 정보 조회
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 범용 HTTP 요청 카드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-globe"></i> 범용 HTTP 요청</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="httpTargetUrl" class="form-label">대상 URL</label>
+                                        <input type="text" class="form-control" id="httpTargetUrl" placeholder="https://api.example.com/data">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="httpMethod" class="form-label">HTTP 메서드</label>
+                                        <select class="form-select" id="httpMethod">
+                                            <option value="GET">GET</option>
+                                            <option value="POST" selected>POST</option>
+                                            <option value="PUT">PUT</option>
+                                            <option value="DELETE">DELETE</option>
+                                            <option value="PATCH">PATCH</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="httpRequestData" class="form-label">요청 데이터 (JSON)</label>
+                                        <textarea class="form-control" id="httpRequestData" rows="5" placeholder='{"key": "value"}'></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary me-2" onclick="sendHttpRequest()">
+                                        <i class="fas fa-paper-plane"></i> HTTP 요청 전송
+                                    </button>
+                                    <button type="button" class="btn btn-success me-2" onclick="sendHttpPostRequest()">
+                                        <i class="fas fa-plus"></i> POST 요청
+                                    </button>
+                                    <button type="button" class="btn btn-info me-2" onclick="sendHttpGetRequest()">
+                                        <i class="fas fa-search"></i> GET 요청
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="clearHttpForm()">
+                                        <i class="fas fa-eraser"></i> 폼 초기화
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- HTTP 응답 영역 -->
+                            <div class="response-area" id="httpResponseArea" style="display: none;">
+                                <h5><i class="fas fa-arrow-down"></i> HTTP 응답 결과</h5>
+                                <div id="httpResponseContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
@@ -375,6 +558,272 @@
         document.addEventListener('DOMContentLoaded', function() {
             healthCheck();
         });
+
+        // ================== MBC 호출 함수들 ==================
+
+        // MBC 서비스 정보 조회
+        function getMbcServiceInfo() {
+            const mbcResponseArea = document.getElementById('mbcResponseArea');
+            const mbcResponseContent = document.getElementById('mbcResponseContent');
+            
+            mbcResponseArea.style.display = 'block';
+            mbcResponseContent.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">MBC 서비스 정보 조회 중...</p></div>';
+
+            fetch('/mba/eplaton/api/mbc/service-info', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                mbcResponseContent.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-check"></i> MBC 서비스 정보 조회 성공</h6>
+                    </div>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+            })
+            .catch(error => {
+                mbcResponseContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle"></i> MBC 서비스 정보 조회 실패</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // MBC 요청 데이터 구성
+        function buildMbcRequestData() {
+            return {
+                common: {
+                    bankCode: document.getElementById('bankCode').value,
+                    branchCode: document.getElementById('branchCode').value,
+                    userId: document.getElementById('userId').value
+                },
+                systemName: document.getElementById('systemName').value,
+                actionName: document.getElementById('actionName').value,
+                operationName: document.getElementById('operationName').value,
+                operationMethod: document.getElementById('mbcOperationMethod').value,
+                reqName: document.getElementById('mbcReqName').value,
+                request: parseMbcRequestData()
+            };
+        }
+
+        // MBC 요청 데이터 파싱
+        function parseMbcRequestData() {
+            const requestDataText = document.getElementById('mbcRequestData').value;
+            if (!requestDataText) return {};
+            
+            try {
+                return JSON.parse(requestDataText);
+            } catch (e) {
+                console.error('JSON 파싱 오류:', e);
+                return { rawData: requestDataText };
+            }
+        }
+
+        // MBC API 호출 함수
+        function callMbcApi(endpoint, data, operationName) {
+            const mbcResponseArea = document.getElementById('mbcResponseArea');
+            const mbcResponseContent = document.getElementById('mbcResponseContent');
+            
+            mbcResponseArea.style.display = 'block';
+            mbcResponseContent.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">MBC 요청 처리 중...</p></div>';
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                mbcResponseContent.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-check"></i> MBC ${operationName} 성공</h6>
+                    </div>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+            })
+            .catch(error => {
+                mbcResponseContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle"></i> MBC ${operationName} 실패</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // MBC 실행 함수
+        function executeMbcOperation() {
+            const requestData = buildMbcRequestData();
+            callMbcApi('/mba/eplaton/api/mbc/execute', requestData, '실행');
+        }
+
+        // MBC 읽기 전용 실행 함수
+        function executeMbcReadOnly() {
+            const requestData = buildMbcRequestData();
+            callMbcApi('/mba/eplaton/api/mbc/execute-readonly', requestData, '읽기 전용 실행');
+        }
+
+        // MBC 액션 라우팅 함수
+        function routeMbcAction() {
+            const requestData = buildMbcRequestData();
+            callMbcApi('/mba/eplaton/api/mbc/route-action', requestData, '액션 라우팅');
+        }
+
+        // MBC 상태 확인 함수
+        function checkMbcHealth() {
+            callMbcApi('/mba/eplaton/api/mbc/health', {}, '상태 확인');
+        }
+
+        // ================== 범용 HTTP 호출 함수들 ==================
+
+        // 모듈 정보 조회
+        function getModuleInfo() {
+            const httpResponseArea = document.getElementById('httpResponseArea');
+            const httpResponseContent = document.getElementById('httpResponseContent');
+            
+            httpResponseArea.style.display = 'block';
+            httpResponseContent.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">모듈 정보 조회 중...</p></div>';
+
+            fetch('/mba/eplaton/api/module-info', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                httpResponseContent.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-check"></i> 모듈 정보 조회 성공</h6>
+                    </div>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+            })
+            .catch(error => {
+                httpResponseContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle"></i> 모듈 정보 조회 실패</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // HTTP 요청 데이터 파싱
+        function parseHttpRequestData() {
+            const requestDataText = document.getElementById('httpRequestData').value;
+            if (!requestDataText) return {};
+            
+            try {
+                return JSON.parse(requestDataText);
+            } catch (e) {
+                console.error('JSON 파싱 오류:', e);
+                return { rawData: requestDataText };
+            }
+        }
+
+        // 범용 HTTP 요청 전송
+        function sendHttpRequest() {
+            const targetUrl = document.getElementById('httpTargetUrl').value;
+            const method = document.getElementById('httpMethod').value;
+            const requestData = parseHttpRequestData();
+            
+            if (!targetUrl) {
+                alert('대상 URL을 입력해주세요.');
+                return;
+            }
+
+            const requestBody = {
+                targetUrl: targetUrl,
+                method: method,
+                requestData: requestData
+            };
+
+            callHttpApi('/mba/eplaton/api/http/request', requestBody, '범용 HTTP 요청');
+        }
+
+        // HTTP POST 요청 전송
+        function sendHttpPostRequest() {
+            const targetUrl = document.getElementById('httpTargetUrl').value;
+            const requestData = parseHttpRequestData();
+            
+            if (!targetUrl) {
+                alert('대상 URL을 입력해주세요.');
+                return;
+            }
+
+            const requestBody = {
+                targetUrl: targetUrl,
+                requestData: requestData
+            };
+
+            callHttpApi('/mba/eplaton/api/http/post', requestBody, 'HTTP POST 요청');
+        }
+
+        // HTTP GET 요청 전송
+        function sendHttpGetRequest() {
+            const targetUrl = document.getElementById('httpTargetUrl').value;
+            
+            if (!targetUrl) {
+                alert('대상 URL을 입력해주세요.');
+                return;
+            }
+
+            const requestBody = {
+                targetUrl: targetUrl
+            };
+
+            callHttpApi('/mba/eplaton/api/http/get', requestBody, 'HTTP GET 요청');
+        }
+
+        // HTTP API 호출 함수
+        function callHttpApi(endpoint, data, operationName) {
+            const httpResponseArea = document.getElementById('httpResponseArea');
+            const httpResponseContent = document.getElementById('httpResponseContent');
+            
+            httpResponseArea.style.display = 'block';
+            httpResponseContent.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">HTTP 요청 처리 중...</p></div>';
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                httpResponseContent.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-check"></i> ${operationName} 성공</h6>
+                    </div>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+            })
+            .catch(error => {
+                httpResponseContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle"></i> ${operationName} 실패</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // HTTP 폼 초기화
+        function clearHttpForm() {
+            document.getElementById('httpTargetUrl').value = '';
+            document.getElementById('httpMethod').value = 'POST';
+            document.getElementById('httpRequestData').value = '';
+            document.getElementById('httpResponseArea').style.display = 'none';
+        }
     </script>
 </body>
 </html> 

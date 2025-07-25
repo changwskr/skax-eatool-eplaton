@@ -1,0 +1,86 @@
+✅ 1. 요구 목적 정리 (Assumption)
+항목	내용
+목적	Java에서 API 호출 시, **공통된 전송 모듈(HttpTPSsendrecv)**로 통합 처리
+요구사항	공통 헤더, 전문변환, 인증토큰, 응답검증, 에러 핸들링 포함
+성능	TPS 확보 (비동기 or 커넥션풀 등 고려 가능)
+아키텍처	호출 모듈 ↔ HttpTPSsendrecv ↔ 외부 API
+적용 대상	RESTful API 또는 SOAP, HTTP, 내부 RPC 포함 가능성 있음
+
+✅ 2. HttpTPSsendrecv 설계 목표
+설계 기준	설명
+📦 모듈화	외부 호출 방식(API, REST, HTTP, SOAP 등)과 내부 로직을 분리
+📃 전문 헤더 처리	공통 헤더 세팅, 전문 포맷(JSON/XML)의 표준화
+🛡 인증 처리	Token, Signature, OAuth2 등 인증 헤더 자동 처리
+💥 예외처리 공통화	예외 맵핑, 타임아웃, 재시도 정책 적용
+📈 TPS 대응	커넥션 풀, 동기/비동기 전략, Circuit Breaker 적용 고려
+🧪 테스트 용이성	Mockable 구조, 테스트 격리성 확보
+
+✅ 3. 추천 설계 구조
+
+┌───────────────────────────────────────────────┐
+│              [업무 모듈 or 호출자]             │
+│      (ex: UserService, ApprovalService 등)     │
+└───────────────────────────────────────────────┘
+                     │
+                     ▼
+┌───────────────────────────────────────────────┐
+│             HttpTPSsendrecv 모듈 인터페이스       │
+│      ITpsClient (send(TpsRequest): TpsResponse)│
+└───────────────────────────────────────────────┘
+                     │
+                     ▼
+┌───────────────────────────────────────────────┐
+│          구현체 (예: RestTpsClientImpl)        │
+│   - 공통 헤더 구성                             │
+│   - HTTP 전송 처리 (WebClient/RestTemplate 등)│
+│   - 전문 변환(JSON, XML, Binary)              │
+│   - 응답 파싱 + 공통에러 처리                 │
+└───────────────────────────────────────────────┘
+                     │
+                     ▼
+        [외부 시스템 API (REST/SOAP 등)]
+✅ 4. 기술 스택 추천
+컴포넌트	기술
+HTTP Client	WebClient (비동기, 고TPS에 적합) / RestTemplate (전통 방식)
+공통 인터페이스	ITpsClient, TpsRequest, TpsResponse
+로깅	SLF4J + MDC (GUID 포함 요청 로그 추적)
+Retry/Timeout	Resilience4j, Spring Retry, TimeoutInterceptor
+전문 포맷 변환	Jackson (JSON), JAXB (XML), 커스텀 바이트 변환
+유닛테스트	MockWebServer, Mockito, TestRestTemplate
+트랜잭션 GUID 연동	AOP or ThreadLocal 기반 컨텍스트 전파
+
+✅ 5. 주요 클래스 구성 예시
+🔹 TpsRequest
+public class TpsRequest {
+    private String txId;
+    private Map<String, String> headers;
+    private String bodyJson; // or XML
+    private String targetUrl;
+}
+🔹 TpsResponse
+public class TpsResponse {
+    private int statusCode;
+    private String body;
+    private Map<String, String> headers;
+}
+🔹 ITpsClient
+public interface ITpsClient {
+    TpsResponse send(TpsRequest request) throws TpsException;
+}
+🔹 RestTpsClientImpl (WebClient 기반)
+@Component
+public class RestTpsClientImpl implements ITpsClient {
+    private final WebClient webClient = WebClient.builder().build();
+
+    public TpsResponse send(TpsRequest request) {
+        return webClient.post()
+            .uri(request.getTargetUrl())
+            .headers(httpHeaders -> httpHeaders.setAll(request.getHeaders()))
+            .bodyValue(request.getBodyJson())
+            .retrieve()
+            .onStatus(HttpStatus::isError, clientResponse -> Mono.error(new TpsException("API 오류")))
+            .bodyToMono(String.class)
+            .map(body -> new TpsResponse(200, body, new HashMap<>()))
+            .block();
+    }
+}

@@ -16,7 +16,8 @@ import org.springframework.context.annotation.ComponentScan;
     "com.skax.eatool.kji",
     "com.skax.eatool.kji.controller",
     "com.skax.eatool.kji.service",
-    "com.skax.eatool.kji.config"
+    "com.skax.eatool.kji.config",
+    "com.skax.eatool.kji.tpm"
 })
 public class KjiApplication {
 

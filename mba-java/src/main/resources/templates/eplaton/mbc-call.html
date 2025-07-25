@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBC 연동 - EPlaton Framework</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .back-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .page-title {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .page-title h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        .page-title p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .api-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .api-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .api-card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .api-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2em;
+            color: white;
+        }
+        .api-card.health .api-card-icon {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+        .api-card.execute .api-card-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        .api-card.readonly .api-card-icon {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+        }
+        .api-card.route .api-card-icon {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        .api-card.service .api-card-icon {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+        }
+        .api-card.custom .api-card-icon {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        }
+        .api-card.advanced .api-card-icon {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+        }
+        .api-card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        .api-card-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .api-card-method {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .method-get {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .method-post {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+        .request-form {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #667eea;
+        }
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        .response-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .response-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .response-title {
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        .response-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .response-body {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .info-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+        .info-section h3 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .info-item {
+            text-align: center;
+        }
+        .info-item h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+        .info-item p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        @media (max-width: 768px) {
+            .api-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .page-title h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">MBA - MBC 연동</div>
+            <a href="/" class="back-btn">← 홈으로</a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="page-title">
+            <h1>MBC 연동</h1>
+            <p>MBA에서 MBC 서버로 EPlaton API 호출</p>
+        </div>
+
+        <div class="info-section">
+            <h3>연동 정보</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <h4>MBC 서버</h4>
+                    <p>http://localhost:8085</p>
+                </div>
+                <div class="info-item">
+                    <h4>통신 방식</h4>
+                    <p>HttpTPSsendrecv</p>
+                </div>
+                <div class="info-item">
+                    <h4>API 타입</h4>
+                    <p>REST API</p>
+                </div>
+                <div class="info-item">
+                    <h4>데이터 형식</h4>
+                    <p>JSON</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-grid">
+            <!-- 헬스체크 -->
+            <div class="api-card health">
+                <div class="api-card-header">
+                    <div class="api-card-icon">💚</div>
+                    <h3 class="api-card-title">헬스체크</h3>
+                </div>
+                <div class="api-card-description">
+                    MBC EPlaton 서버의 상태를 확인합니다.
+                </div>
+                <span class="api-card-method method-get">GET</span>
+                <button class="btn btn-primary" onclick="callHealthCheck()">헬스체크 실행</button>
+                <div class="loading" id="health-loading">
+                    <div class="spinner"></div>
+                    <p>요청 중...</p>
+                </div>
+                <div class="response-section" id="health-response" style="display: none;"></div>
+            </div>
+
+            <!-- 비즈니스 로직 실행 -->
+            <div class="api-card execute">
+                <div class="api-card-header">
+                    <div class="api-card-icon">⚡</div>
+                    <h3 class="api-card-title">비즈니스 로직 실행</h3>
+                </div>
+                <div class="api-card-description">
+                    MBC EPlaton 비즈니스 로직을 실행합니다.
+                </div>
+                <span class="api-card-method method-post">POST</span>
+                <div class="request-form">
+                    <div class="form-group">
+                        <label>은행 코드:</label>
+                        <input type="text" id="bankCode" value="001" placeholder="은행 코드">
+                    </div>
+                    <div class="form-group">
+                        <label>지점 코드:</label>
+                        <input type="text" id="branchCode" value="001" placeholder="지점 코드">
+                    </div>
+                    <div class="form-group">
+                        <label>사용자 ID:</label>
+                        <input type="text" id="userId" value="USER001" placeholder="사용자 ID">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="callExecute()">실행</button>
+                <div class="loading" id="execute-loading">
+                    <div class="spinner"></div>
+                    <p>요청 중...</p>
+                </div>
+                <div class="response-section" id="execute-response" style="display: none;"></div>
+            </div>
+
+            <!-- 읽기 전용 실행 -->
+            <div class="api-card readonly">
+                <div class="api-card-header">
+                    <div class="api-card-icon">📖</div>
+                    <h3 class="api-card-title">읽기 전용 실행</h3>
+                </div>
+                <div class="api-card-description">
+                    MBC EPlaton 읽기 전용 작업을 실행합니다.
+                </div>
+                <span class="api-card-method method-post">POST</span>
+                <div class="request-form">
+                    <div class="form-group">
+                        <label>시스템명:</label>
+                        <input type="text" id="systemName" value="CashCard" placeholder="시스템명">
+                    </div>
+                    <div class="form-group">
+                        <label>액션명:</label>
+                        <input type="text" id="actionName" value="CashCardBizAction" placeholder="액션명">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="callExecuteReadOnly()">읽기 전용 실행</button>
+                <div class="loading" id="readonly-loading">
+                    <div class="spinner"></div>
+                    <p>요청 중...</p>
+                </div>
+                <div class="response-section" id="readonly-response" style="display: none;"></div>
+            </div>
+
+            <!-- 액션 라우팅 -->
+            <div class="api-card route">
+                <div class="api-card-header">
+                    <div class="api-card-icon">🛣️</div>
+                    <h3 class="api-card-title">액션 라우팅</h3>
+                </div>
+                <div class="api-card-description">
+                    MBC EPlaton 액션 라우팅을 실행합니다.
+                </div>
+                <span class="api-card-method method-post">POST</span>
+                <div class="request-form">
+                    <div class="form-group">
+                        <label>액션명:</label>
+                        <input type="text" id="routeActionName" value="CashCardBizAction" placeholder="액션명">
+                    </div>
+                    <div class="form-group">
+                        <label>카드 번호:</label>
+                        <input type="text" id="cardNumber" value="1234567890123456" placeholder="카드 번호">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="callRouteAction()">라우팅 실행</button>
+                <div class="loading" id="route-loading">
+                    <div class="spinner"></div>
+                    <p>요청 중...</p>
+                </div>
+                <div class="response-section" id="route-response" style="display: none;"></div>
+            </div>
+
+            <!-- 서비스 정보 -->
+            <div class="api-card service">
+                <div class="api-card-header">
+                    <div class="api-card-icon">ℹ️</div>
+                    <h3 class="api-card-title">서비스 정보</h3>
+                </div>
+                <div class="api-card-description">
+                    MBC EPlaton 서비스 정보를 조회합니다.
+                </div>
+                <span class="api-card-method method-get">GET</span>
+                <button class="btn btn-primary" onclick="callServiceInfo()">서비스 정보 조회</button>
+                <div class="loading" id="service-loading">
+                    <div class="spinner"></div>
+                    <p>요청 중...</p>
+                </div>
+                <div class="response-section" id="service-response" style="display: none;"></div>
+            </div>
+
+            <!-- 고급 TPS 호출 -->
+            <div class="api-card advanced">
+                <div class="api-card-header">
+                    <div class="api-card-icon">🚀</div>
+                    <h3 class="api-card-title">고급 TPS 호출</h3>
+                </div>
+                <div class="api-card-description">
+                    HttpTPSsendrecv를 사용한 고급 TPS 호출을 실행합니다.
+                </div>
+                <span class="api-card-method method-post">POST</span>
+                <div class="request-form">
+                    <div class="form-group">
+                        <label>요청 데이터 (JSON):</label>
+                        <textarea id="advancedData" placeholder='{"operation": "ADVANCED_OPERATION", "parameters": {"param1": "value1"}}'>{
+  "operation": "ADVANCED_OPERATION",
+  "parameters": {
+    "param1": "value1",
+    "param2": "value2"
+  },
+  "advanced": true
+}</textarea>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="callAdvancedTps()">고급 TPS 호출</button>
+                <div class="loading" id="advanced-loading">
+                    <div class="spinner"></div>
+                    <p>요청 중...</p>
+                </div>
+                <div class="response-section" id="advanced-response" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 헬스체크 호출
+        async function callHealthCheck() {
+            showLoading('health');
+            try {
+                const response = await fetch('/mba/eplaton/mbc-call/health');
+                const data = await response.json();
+                showResponse('health', response.ok, data);
+            } catch (error) {
+                showResponse('health', false, { error: error.message });
+            }
+        }
+
+        // 비즈니스 로직 실행
+        async function callExecute() {
+            showLoading('execute');
+            try {
+                const requestData = {
+                    bankCode: document.getElementById('bankCode').value,
+                    branchCode: document.getElementById('branchCode').value,
+                    userId: document.getElementById('userId').value,
+                    systemName: 'CashCard',
+                    actionName: 'CashCardBizAction',
+                    operationName: 'COMMO1000',
+                    operationMethod: 'getCardInfo',
+                    reqName: 'CardInfoRequest'
+                };
+
+                const response = await fetch('/mba/eplaton/mbc-call/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                const data = await response.json();
+                showResponse('execute', response.ok, data);
+            } catch (error) {
+                showResponse('execute', false, { error: error.message });
+            }
+        }
+
+        // 읽기 전용 실행
+        async function callExecuteReadOnly() {
+            showLoading('readonly');
+            try {
+                const requestData = {
+                    bankCode: '001',
+                    branchCode: '001',
+                    userId: 'USER001',
+                    systemName: document.getElementById('systemName').value,
+                    actionName: document.getElementById('actionName').value,
+                    operationName: 'COMMO1000',
+                    operationMethod: 'getCardInfo',
+                    reqName: 'CardInfoRequest',
+                    readOnly: true
+                };
+
+                const response = await fetch('/mba/eplaton/mbc-call/execute-readonly', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                const data = await response.json();
+                showResponse('readonly', response.ok, data);
+            } catch (error) {
+                showResponse('readonly', false, { error: error.message });
+            }
+        }
+
+        // 액션 라우팅
+        async function callRouteAction() {
+            showLoading('route');
+            try {
+                const requestData = {
+                    actionName: document.getElementById('routeActionName').value,
+                    operationName: 'COMMO1000',
+                    parameters: {
+                        cardNumber: document.getElementById('cardNumber').value,
+                        cardType: 'CREDIT'
+                    }
+                };
+
+                const response = await fetch('/mba/eplaton/mbc-call/route-action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                const data = await response.json();
+                showResponse('route', response.ok, data);
+            } catch (error) {
+                showResponse('route', false, { error: error.message });
+            }
+        }
+
+        // 서비스 정보 조회
+        async function callServiceInfo() {
+            showLoading('service');
+            try {
+                const response = await fetch('/mba/eplaton/mbc-call/service-info');
+                const data = await response.json();
+                showResponse('service', response.ok, data);
+            } catch (error) {
+                showResponse('service', false, { error: error.message });
+            }
+        }
+
+        // 고급 TPS 호출
+        async function callAdvancedTps() {
+            showLoading('advanced');
+            try {
+                const requestData = JSON.parse(document.getElementById('advancedData').value);
+
+                const response = await fetch('/mba/eplaton/mbc-call/advanced-tps', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                const data = await response.json();
+                showResponse('advanced', response.ok, data);
+            } catch (error) {
+                showResponse('advanced', false, { error: error.message });
+            }
+        }
+
+        // 로딩 표시
+        function showLoading(type) {
+            document.getElementById(`${type}-loading`).style.display = 'block';
+            document.getElementById(`${type}-response`).style.display = 'none';
+        }
+
+        // 응답 표시
+        function showResponse(type, success, data) {
+            document.getElementById(`${type}-loading`).style.display = 'none';
+            const responseDiv = document.getElementById(`${type}-response`);
+            responseDiv.style.display = 'block';
+            
+            const statusClass = success ? 'status-success' : 'status-error';
+            const statusText = success ? '성공' : '실패';
+            
+            responseDiv.innerHTML = `
+                <div class="response-header">
+                    <h4 class="response-title">응답 결과</h4>
+                    <span class="response-status ${statusClass}">${statusText}</span>
+                </div>
+                <div class="response-body">${JSON.stringify(data, null, 2)}</div>
+            `;
+        }
+    </script>
+</body>
+</html> 

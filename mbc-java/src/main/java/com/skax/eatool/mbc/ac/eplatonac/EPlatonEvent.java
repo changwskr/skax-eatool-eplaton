@@ -1,5 +1,4 @@
-package com.skax.eatool.mba.ac.eplatonac;
-
+package com.skax.eatool.mbc.ac.eplatonac;
 
 
 /**
