@@ -1,0 +1,550 @@
+# Backend API Implementation Guide
+
+## 🚀 **SKAX EA Tool Eplaton API Implementation Rules**
+
+### **🏗️ API 아키텍처 개요**
+
+```
+📦 API Layer Structure
+├── 🎯 AC (Application Control) Layer
+│   ├── REST Controllers (@RestController)
+│   ├── Request/Response Handling
+│   └── Input Validation
+├── 🔧 AS (Application Service) Layer
+│   ├── Business Logic
+│   ├── Transaction Management
+│   └── Service Orchestration
+├── 📊 PC (Presentation Control) Layer
+│   ├── DTOs (Data Transfer Objects)
+│   ├── Request/Response Models
+│   └── Data Transformation
+└── 💾 DC (Data Control) Layer
+    ├── Data Access
+    ├── Repository Pattern
+    └── Database Operations
+```
+
+### **🎯 MUST FOLLOW - API 구현 규칙**
+
+#### **1. 컨트롤러 클래스 구조**
+
+**✅ 올바른 컨트롤러 구조**
+```java
+/**
+ * {도메인} 관리 Application Control
+ * 
+ * 프로그램명: AC{모듈}{기능번호}.java
+ * 설명: {도메인} 관리 REST API 컨트롤러
+ * 작성일: 2024-01-01
+ * 작성자: SKAX Project Team
+ * 
+ * 주요 기능:
+ * - {도메인} CRUD API
+ * - 입력 데이터 검증
+ * - AS 호출 및 결과 반환
+ * 
+ * @version 1.0
+ */
+@RestController
+@RequestMapping({ "/api/{domain}", "/{module}/{domain}" })
+@Tag(name = "{도메인} 관리", description = "{도메인} 관리 관련 API")
+@CrossOrigin(origins = "*")
+public class AC{모듈}{기능번호} implements NewIApplicationService {
+
+    private static final org.slf4j.Logger logger = 
+        org.slf4j.LoggerFactory.getLogger(AC{모듈}{기능번호}.class);
+
+    @Autowired
+    private AS{모듈}{기능번호} as{모듈}{기능번호};
+
+    // API 메서드들...
+}
+```
+
+#### **2. HTTP 메서드별 API 구현**
+
+**✅ GET API - 조회**
+```java
+/**
+ * {도메인} 목록 조회 API
+ */
+@GetMapping("/list")
+@Operation(summary = "{도메인} 목록 조회", description = "{도메인} 목록을 조회합니다.")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "조회 성공", 
+                content = @Content(mediaType = "application/json", 
+                schema = @Schema(implementation = Map.class))),
+    @ApiResponse(responseCode = "400", description = "잘못된 요청", 
+                content = @Content(mediaType = "application/json"))
+})
+public ResponseEntity<Map<String, Object>> get{도메인}List(
+        @Parameter(description = "검색 키워드") 
+        @RequestParam(required = false) String searchKeyword,
+        @Parameter(description = "페이지 번호") 
+        @RequestParam(defaultValue = "1") Integer page,
+        @Parameter(description = "페이지 크기") 
+        @RequestParam(defaultValue = "10") Integer size) {
+    
+    logger.info("=== AC{모듈}{기능번호}.get{도메인}List START ===");
+    
+    try {
+        // 1. 입력 데이터 검증
+        validateSearchParameters(searchKeyword, page, size);
+        
+        // 2. AS 호출
+        NewKBData reqData = new NewKBData();
+        NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
+        input.put("searchKeyword", searchKeyword);
+        input.put("page", page);
+        input.put("size", size);
+        input.put("command", "LIST");
+        
+        NewKBData result = as{모듈}{기능번호}.execute(reqData);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "{도메인} 목록 조회가 완료되었습니다.");
+        response.put("data", result);
+        
+        logger.info("=== AC{모듈}{기능번호}.get{도메인}List END ===");
+        return ResponseEntity.ok(response);
+        
+    } catch (Exception e) {
+        logger.error("=== AC{모듈}{기능번호}.get{도메인}List - Error: {} ===", e.getMessage());
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "{도메인} 목록 조회 중 오류가 발생했습니다. 원인: " + e.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+}
+```
+
+**✅ POST API - 생성**
+```java
+/**
+ * {도메인} 생성 처리 (POST) - REST API
+ */
+@PostMapping
+@ResponseBody
+@Operation(summary = "{도메인} 생성", description = "새로운 {도메인}을 생성합니다.")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "{도메인} 생성 성공"),
+    @ApiResponse(responseCode = "400", description = "잘못된 요청")
+})
+public ResponseEntity<Map<String, Object>> create{도메인}Post(
+        @RequestBody {도메인}PDTO {도메인}PDTO) throws NewBusinessException {
+    
+    logger.info("=== AC{모듈}{기능번호}.create{도메인}Post START ===");
+    logger.info("=== Input {도메인}PDTO: {} ===", {도메인}PDTO);
+    
+    try {
+        // 1. 입력 데이터 검증
+        validateInputData({도메인}PDTO);
+        
+        // 2. AS 호출
+        NewKBData reqData = new NewKBData();
+        NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
+        input.put("{도메인}PDTO", {도메인}PDTO);
+        input.put("command", "CREATE");
+        
+        NewKBData result = as{모듈}{기능번호}.execute(reqData);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "{도메인}이 성공적으로 생성되었습니다.");
+        response.put("data", result);
+        
+        logger.info("=== AC{모듈}{기능번호}.create{도메인}Post END ===");
+        return ResponseEntity.ok(response);
+        
+    } catch (Exception e) {
+        logger.error("=== AC{모듈}{기능번호}.create{도메인}Post - Error: {} ===", e.getMessage());
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "{도메인} 생성 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+}
+```
+
+**✅ PUT API - 수정**
+```java
+/**
+ * {도메인} 수정 처리 (PUT)
+ */
+@PutMapping("/{id}")
+@Operation(summary = "{도메인} 수정", description = "기존 {도메인}을 수정합니다.")
+public ResponseEntity<Map<String, Object>> update{도메인}(
+        @Parameter(description = "{도메인} ID") @PathVariable String id,
+        @RequestBody {도메인}PDTO {도메인}PDTO) throws NewBusinessException {
+    
+    logger.info("=== AC{모듈}{기능번호}.update{도메인} START ===");
+    logger.info("=== ID: {}, Input: {} ===", id, {도메인}PDTO);
+    
+    try {
+        // 1. 입력 데이터 검증
+        validateInputData({도메인}PDTO);
+        {도메인}PDTO.setId(id); // ID 설정
+        
+        // 2. AS 호출
+        NewKBData reqData = new NewKBData();
+        NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
+        input.put("{도메인}PDTO", {도메인}PDTO);
+        input.put("command", "UPDATE");
+        
+        NewKBData result = as{모듈}{기능번호}.execute(reqData);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "{도메인}이 성공적으로 수정되었습니다.");
+        response.put("data", result);
+        
+        logger.info("=== AC{모듈}{기능번호}.update{도메인} END ===");
+        return ResponseEntity.ok(response);
+        
+    } catch (Exception e) {
+        logger.error("=== AC{모듈}{기능번호}.update{도메인} - Error: {} ===", e.getMessage());
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "{도메인} 수정 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+}
+```
+
+**✅ DELETE API - 삭제**
+```java
+/**
+ * {도메인} 삭제 처리 (DELETE)
+ */
+@DeleteMapping("/{id}")
+@Operation(summary = "{도메인} 삭제", description = "기존 {도메인}을 삭제합니다.")
+public ResponseEntity<Map<String, Object>> delete{도메인}(
+        @Parameter(description = "{도메인} ID") @PathVariable String id) 
+        throws NewBusinessException {
+    
+    logger.info("=== AC{모듈}{기능번호}.delete{도메인} START ===");
+    logger.info("=== ID: {} ===", id);
+    
+    try {
+        // 1. 입력 데이터 검증
+        if (id == null || id.trim().isEmpty()) {
+            throw new NewBusinessException("ID는 필수 입력 항목입니다.");
+        }
+        
+        // 2. AS 호출
+        NewKBData reqData = new NewKBData();
+        NewGenericDto input = reqData.getInputGenericDto().using(NewGenericDto.INDATA);
+        input.put("id", id);
+        input.put("command", "DELETE");
+        
+        NewKBData result = as{모듈}{기능번호}.execute(reqData);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "{도메인}이 성공적으로 삭제되었습니다.");
+        response.put("data", result);
+        
+        logger.info("=== AC{모듈}{기능번호}.delete{도메인} END ===");
+        return ResponseEntity.ok(response);
+        
+    } catch (Exception e) {
+        logger.error("=== AC{모듈}{기능번호}.delete{도메인} - Error: {} ===", e.getMessage());
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "{도메인} 삭제 처리 중 오류가 발생했습니다. 원인: " + e.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+}
+```
+
+#### **3. DTO 클래스 구조**
+
+**✅ DTO 클래스 구조**
+```java
+/**
+ * {도메인}PDTO class - Entity와 일치하는 필드명으로 수정
+ */
+public class {도메인}PDTO extends NewAbstractDTO {
+
+    // 필수 필드
+    private String id;                    // ID
+    private String name;                  // 이름
+    private String status;                // 상태
+    private String createdDate;           // 생성일
+    private String updatedDate;           // 수정일
+    
+    // 도메인별 필드
+    private String {도메인}SpecificField1;  // 도메인 특화 필드1
+    private String {도메인}SpecificField2;  // 도메인 특화 필드2
+    
+    // 기본 생성자
+    public {도메인}PDTO() {
+        // Default constructor
+    }
+    
+    // Getters and Setters
+    public String getId() {
+        return id;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    // ... 나머지 getter/setter 메서드들
+}
+```
+
+#### **4. 입력 데이터 검증**
+
+**✅ 검증 메서드 구조**
+```java
+/**
+ * 입력 데이터 검증 ({도메인}PDTO용)
+ * 
+ * @param {도메인}PDTO {도메인} 정보
+ * @throws NewBusinessException 검증 실패 시
+ */
+private void validateInputData({도메인}PDTO {도메인}PDTO) throws NewBusinessException {
+    if ({도메인}PDTO == null) {
+        throw new NewBusinessException("{도메인}PDTO가 null입니다.");
+    }
+    
+    // 필수 필드 검증
+    if ({도메인}PDTO.getName() == null || {도메인}PDTO.getName().trim().isEmpty()) {
+        throw new NewBusinessException("이름은 필수 입력 항목입니다.");
+    }
+    
+    // 도메인별 검증 로직
+    validate{도메인}SpecificFields({도메인}PDTO);
+    
+    logger.debug("AC{모듈}{기능번호} - 입력 데이터 검증 완료");
+}
+
+/**
+ * {도메인} 특화 필드 검증
+ */
+private void validate{도메인}SpecificFields({도메인}PDTO {도메인}PDTO) 
+    throws NewBusinessException {
+    // 도메인별 특화 검증 로직 구현
+}
+```
+
+### **🚫 NEVER DO - API 구현 위반사항**
+
+#### **1. 잘못된 컨트롤러 구조**
+```java
+// ❌ 잘못된 예시
+@Controller  // @RestController 사용해야 함
+@RequestMapping("/api")
+public class AccountController {
+    
+    @Autowired
+    private AccountService accountService;  // AS 레이어 직접 의존
+    
+    @GetMapping("/accounts")
+    public String getAccounts(Model model) {  // String 반환
+        // ...
+    }
+}
+
+// ✅ 올바른 예시
+@RestController
+@RequestMapping("/api/account")
+public class ACMBC71001 implements NewIApplicationService {
+    
+    @Autowired
+    private ASMBC71001 asMbc71001;  // AS 레이어만 의존
+    
+    @GetMapping("/list")
+    public ResponseEntity<Map<String, Object>> getAccountList() {
+        // ...
+    }
+}
+```
+
+#### **2. 잘못된 응답 구조**
+```java
+// ❌ 잘못된 예시
+@GetMapping("/list")
+public List<Account> getAccounts() {  // 직접 Entity 반환
+    return accountRepository.findAll();
+}
+
+// ✅ 올바른 예시
+@GetMapping("/list")
+public ResponseEntity<Map<String, Object>> getAccounts() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("success", true);
+    response.put("message", "조회 완료");
+    response.put("data", result);
+    return ResponseEntity.ok(response);
+}
+```
+
+#### **3. 잘못된 예외 처리**
+```java
+// ❌ 잘못된 예시
+@PostMapping
+public ResponseEntity<Map<String, Object>> createAccount(@RequestBody AccountPDTO dto) {
+    try {
+        // 비즈니스 로직
+        return ResponseEntity.ok(result);
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body(null);  // 상세 정보 없음
+    }
+}
+
+// ✅ 올바른 예시
+@PostMapping
+public ResponseEntity<Map<String, Object>> createAccount(@RequestBody AccountPDTO dto) {
+    try {
+        // 비즈니스 로직
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "생성 완료");
+        response.put("data", result);
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        logger.error("계정 생성 중 오류: {}", e.getMessage(), e);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "계정 생성 중 오류가 발생했습니다. 원인: " + e.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+}
+```
+
+### **📋 API 구현 체크리스트**
+
+#### **새로운 API 개발 시**
+- [ ] 컨트롤러 클래스명: `AC{모듈}{기능번호}` 형식
+- [ ] `@RestController` 어노테이션 사용
+- [ ] `@RequestMapping` 경로 설정
+- [ ] `@Tag` Swagger 문서화
+- [ ] `@CrossOrigin` CORS 설정
+- [ ] `NewIApplicationService` 인터페이스 구현
+- [ ] AS 레이어 의존성 주입
+- [ ] 로깅 설정 (`org.slf4j.Logger`)
+
+#### **HTTP 메서드별 구현**
+- [ ] GET: 목록 조회, 상세 조회
+- [ ] POST: 생성
+- [ ] PUT: 수정
+- [ ] DELETE: 삭제
+- [ ] 각 메서드에 적절한 `@Operation` 어노테이션
+- [ ] `@ApiResponses` 응답 정의
+
+#### **데이터 검증**
+- [ ] 입력 데이터 null 체크
+- [ ] 필수 필드 검증
+- [ ] 도메인별 특화 검증
+- [ ] `NewBusinessException` 사용
+
+#### **응답 구조**
+- [ ] `ResponseEntity<Map<String, Object>>` 사용
+- [ ] `success` 필드 포함
+- [ ] `message` 필드 포함
+- [ ] `data` 필드 포함
+- [ ] 적절한 HTTP 상태 코드 반환
+
+#### **로깅**
+- [ ] 메서드 시작/종료 로깅
+- [ ] 입력 파라미터 로깅
+- [ ] 오류 발생 시 상세 로깅
+- [ ] 성공/실패 결과 로깅
+
+### **🔧 특별한 API 패턴**
+
+#### **1. 페이지네이션 API**
+```java
+@GetMapping("/list")
+public ResponseEntity<Map<String, Object>> getList(
+        @RequestParam(defaultValue = "1") Integer page,
+        @RequestParam(defaultValue = "10") Integer size,
+        @RequestParam(required = false) String searchKeyword) {
+    
+    // 페이지네이션 로직
+    int offset = (page - 1) * size;
+    
+    // AS 호출 시 페이지네이션 정보 전달
+    input.put("page", page);
+    input.put("size", size);
+    input.put("offset", offset);
+    input.put("searchKeyword", searchKeyword);
+}
+```
+
+#### **2. 검색 API**
+```java
+@GetMapping("/search")
+public ResponseEntity<Map<String, Object>> search(
+        @RequestParam String keyword,
+        @RequestParam(required = false) String searchType,
+        @RequestParam(required = false) String filter) {
+    
+    // 검색 조건 설정
+    input.put("keyword", keyword);
+    input.put("searchType", searchType);
+    input.put("filter", filter);
+}
+```
+
+#### **3. 배치 처리 API**
+```java
+@PostMapping("/batch")
+public ResponseEntity<Map<String, Object>> batchProcess(
+        @RequestBody List<{도메인}PDTO> {도메인}List) {
+    
+    // 배치 처리 로직
+    input.put("{도메인}List", {도메인}List);
+    input.put("command", "BATCH_PROCESS");
+}
+```
+
+### **📝 API 문서화 가이드**
+
+#### **Swagger 어노테이션**
+```java
+@Operation(summary = "API 제목", description = "API 상세 설명")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "성공"),
+    @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+    @ApiResponse(responseCode = "500", description = "서버 오류")
+})
+@Parameter(description = "파라미터 설명", required = true, example = "예시값")
+```
+
+#### **요청/응답 예시**
+```java
+@PostMapping
+@Operation(summary = "계정 생성", description = "새로운 계정을 생성합니다.")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "계정 생성 성공", 
+                content = @Content(mediaType = "application/json", 
+                schema = @Schema(implementation = Map.class), 
+                examples = @ExampleObject(name = "성공 응답", 
+                value = "{\"success\": true, \"message\": \"계정이 성공적으로 생성되었습니다.\", \"data\": {}}"))),
+    @ApiResponse(responseCode = "400", description = "잘못된 요청", 
+                content = @Content(mediaType = "application/json", 
+                schema = @Schema(implementation = Map.class), 
+                examples = @ExampleObject(name = "오류 응답", 
+                value = "{\"success\": false, \"message\": \"계정 생성 처리 중 오류가 발생했습니다.\"}")))
+})
+```
+
+### **⚠️ 주의사항**
+
+1. **레이어 간 의존성**: AC → AS → DC 순서만 허용
+2. **응답 형식 통일**: 모든 API는 동일한 응답 구조 사용
+3. **예외 처리**: 모든 API에서 적절한 예외 처리 구현
+4. **로깅**: 모든 API에서 상세한 로깅 구현
+5. **검증**: 모든 입력 데이터에 대한 검증 로직 구현
+6. **문서화**: Swagger를 통한 API 문서화 필수
+
+이 가이드를 따라 API를 구현하면 일관성 있고 유지보수하기 쉬운 백엔드 API를 구축할 수 있습니다.
+description:
+globs:
+alwaysApply: false
+---

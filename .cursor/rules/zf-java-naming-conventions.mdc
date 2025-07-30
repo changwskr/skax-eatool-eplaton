@@ -1,0 +1,616 @@
+# Java Naming Conventions Guide
+
+## 📝 **SKAX EA Tool Eplaton Java Naming Conventions**
+
+### **🏗️ 개요**
+
+이 문서는 SKAX EA Tool Eplaton 프로젝트에서 사용하는 Java 네이밍 규칙을 정의합니다. 일관성 있는 코드 작성과 유지보수성을 향상시키기 위한 표준을 제시합니다.
+
+### **📋 가정 및 제약사항**
+
+- Java 8 이상 사용
+- Spring Boot 프레임워크 기반
+- Maven/Gradle 빌드 도구 사용
+- UTF-8 인코딩 사용
+- IDE: IntelliJ IDEA 또는 Eclipse 권장
+
+### **🏛️ Java Source Package 구조**
+
+#### **어플리케이션 계층 구조**
+
+```
+📦 Application Layer Architecture
+├── 🎯 AS (Application Service) - 어플리케이션 서비스
+│   ├── 비즈니스 로직 오케스트레이션
+│   ├── 트랜잭션 관리
+│   ├── 서비스 조정
+│   └── 데이터 검증
+├── 🔧 PC (Process Component) - 어플리케이션 프로세스
+│   ├── 데이터 변환
+│   ├── 비즈니스 규칙
+│   └── 도메인 로직
+├── 💾 DC (Domain Component) - 도메인 컴포넌트
+│   ├── 데이터 액세스 로직
+│   ├── Repository 작업
+│   └── 데이터베이스 트랜잭션
+├── 🔌 IC (Interface Component) - 인터페이스 컴포넌트
+│   ├── 외부 시스템 연동
+│   ├── API 인터페이스
+│   └── 프로토콜 처리
+└── 🛠️ FC (Foundation Component) - 공통 컴포넌트
+    ├── 유틸리티 클래스
+    ├── 공통 설정
+    ├── 공통 예외 처리
+    └── 공통 로깅
+```
+
+#### **Java Source Package 상세 설명**
+
+```
+src/main/java/
+└── com/skax/eatool/{appcode}/
+    ├── as/                    # Application Service
+    │   ├── {domain}as/       # 도메인별 AS 패키지
+    │   └── {feature}as/      # 기능별 AS 패키지
+    ├── pc/                    # Process Component
+    │   ├── {domain}pc/       # 도메인별 PC 패키지
+    │   └── {feature}pc/      # 기능별 PC 패키지
+    ├── dc/                    # Domain Component
+    │   ├── {domain}dc/       # 도메인별 DC 패키지
+    │   ├── repository/        # Repository 패키지
+    │   ├── mapper/           # MyBatis Mapper 패키지
+    │   └── dto/              # DTO 패키지
+    ├── ic/                    # Interface Component
+    │   ├── external/         # 외부 시스템 연동
+    │   ├── api/              # API 인터페이스
+    │   └── protocol/         # 프로토콜 처리
+    └── fc/                    # Foundation Component
+        ├── config/           # 설정 클래스
+        ├── util/             # 유틸리티 클래스
+        ├── exception/        # 예외 클래스
+        └── common/           # 공통 클래스
+```
+
+### **🎯 Java Source Package 명명규칙**
+
+#### **Application Code 명명규칙**
+
+| 구분 | 표준 명명 규칙 | 예제 |
+|------|---------------|------|
+| **AS** | 구현클래스명 | AS + 거래코드(AA의 거래코드 표준 적용) | ASPAB75001 |
+| **PC** | Interface명 | IPC + 명사형 | IPCCustomerInquiry |
+| | 구현클래스명 | PC + 명사형 | PCCustomerInquiry |
+| | DTO명 | 명사형 + PDTO | CustomerPDTO |
+| **DC** | Interface명 | IDC + 명사형 | IDCCustomer |
+| | 구현클래스명 | DC + 명사형 | DCCustomer |
+| | DTO명 | 명사형 + DDTO | CustomerDDTO |
+| | 내부클래스명 | 명사형 | Customer |
+
+### **📝 프로그램 명명규칙**
+
+#### **기본 원칙**
+
+1. **프로그램명은 영문 대, 소문자를 혼용하여 단어의 첫 글자는 대문자로 정의**
+2. **단어의 조합을 구분할 수 있도록 한다**
+3. **축약어를 사용할 경우에도 단어 조합을 구분하기 위해 첫 글자만 대문자로 정의**
+
+#### **올바른 예시 vs 잘못된 예시**
+
+```java
+// ❌ 잘못된 예시
+exportHTMLSource    // HTML 전체 대문자
+openDVDPlayer      // DVD 전체 대문자
+
+// ✅ 올바른 예시
+exportHtmlSource   // Html 첫 글자만 대문자
+openDvdPlayer      // Dvd 첫 글자만 대문자
+```
+
+### **🔧 오퍼레이션 명명규칙**
+
+오퍼레이션은 동사에 해당하는 접두어를 표준으로 정의한다.
+명사형은 대, 소문자를 혼용한다.
+단어의 첫 글자는 대문자로 정의하여 단어의 조합을 구분할 수 있도록 한다.
+
+| 구분 | 표준 명명 규칙 | 예제 |
+|------|---------------|------|
+| **등록** | register + 명사형, create + 명사형 | registerCustomer, createUser |
+| **수정** | modify + 명사형, update + 명사형 | modifyCustomer, updateUser |
+| **삭제** | delete + 명사형 | deleteCustomer |
+| **조회_단일레코드** | get + 명사형 | getAccountNo |
+| **조회_복수레코드** | getList + 명사형 | getListCustomer |
+| **검증** | validate + 명사형 | validateUser |
+| **계산** | calculate + 명사형 | calculateBalance |
+| **건수조회** | count + 명사형 | countUsers |
+| **여부조회** | is + 명사형 | isActive |
+
+### **📋 타입 명명 규칙**
+
+타입을 표현하는 이름은 대, 소문자를 혼용한다.
+명사형을 사용하여 단어의 첫 글자는 반드시 대문자로 사용한다.
+
+```java
+// ✅ 올바른 예시
+Account, EventHandler, UserService, CustomerRepository
+
+// ❌ 잘못된 예시
+account, eventHandler, userService, customerRepository
+```
+
+### **🔤 변수 명명 규칙**
+
+변수명은 대, 소문자를 혼용한다.
+단어의 첫 글자는 반드시 소문자로 사용한다.
+단어의 조합의 경우 대문자를 이용하여 구분할 수 있도록 한다.
+
+```java
+// ✅ 올바른 예시
+String userName;
+int maxRetryCount;
+List<User> userList;
+Map<String, Object> requestData;
+
+// ❌ 잘못된 예시
+String UserName;
+int maxretrycount;
+List<User> userlist;
+Map<String, Object> requestdata;
+```
+
+### **🔒 Private 변수 명명 규칙**
+
+클래스 변수는 메소드 내에서 선언되는 로컬 변수에 비해 중요도가 높기 때문에 프로그래머의 각별한 주의가 필요하다.
+로컬 변수가 아닌 클래스 범위의 변수임을 쉽게 구분하기 위해 접미사로 '_'를 사용하여 setter 메소드에서의 변수 명명 충돌 문제를 해결할 수 있다.
+
+```java
+// ✅ 올바른 예시
+public class UserService {
+    private String userName_;
+    private int maxRetryCount_;
+    private List<User> userList_;
+    
+    public void setUserName(String userName) {
+        this.userName_ = userName;  // 충돌 방지
+    }
+}
+
+// ❌ 잘못된 예시
+public class UserService {
+    private String userName;
+    private int maxRetryCount;
+    
+    public void setUserName(String userName) {
+        this.userName = userName;  // 변수명 충돌 가능성
+    }
+}
+```
+
+### **🔢 상수 명명 규칙**
+
+상수명(final 변수)은 대문자를 사용한다.
+단어의 조합의 경우 '_'를 사용하여 구분할 수 있도록 한다.
+
+```java
+// ✅ 올바른 예시
+public static final int MAX_RETRY_COUNT = 3;
+public static final String DEFAULT_USER_ROLE = "USER";
+public static final long TIMEOUT_DURATION = 30000L;
+
+// ❌ 잘못된 예시
+public static final int maxRetryCount = 3;
+public static final String defaultUserRole = "USER";
+public static final long timeoutDuration = 30000L;
+```
+
+### **🏷️ 상세 네이밍 규칙**
+
+#### **클래스(Class) 네이밍**
+
+```java
+// ✅ 올바른 예시
+public class UserService { }
+public class CustomerRepository { }
+public class AccountManager { }
+public class OrderProcessor { }
+
+// ❌ 잘못된 예시
+public class userService { }
+public class customerRepository { }
+public class accountManager { }
+```
+
+#### **인터페이스(Interface) 네이밍**
+
+```java
+// ✅ 올바른 예시
+public interface UserRepository { }
+public interface CustomerService { }
+public interface OrderValidator { }
+public interface PaymentProcessor { }
+
+// ❌ 잘못된 예시
+public interface userRepository { }
+public interface customerService { }
+public interface orderValidator { }
+```
+
+#### **메서드(Method) 네이밍**
+
+```java
+// ✅ 올바른 예시
+public User getUserById(String userId) { }
+public List<User> getListUser(UserDDTO userDDTO) { }
+public int insertUser(UserDDTO userDDTO) { }
+public int updateUser(UserDDTO userDDTO) { }
+public int deleteUser(UserDDTO userDDTO) { }
+public boolean validateUser(UserDDTO userDDTO) { }
+public BigDecimal calculateBalance(String accountNo) { }
+public int countUsers(UserDDTO userDDTO) { }
+public boolean isActiveUser(String userId) { }
+
+// ❌ 잘못된 예시
+public User getuserbyid(String userId) { }
+public List<User> getlistuser(UserDDTO userDDTO) { }
+public int insertuser(UserDDTO userDDTO) { }
+```
+
+#### **변수(Variable) 네이밍**
+
+```java
+// ✅ 올바른 예시
+private String userName_;
+private int maxRetryCount_;
+private List<User> userList_;
+private Map<String, Object> requestData_;
+private BigDecimal accountBalance_;
+private LocalDateTime createdDate_;
+
+// ❌ 잘못된 예시
+private String username_;
+private int maxretrycount_;
+private List<User> userlist_;
+private Map<String, Object> requestdata_;
+```
+
+#### **상수(Constant) 네이밍**
+
+```java
+// ✅ 올바른 예시
+public static final int MAX_RETRY_COUNT = 3;
+public static final String DEFAULT_USER_ROLE = "USER";
+public static final long TIMEOUT_DURATION = 30000L;
+public static final String ERROR_CODE_PREFIX = "E";
+public static final String SUCCESS_CODE_PREFIX = "S";
+
+// ❌ 잘못된 예시
+public static final int maxRetryCount = 3;
+public static final String defaultUserRole = "USER";
+public static final long timeoutDuration = 30000L;
+```
+
+#### **패키지(Package) 네이밍**
+
+```java
+// ✅ 올바른 예시
+package com.skax.eatool.mbc.as.usermgtas;
+package com.skax.eatool.mbc.pc.usermgtpc;
+package com.skax.eatool.mbc.dc.usermgtdc;
+package com.skax.eatool.mbc.ic.external;
+package com.skax.eatool.mbc.fc.util;
+
+// ❌ 잘못된 예시
+package com.skax.eatool.mbc.AS.usermgtas;
+package com.skax.eatool.mbc.PC.usermgtpc;
+package com.skax.eatool.mbc.DC.usermgtdc;
+```
+
+#### **제네릭(Generic) 네이밍**
+
+```java
+// ✅ 올바른 예시
+public class Repository<T> { }
+public interface Service<T, ID> { }
+public class List<User> userList_;
+public class Map<String, Object> dataMap_;
+public class Optional<User> userOptional;
+
+// ❌ 잘못된 예시
+public class Repository<t> { }
+public interface Service<t, id> { }
+public class List<user> userList_;
+```
+
+#### **DTO / VO / Response 객체 네이밍**
+
+```java
+// ✅ 올바른 예시
+public class UserPDTO { }        // PC Layer DTO
+public class UserDDTO { }        // DC Layer DTO
+public class UserResponse { }    // Response Object
+public class CreateUserRequest { } // Request Object
+public class UserVO { }          // Value Object
+
+// ❌ 잘못된 예시
+public class userPDTO { }
+public class userDDTO { }
+public class userResponse { }
+```
+
+#### **Enum 네이밍**
+
+```java
+// ✅ 올바른 예시
+public enum UserStatus {
+    ACTIVE, INACTIVE, SUSPENDED, DELETED
+}
+
+public enum AccountType {
+    SAVINGS, CHECKING, CREDIT
+}
+
+public enum TransactionType {
+    DEPOSIT, WITHDRAWAL, TRANSFER
+}
+
+// ❌ 잘못된 예시
+public enum userStatus {
+    active, inactive, suspended, deleted
+}
+```
+
+#### **테스트 메서드(Test Method) 네이밍**
+
+```java
+// ✅ 올바른 예시
+@Test
+public void shouldCreateUserWhenValidDataProvided() { }
+
+@Test
+public void shouldThrowExceptionWhenUserIdIsNull() { }
+
+@Test
+public void shouldReturnUserListWhenSearchCriteriaProvided() { }
+
+@Test
+public void shouldUpdateUserWhenValidUserDataProvided() { }
+
+// ❌ 잘못된 예시
+@Test
+public void testCreateUser() { }
+@Test
+public void testException() { }
+@Test
+public void testUserList() { }
+```
+
+#### **예외 클래스(Exception) 네이밍**
+
+```java
+// ✅ 올바른 예시
+public class UserNotFoundException extends BusinessException { }
+public class DuplicateUserException extends BusinessException { }
+public class InvalidUserDataException extends BusinessException { }
+public class DatabaseConnectionException extends SystemException { }
+
+// ❌ 잘못된 예시
+public class userNotFoundException extends BusinessException { }
+public class duplicateUserException extends BusinessException { }
+public class invalidUserDataException extends BusinessException { }
+```
+
+#### **Boolean 필드/메서드 네이밍**
+
+```java
+// ✅ 올바른 예시
+private boolean isActive_;
+private boolean hasPermission_;
+private boolean canEdit_;
+
+public boolean isActive() { }
+public boolean hasPermission() { }
+public boolean canEdit() { }
+public boolean isValid() { }
+public boolean exists() { }
+
+// ❌ 잘못된 예시
+private boolean active_;
+private boolean permission_;
+private boolean edit_;
+
+public boolean active() { }
+public boolean permission() { }
+public boolean edit() { }
+```
+
+#### **컬렉션 변수 네이밍**
+
+```java
+// ✅ 올바른 예시
+private List<User> userList_;
+private Map<String, User> userMap_;
+private Set<String> userIdSet_;
+private Queue<Order> orderQueue_;
+private Collection<Account> accountCollection_;
+
+// ❌ 잘못된 예시
+private List<User> users_;
+private Map<String, User> users_;
+private Set<String> userIds_;
+private Queue<Order> orders_;
+```
+
+#### **API/도메인 관련 명명 규칙**
+
+```java
+// ✅ 올바른 예시
+// API 관련
+public class UserApiController { }
+public class AccountApiService { }
+public class OrderApiRepository { }
+
+// 도메인 관련
+public class UserDomainService { }
+public class AccountDomainRepository { }
+public class OrderDomainValidator { }
+
+// 비즈니스 로직 관련
+public class UserBusinessService { }
+public class AccountBusinessLogic { }
+public class OrderBusinessValidator { }
+
+// ❌ 잘못된 예시
+public class userApiController { }
+public class accountApiService { }
+public class orderApiRepository { }
+```
+
+#### **접두사/접미사 명명 전략**
+
+```java
+// ✅ 올바른 예시
+// 접두사 (Prefix)
+public class IUserRepository { }      // Interface
+public class AbstractUserService { }  // Abstract Class
+public class BaseUserController { }   // Base Class
+
+// 접미사 (Suffix)
+public class UserService { }          // Service
+public class UserRepository { }       // Repository
+public class UserController { }       // Controller
+public class UserValidator { }        // Validator
+public class UserProcessor { }        // Processor
+public class UserManager { }          // Manager
+public class UserHelper { }           // Helper
+public class UserUtil { }             // Util
+
+// ❌ 잘못된 예시
+public class userService { }
+public class userRepository { }
+public class userController { }
+```
+
+### **📝 주석 표준**
+
+#### **문서 주석**
+
+문서 주석은 모든 Public 클래스와 Public 클래스의 오퍼레이션에 대한 주석을 의미한다.
+다음의 문서주석 표준으로 작성된 자바 구현소스는 Javadoc을 이용하여 HTML문서로 자동 생성할 수 있어 온라인 코드 API문서로 사용할 수 있다.
+
+#### **자바 구현 소스 파일 주석 표준**
+
+자바 구현 소스 파일에 대한 주석은 package 선언문 상단에 다음과 같이 기술한다.
+
+**표준 형식**
+```java
+/**
+ * (@)# <<파일의 이름>>.java
+ * Copyright KB StarInc. All rights reserved.StarInc.
+ * PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * 프로그램설명 :
+ * 변경이력(일자::작성자::변경내용)
+ *    	<ul>
+ *    	<li>2008-02-20::홍길동::신규작성
+ *    	</ul>
+ */
+```
+
+**예제**
+```java
+/**
+ * (@)# UserService.java
+ * Copyright KB StarInc. All rights reserved.StarInc.
+ * PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * 프로그램설명 : 사용자 관리 서비스 클래스
+ * 변경이력(일자::작성자::변경내용)
+ *    	<ul>
+ *    	<li>2024-01-01::SKAX Team::신규작성
+ *    	<li>2024-01-15::SKAX Team::사용자 검증 로직 추가
+ *    	</ul>
+ */
+package com.skax.eatool.mbc.as.usermgtas;
+
+public class UserService {
+    // 클래스 구현
+}
+```
+
+#### **오퍼레이션 주석 표준**
+
+오퍼레이션 주석은 각 오퍼레이션 선언문 상단에 다음과 같이 기술한다.
+
+**표준 형식**
+```java
+/**
+ * <li>오퍼레이션에 대한 설명
+ * @param  	DTO.Attribute  한글명
+ * @return  	DTO.Attribute  한글명
+ */
+```
+
+**예제**
+```java
+/**
+ * <li>사용자 정보를 조회한다.
+ * @param  	userDDTO.userId  사용자 ID
+ * @return  	User  사용자 정보
+ */
+public User getUser(UserDDTO userDDTO) throws NewBusinessException {
+    // 메서드 구현
+}
+
+/**
+ * <li>사용자 목록을 조회한다.
+ * @param  	userDDTO.searchKeyword  검색 키워드
+ * @param  	userDDTO.pageSize  페이지 크기
+ * @return  	List<User>  사용자 목록
+ */
+public List<User> getListUser(UserDDTO userDDTO) throws NewBusinessException {
+    // 메서드 구현
+}
+```
+
+#### **구현 주석**
+
+문서 주석 외에 오퍼레이션 내의 변수 또는 코드에 대한 블록 주석이 필요한 경우 사용한다.
+블록 주석은 코드와 분리하기 위해 주석을 사용한다.
+
+```java
+public class UserService {
+    
+    /**
+     * 사용자 정보를 등록한다.
+     */
+    public int insertUser(UserDDTO userDDTO) throws NewBusinessException {
+        
+        // 1. 입력 데이터 검증
+        if (userDDTO == null) {
+            throw new NewBusinessException("사용자 정보가 null입니다.");
+        }
+        
+        // 2. 중복 사용자 체크
+        if (existsUser(userDDTO.getUserId())) {
+            throw new NewBusinessException("이미 존재하는 사용자입니다: " + userDDTO.getUserId());
+        }
+        
+        // 3. 사용자 등록
+        int result = userRepository.insertUser(userDDTO);
+        
+        // 4. 결과 반환
+        return result;
+    }
+}
+```
+
+### **⚠️ 주의사항**
+
+1. **일관성**: 프로젝트 전체에서 동일한 네이밍 규칙 적용
+2. **가독성**: 코드를 읽는 사람이 쉽게 이해할 수 있도록 명명
+3. **의미성**: 변수나 메서드의 역할을 명확히 표현
+4. **확장성**: 향후 확장을 고려한 네이밍
+5. **표준 준수**: Java 커뮤니티의 일반적인 네이밍 컨벤션 준수
+
+이 가이드를 따라 Java 네이밍 규칙을 적용하면 일관성 있고 유지보수하기 쉬운 코드를 작성할 수 있습니다.
+description:
+globs:
+alwaysApply: false
+---

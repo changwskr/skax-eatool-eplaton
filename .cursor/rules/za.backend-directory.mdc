@@ -1,0 +1,244 @@
+# Backend Directory Structure Rules
+
+## 📁 **SKAX EA Tool Eplaton Backend Architecture**
+
+### **🏗️ 전체 프로젝트 구조**
+
+```
+skax-eatool-eplaton-master/
+├── 📦 Multi-Module Maven Project
+│   ├── ksa-lib/          # KSA Library (External JAR)
+│   ├── ksa-java/         # KSA Java Implementation
+│   ├── kji-lib/          # KJI Library (External JAR)
+│   ├── kji-java/         # KJI Java Implementation
+│   ├── mbc01-lib/        # MBC01 Library (External JAR)
+│   ├── mbc01-java/       # MBC01 Java Implementation
+│   ├── mbc-java/         # MBC Java (Main Application)
+│   ├── mba-java/         # MBA Java (Master Business Application)
+│   └── spring-cloud-apigateway-service/  # API Gateway
+├── 📋 Configuration Files
+│   ├── pom.xml           # Root Maven Configuration
+│   ├── checkstyle.xml    # Code Style Rules
+│   └── docker-compose.yml # Container Orchestration
+└── 🛠️ Development Tools
+    ├── zCICD/            # CI/CD Configuration
+    ├── z-prometheus-grafana/  # Monitoring Stack
+    └── z-micrometer-prometheus/ # Metrics Collection
+```
+
+### **🎯 MUST FOLLOW - 디렉토리 구조 규칙**
+
+#### **1. 모듈별 패키지 구조**
+```
+📦 {module-name}-java/
+├── src/main/java/com/skax/eatool/{module}/
+│   ├── {Module}Application.java    # Spring Boot Main Class
+│   ├── config/                     # Configuration Classes
+│   ├── ac/                         # Application Control Layer
+│   ├── as/                         # Application Service Layer
+│   ├── pc/                         # Presentation Control Layer
+│   ├── dc/                         # Data Control Layer
+│   ├── ic/                         # Interface Control Layer
+│   ├── web/                        # Web Layer (Controllers)
+│   ├── util/                       # Utility Classes
+│   └── {domain-specific}/          # Domain-specific packages
+└── src/main/resources/
+    ├── application.yml             # Application Configuration
+    ├── mapper/                     # MyBatis Mapper XML
+    └── templates/                  # Thymeleaf Templates
+```
+
+#### **2. 레이어별 디렉토리 규칙**
+
+**✅ AC (Application Control) Layer**
+```
+ac/
+├── accountac/      # Account Application Control
+├── reportac/       # Report Application Control
+├── usermgtac/      # User Management Application Control
+├── eplatonac/      # EPlaton Application Control
+├── runtimeac/      # Runtime Application Control
+└── commonac/       # Common Application Control
+```
+
+**✅ AS (Application Service) Layer**
+```
+as/
+├── accountas/      # Account Application Service
+├── reportas/       # Report Application Service
+├── usermgtas/      # User Management Application Service
+├── commonas/       # Common Application Service
+├── bzcrudbus/      # Business CRUD Business
+├── usermgtpilotas/ # User Management Pilot Application Service
+├── testas/         # Test Application Service
+└── runtimeas/      # Runtime Application Service
+```
+
+**✅ PC (Presentation Control) Layer**
+```
+pc/
+├── accountpc/      # Account Presentation Control
+├── reportpc/       # Report Presentation Control
+├── userpc/         # User Presentation Control
+├── commonpc/       # Common Presentation Control
+├── dto/            # Data Transfer Objects
+├── UserTest/       # User Test
+└── usermanagementpilotpc/ # User Management Pilot PC
+```
+
+**✅ DC (Data Control) Layer**
+```
+dc/
+├── accountdc/      # Account Data Control
+├── reportdc/       # Report Data Control
+├── usermgtdc/      # User Management Data Control
+├── runtimedc/      # Runtime Data Control
+├── UserTest/       # User Test
+└── usermgtpilotdc/ # User Management Pilot Data Control
+```
+
+**✅ IC (Interface Control) Layer**
+```
+ic/
+└── authic/         # Authentication Interface Control
+```
+
+**✅ Web Layer**
+```
+web/
+├── account/        # Account Web Controllers
+├── home/           # Home Web Controllers
+├── welcome/        # Welcome Web Controllers
+├── monitoring/     # Monitoring Web Controllers
+├── swagger/        # Swagger Documentation
+├── testas/         # Test Application Service Web
+├── commonas/       # Common Application Service Web
+└── accountas/      # Account Application Service Web
+```
+
+### **🚫 NEVER DO - 디렉토리 구조 위반사항**
+
+#### **1. 패키지 명명 규칙 위반**
+```java
+// ❌ 잘못된 예시
+com.skax.eatool.mbc.controller  // controller 대신 web 사용
+com.skax.eatool.mbc.service     // service 대신 as 사용
+com.skax.eatool.mbc.repository  // repository 대신 dc 사용
+com.skax.eatool.mbc.model       // model 대신 pc/dto 사용
+
+// ✅ 올바른 예시
+com.skax.eatool.mbc.web         // Web Layer
+com.skax.eatool.mbc.as          // Application Service Layer
+com.skax.eatool.mbc.dc          // Data Control Layer
+com.skax.eatool.mbc.pc.dto      // Presentation Control DTO
+```
+
+#### **2. 레이어 혼재 금지**
+```java
+// ❌ 잘못된 예시 - 레이어 혼재
+@Controller
+public class AccountController {  // web 레이어에 있음
+    @Autowired
+    private AccountService accountService;  // as 레이어 의존성
+    @Autowired
+    private AccountRepository accountRepository;  // dc 레이어 의존성
+}
+
+// ✅ 올바른 예시 - 레이어 분리
+@Controller
+public class AccountController {  // web 레이어
+    @Autowired
+    private AccountAS accountAS;  // as 레이어만 의존
+}
+```
+
+#### **3. 도메인별 패키지 구조 위반**
+```java
+// ❌ 잘못된 예시 - 도메인 혼재
+com.skax.eatool.mbc.ac.account
+com.skax.eatool.mbc.as.user
+com.skax.eatool.mbc.pc.report
+
+// ✅ 올바른 예시 - 도메인별 패키지
+com.skax.eatool.mbc.ac.accountac
+com.skax.eatool.mbc.as.accountas
+com.skax.eatool.mbc.pc.accountpc
+```
+
+### **📋 디렉토리 구조 체크리스트**
+
+#### **새로운 모듈 생성 시**
+- [ ] `{Module}Application.java` 메인 클래스 생성
+- [ ] `config/` 디렉토리 생성 (설정 클래스용)
+- [ ] `ac/` 디렉토리 생성 (Application Control용)
+- [ ] `as/` 디렉토리 생성 (Application Service용)
+- [ ] `pc/` 디렉토리 생성 (Presentation Control용)
+- [ ] `dc/` 디렉토리 생성 (Data Control용)
+- [ ] `web/` 디렉토리 생성 (Web Controller용)
+- [ ] `util/` 디렉토리 생성 (Utility 클래스용)
+
+#### **새로운 도메인 추가 시**
+- [ ] `ac/{domain}ac/` 디렉토리 생성
+- [ ] `as/{domain}as/` 디렉토리 생성
+- [ ] `pc/{domain}pc/` 디렉토리 생성
+- [ ] `dc/{domain}dc/` 디렉토리 생성
+- [ ] `web/{domain}/` 디렉토리 생성 (필요시)
+
+#### **파일 배치 규칙**
+- [ ] Controller 클래스는 `web/` 디렉토리에 배치
+- [ ] Service 클래스는 `as/` 디렉토리에 배치
+- [ ] Repository/DAO 클래스는 `dc/` 디렉토리에 배치
+- [ ] DTO 클래스는 `pc/dto/` 디렉토리에 배치
+- [ ] Configuration 클래스는 `config/` 디렉토리에 배치
+
+### **🔧 특별한 모듈 구조**
+
+#### **KSA (Kesa Service Application)**
+```
+ksa-java/
+├── controller/     # REST Controllers
+├── biz/           # Business Logic
+├── das/           # Data Access Service
+├── infra/         # Infrastructure
+├── oltp/          # OLTP Processing
+├── po/            # Persistent Objects
+├── exception/     # Custom Exceptions
+├── logger/        # Logging Components
+└── util/          # Utility Classes
+```
+
+#### **API Gateway**
+```
+spring-cloud-apigateway-service/
+├── config/        # Gateway Configuration
+├── filter/        # Gateway Filters
+└── ApigatewayServiceApplication.java
+```
+
+### **📝 디렉토리 구조 작성 가이드**
+
+#### **새로운 기능 개발 시**
+1. **도메인 식별**: Account, User, Report 등
+2. **레이어별 패키지 생성**: `{domain}ac`, `{domain}as`, `{domain}pc`, `{domain}dc`
+3. **클래스 배치**: 각 레이어에 맞는 디렉토리에 배치
+4. **의존성 관리**: 상위 레이어에서 하위 레이어로만 의존
+
+#### **기존 코드 수정 시**
+1. **현재 위치 확인**: 올바른 레이어에 있는지 확인
+2. **패키지명 검증**: 도메인별 패키지 구조 준수
+3. **의존성 검토**: 레이어 간 의존성 규칙 준수
+4. **이동 필요시**: 올바른 디렉토리로 이동
+
+### **⚠️ 주의사항**
+
+1. **레이어 간 직접 의존 금지**: web → as → dc 순서만 허용
+2. **도메인별 패키지 분리**: 각 도메인은 독립적인 패키지 구조
+3. **공통 컴포넌트**: `common` 접두사 사용
+4. **테스트 코드**: `test` 접두사 사용
+5. **파일명 규칙**: 클래스명과 파일명 일치
+
+이 구조를 따라 백엔드 개발을 진행하면 일관성 있고 유지보수하기 쉬운 코드베이스를 구축할 수 있습니다.
+description:
+globs:
+alwaysApply: false
+---

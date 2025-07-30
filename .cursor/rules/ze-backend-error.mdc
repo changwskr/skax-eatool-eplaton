@@ -1,0 +1,845 @@
+# Backend Error Handling Guide
+
+## 🚨 **SKAX EA Tool Eplaton Error Handling Implementation Rules**
+
+### **🏗️ 에러 처리 아키텍처 개요**
+
+```
+📦 Error Handling Architecture
+├── 🎯 Global Exception Handler (중앙 에러 핸들러)
+│   ├── @ControllerAdvice
+│   ├── @ExceptionHandler
+│   ├── Error Response Standardization
+│   └── Logging & Monitoring
+├── 🔧 Custom Exception Classes (커스텀 예외)
+│   ├── BusinessException Hierarchy
+│   ├── FrameworkException Hierarchy
+│   ├── ValidationException
+│   └── SystemException
+├── ⚡ Async Error Handling (비동기 에러 처리)
+│   ├── CompletableFuture Error Handling
+│   ├── @Async Exception Handling
+│   ├── Reactive Error Handling
+│   └── Circuit Breaker Pattern
+└── 📊 Error Response Structure
+    ├── Error Code Standardization
+    ├── Error Message Localization
+    ├── Error Context Information
+    └── Error Tracking & Monitoring
+```
+
+### **🎯 MUST FOLLOW - 에러 처리 구현 규칙**
+
+#### **1. 중앙 에러 핸들러 (Global Exception Handler)**
+
+**✅ 올바른 중앙 에러 핸들러 구조**
+```java
+/**
+ * 글로벌 예외 처리 핸들러
+ * 
+ * 프로그램명: GlobalExceptionHandler.java
+ * 설명: 애플리케이션 전체의 예외를 중앙에서 처리하는 핸들러
+ * 작성일: 2024-01-01
+ * 작성자: SKAX Project Team
+ * 
+ * 주요 기능:
+ * - 비즈니스 예외 처리
+ * - 검증 예외 처리
+ * - 시스템 예외 처리
+ * - 에러 응답 표준화
+ * 
+ * @version 1.0
+ */
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+    
+    /**
+     * 비즈니스 예외 처리
+     */
+    @ExceptionHandler(NewBusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(NewBusinessException e, HttpServletRequest request) {
+        log.warn("비즈니스 예외 발생: {} - URI: {}", e.getMessage(), request.getRequestURI());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode("BUSINESS_ERROR")
+            .message(e.getMessage())
+            .timestamp(LocalDateTime.now())
+            .path(request.getRequestURI())
+            .method(request.getMethod())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+    
+    /**
+     * 검증 예외 처리
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request) {
+        log.warn("검증 예외 발생: {} - URI: {}", e.getMessage(), request.getRequestURI());
+        
+        List<String> errors = e.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.toList());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode("VALIDATION_ERROR")
+            .message("입력 데이터 검증에 실패했습니다.")
+            .details(errors)
+            .timestamp(LocalDateTime.now())
+            .path(request.getRequestURI())
+            .method(request.getMethod())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+    
+    /**
+     * 데이터베이스 예외 처리
+     */
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ErrorResponse> handleDataAccessException(DataAccessException e, HttpServletRequest request) {
+        log.error("데이터베이스 접근 예외 발생: {} - URI: {}", e.getMessage(), request.getRequestURI(), e);
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode("DATABASE_ERROR")
+            .message("데이터베이스 처리 중 오류가 발생했습니다.")
+            .timestamp(LocalDateTime.now())
+            .path(request.getRequestURI())
+            .method(request.getMethod())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+    
+    /**
+     * 인증/인가 예외 처리
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
+        log.warn("접근 거부 예외 발생: {} - URI: {}", e.getMessage(), request.getRequestURI());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode("ACCESS_DENIED")
+            .message("해당 리소스에 대한 접근 권한이 없습니다.")
+            .timestamp(LocalDateTime.now())
+            .path(request.getRequestURI())
+            .method(request.getMethod())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+    
+    /**
+     * 일반 예외 처리 (기본 핸들러)
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception e, HttpServletRequest request) {
+        log.error("예상치 못한 예외 발생: {} - URI: {}", e.getMessage(), request.getRequestURI(), e);
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode("INTERNAL_ERROR")
+            .message("서버 내부 오류가 발생했습니다.")
+            .timestamp(LocalDateTime.now())
+            .path(request.getRequestURI())
+            .method(request.getMethod())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+}
+```
+
+#### **2. 에러 응답 표준화**
+
+**✅ 표준 에러 응답 구조**
+```java
+/**
+ * 표준 에러 응답 DTO
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ErrorResponse {
+    
+    private String errorCode;           // 에러 코드
+    private String message;             // 에러 메시지
+    private LocalDateTime timestamp;    // 발생 시간
+    private String path;                // 요청 경로
+    private String method;              // HTTP 메서드
+    private List<String> details;       // 상세 에러 정보
+    private String traceId;             // 추적 ID
+    
+    /**
+     * 에러 응답 생성 (간단한 버전)
+     */
+    public static ErrorResponse of(String errorCode, String message) {
+        return ErrorResponse.builder()
+            .errorCode(errorCode)
+            .message(message)
+            .timestamp(LocalDateTime.now())
+            .build();
+    }
+    
+    /**
+     * 에러 응답 생성 (상세 버전)
+     */
+    public static ErrorResponse of(String errorCode, String message, String path, String method) {
+        return ErrorResponse.builder()
+            .errorCode(errorCode)
+            .message(message)
+            .timestamp(LocalDateTime.now())
+            .path(path)
+            .method(method)
+            .build();
+    }
+}
+```
+
+#### **3. 커스텀 예외 클래스 계층 구조**
+
+**✅ 비즈니스 예외 계층 구조**
+```java
+/**
+ * 비즈니스 예외 기본 클래스
+ */
+public abstract class BusinessException extends RuntimeException {
+    
+    private final String errorCode;
+    private final String errorMessage;
+    private final LocalDateTime timestamp;
+    
+    protected BusinessException(String errorCode, String errorMessage) {
+        super(errorMessage);
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.timestamp = LocalDateTime.now();
+    }
+    
+    protected BusinessException(String errorCode, String errorMessage, Throwable cause) {
+        super(errorMessage, cause);
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.timestamp = LocalDateTime.now();
+    }
+    
+    public String getErrorCode() {
+        return errorCode;
+    }
+    
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+}
+
+/**
+ * 사용자 관련 예외 클래스들
+ */
+public class UserNotFoundException extends BusinessException {
+    public UserNotFoundException(String userId) {
+        super("USER_NOT_FOUND", "사용자를 찾을 수 없습니다: " + userId);
+    }
+}
+
+public class DuplicateUserException extends BusinessException {
+    public DuplicateUserException(String email) {
+        super("DUPLICATE_USER", "이미 존재하는 사용자입니다: " + email);
+    }
+}
+
+public class UserValidationException extends BusinessException {
+    public UserValidationException(String field, String message) {
+        super("USER_VALIDATION_ERROR", field + ": " + message);
+    }
+}
+
+/**
+ * 계정 관련 예외 클래스들
+ */
+public class AccountNotFoundException extends BusinessException {
+    public AccountNotFoundException(String accountNumber) {
+        super("ACCOUNT_NOT_FOUND", "계정을 찾을 수 없습니다: " + accountNumber);
+    }
+}
+
+public class InsufficientBalanceException extends BusinessException {
+    public InsufficientBalanceException(String accountNumber, BigDecimal required, BigDecimal available) {
+        super("INSUFFICIENT_BALANCE", 
+              String.format("잔액이 부족합니다. 계정: %s, 필요: %s, 보유: %s", 
+                          accountNumber, required, available));
+    }
+}
+
+/**
+ * 시스템 관련 예외 클래스들
+ */
+public class SystemException extends RuntimeException {
+    private final String errorCode;
+    
+    public SystemException(String errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+    
+    public SystemException(String errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
+    }
+    
+    public String getErrorCode() {
+        return errorCode;
+    }
+}
+```
+
+#### **4. 비동기 에러 처리**
+
+**✅ CompletableFuture 에러 처리**
+```java
+@Service
+@Slf4j
+public class AsyncUserService {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    /**
+     * 비동기 사용자 조회 (CompletableFuture)
+     */
+    public CompletableFuture<UserDto> getUserAsync(String userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("비동기 사용자 조회 시작: {}", userId);
+                
+                User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException(userId));
+                
+                log.info("비동기 사용자 조회 완료: {}", userId);
+                return UserDto.from(user);
+                
+            } catch (UserNotFoundException e) {
+                log.warn("비동기 사용자 조회 실패 - 사용자 없음: {}", userId);
+                throw e;
+            } catch (Exception e) {
+                log.error("비동기 사용자 조회 중 예외 발생: {}", userId, e);
+                throw new SystemException("ASYNC_USER_QUERY_ERROR", "비동기 사용자 조회 중 오류가 발생했습니다.", e);
+            }
+        }).exceptionally(throwable -> {
+            log.error("CompletableFuture 예외 처리: {}", throwable.getMessage());
+            throw new RuntimeException("비동기 처리 중 오류가 발생했습니다.", throwable);
+        });
+    }
+    
+    /**
+     * 여러 사용자 비동기 조회
+     */
+    public CompletableFuture<List<UserDto>> getUsersAsync(List<String> userIds) {
+        List<CompletableFuture<UserDto>> futures = userIds.stream()
+            .map(this::getUserAsync)
+            .collect(Collectors.toList());
+        
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+            .thenApply(v -> futures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList()))
+            .exceptionally(throwable -> {
+                log.error("다중 사용자 비동기 조회 실패: {}", throwable.getMessage());
+                throw new RuntimeException("다중 사용자 조회 중 오류가 발생했습니다.", throwable);
+            });
+    }
+}
+```
+
+**✅ @Async 에러 처리**
+```java
+@Service
+@Slf4j
+public class AsyncTaskService {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    /**
+     * 비동기 사용자 처리 (@Async)
+     */
+    @Async("taskExecutor")
+    public CompletableFuture<UserDto> processUserAsync(String userId) {
+        try {
+            log.info("비동기 사용자 처리 시작: {}", userId);
+            
+            // 비즈니스 로직 실행
+            User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+            
+            // 복잡한 비즈니스 로직
+            UserDto result = processUserBusinessLogic(user);
+            
+            log.info("비동기 사용자 처리 완료: {}", userId);
+            return CompletableFuture.completedFuture(result);
+            
+        } catch (UserNotFoundException e) {
+            log.warn("비동기 사용자 처리 실패 - 사용자 없음: {}", userId);
+            return CompletableFuture.failedFuture(e);
+        } catch (Exception e) {
+            log.error("비동기 사용자 처리 중 예외 발생: {}", userId, e);
+            return CompletableFuture.failedFuture(
+                new SystemException("ASYNC_USER_PROCESS_ERROR", "비동기 사용자 처리 중 오류가 발생했습니다.", e));
+        }
+    }
+    
+    /**
+     * 비동기 배치 처리
+     */
+    @Async("batchExecutor")
+    public CompletableFuture<BatchResult> processBatchAsync(List<String> userIds) {
+        BatchResult result = new BatchResult();
+        
+        try {
+            log.info("비동기 배치 처리 시작: {}개 사용자", userIds.size());
+            
+            for (String userId : userIds) {
+                try {
+                    UserDto userDto = processUserAsync(userId).get(30, TimeUnit.SECONDS);
+                    result.addSuccess(userId, userDto);
+                } catch (Exception e) {
+                    log.error("배치 처리 중 개별 사용자 실패: {}", userId, e);
+                    result.addFailure(userId, e.getMessage());
+                }
+            }
+            
+            log.info("비동기 배치 처리 완료: 성공 {}개, 실패 {}개", 
+                    result.getSuccessCount(), result.getFailureCount());
+            
+            return CompletableFuture.completedFuture(result);
+            
+        } catch (Exception e) {
+            log.error("비동기 배치 처리 중 전체 실패", e);
+            return CompletableFuture.failedFuture(
+                new SystemException("ASYNC_BATCH_PROCESS_ERROR", "비동기 배치 처리 중 오류가 발생했습니다.", e));
+        }
+    }
+}
+
+/**
+ * 비동기 설정
+ */
+@Configuration
+@EnableAsync
+public class AsyncConfig implements AsyncConfigurer {
+    
+    @Override
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(50);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("AsyncTask-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.initialize();
+        return executor;
+    }
+    
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new SimpleAsyncUncaughtExceptionHandler();
+    }
+    
+    @Bean("taskExecutor")
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(20);
+        executor.setQueueCapacity(50);
+        executor.setThreadNamePrefix("Task-");
+        executor.initialize();
+        return executor;
+    }
+    
+    @Bean("batchExecutor")
+    public Executor batchExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(3);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(25);
+        executor.setThreadNamePrefix("Batch-");
+        executor.initialize();
+        return executor;
+    }
+}
+```
+
+**✅ Reactive 에러 처리**
+```java
+@Service
+@Slf4j
+public class ReactiveUserService {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    /**
+     * Reactive 사용자 조회
+     */
+    public Mono<UserDto> getUserReactive(String userId) {
+        return Mono.fromCallable(() -> {
+            log.info("Reactive 사용자 조회 시작: {}", userId);
+            return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        })
+        .map(UserDto::from)
+        .doOnSuccess(user -> log.info("Reactive 사용자 조회 완료: {}", userId))
+        .doOnError(error -> log.error("Reactive 사용자 조회 실패: {}", userId, error))
+        .onErrorMap(UserNotFoundException.class, e -> 
+            new BusinessException("USER_NOT_FOUND", "사용자를 찾을 수 없습니다: " + userId))
+        .onErrorMap(Exception.class, e -> 
+            new SystemException("REACTIVE_USER_QUERY_ERROR", "Reactive 사용자 조회 중 오류가 발생했습니다.", e));
+    }
+    
+    /**
+     * 여러 사용자 Reactive 조회
+     */
+    public Flux<UserDto> getUsersReactive(List<String> userIds) {
+        return Flux.fromIterable(userIds)
+            .flatMap(this::getUserReactive)
+            .doOnComplete(() -> log.info("Reactive 다중 사용자 조회 완료: {}개", userIds.size()))
+            .doOnError(error -> log.error("Reactive 다중 사용자 조회 실패", error));
+    }
+    
+    /**
+     * Reactive 배치 처리
+     */
+    public Mono<BatchResult> processBatchReactive(List<String> userIds) {
+        return Flux.fromIterable(userIds)
+            .flatMap(userId -> getUserReactive(userId)
+                .map(userDto -> new BatchItem(userId, userDto, null))
+                .onErrorReturn(new BatchItem(userId, null, "처리 실패")))
+            .collectList()
+            .map(this::createBatchResult)
+            .doOnSuccess(result -> log.info("Reactive 배치 처리 완료: 성공 {}개, 실패 {}개", 
+                result.getSuccessCount(), result.getFailureCount()))
+            .doOnError(error -> log.error("Reactive 배치 처리 실패", error));
+    }
+}
+```
+
+#### **5. Circuit Breaker 패턴**
+
+**✅ Circuit Breaker 구현**
+```java
+@Service
+@Slf4j
+public class CircuitBreakerUserService {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    private final CircuitBreaker circuitBreaker;
+    
+    public CircuitBreakerUserService() {
+        CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+            .failureRateThreshold(50)           // 50% 실패율 임계값
+            .waitDurationInOpenState(Duration.ofSeconds(60))  // 60초 대기
+            .ringBufferSizeInHalfOpenState(2)   // 반열림 상태에서 2개 요청
+            .ringBufferSizeInClosedState(10)    // 닫힘 상태에서 10개 요청
+            .build();
+        
+        this.circuitBreaker = CircuitBreaker.of("userService", config);
+    }
+    
+    /**
+     * Circuit Breaker를 사용한 사용자 조회
+     */
+    public UserDto getUserWithCircuitBreaker(String userId) {
+        return circuitBreaker.executeSupplier(() -> {
+            try {
+                log.info("Circuit Breaker 사용자 조회 시작: {}", userId);
+                
+                User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException(userId));
+                
+                log.info("Circuit Breaker 사용자 조회 완료: {}", userId);
+                return UserDto.from(user);
+                
+            } catch (UserNotFoundException e) {
+                log.warn("Circuit Breaker 사용자 조회 실패 - 사용자 없음: {}", userId);
+                throw e;
+            } catch (Exception e) {
+                log.error("Circuit Breaker 사용자 조회 중 예외 발생: {}", userId, e);
+                throw new SystemException("CIRCUIT_BREAKER_USER_QUERY_ERROR", 
+                    "Circuit Breaker 사용자 조회 중 오류가 발생했습니다.", e);
+            }
+        });
+    }
+    
+    /**
+     * Circuit Breaker 상태 모니터링
+     */
+    public CircuitBreaker.State getCircuitBreakerState() {
+        return circuitBreaker.getState();
+    }
+    
+    /**
+     * Circuit Breaker 메트릭스
+     */
+    public CircuitBreaker.Metrics getCircuitBreakerMetrics() {
+        return circuitBreaker.getMetrics();
+    }
+}
+```
+
+### **🚫 NEVER DO - 에러 처리 위반사항**
+
+#### **1. 잘못된 예외 처리**
+```java
+// ❌ 잘못된 예시
+@Service
+public class UserService {
+    
+    public UserDto getUser(String userId) {
+        try {
+            User user = userRepository.findById(userId);
+            return UserDto.from(user);  // null 체크 없음
+        } catch (Exception e) {
+            // 예외를 무시하고 null 반환
+            return null;
+        }
+    }
+}
+
+// ✅ 올바른 예시
+@Service
+@Slf4j
+public class UserService {
+    
+    public UserDto getUser(String userId) {
+        try {
+            User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+            return UserDto.from(user);
+        } catch (UserNotFoundException e) {
+            log.warn("사용자를 찾을 수 없음: {}", userId);
+            throw e;
+        } catch (Exception e) {
+            log.error("사용자 조회 중 예외 발생: {}", userId, e);
+            throw new SystemException("USER_QUERY_ERROR", "사용자 조회 중 오류가 발생했습니다.", e);
+        }
+    }
+}
+```
+
+#### **2. 잘못된 비동기 에러 처리**
+```java
+// ❌ 잘못된 예시
+@Async
+public CompletableFuture<UserDto> getUserAsync(String userId) {
+    User user = userRepository.findById(userId).orElse(null);
+    return CompletableFuture.completedFuture(UserDto.from(user));  // null 처리 없음
+}
+
+// ✅ 올바른 예시
+@Async
+public CompletableFuture<UserDto> getUserAsync(String userId) {
+    try {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(userId));
+        return CompletableFuture.completedFuture(UserDto.from(user));
+    } catch (Exception e) {
+        log.error("비동기 사용자 조회 실패: {}", userId, e);
+        return CompletableFuture.failedFuture(e);
+    }
+}
+```
+
+#### **3. 잘못된 글로벌 핸들러**
+```java
+// ❌ 잘못된 예시
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(Exception.class)
+    public String handleException(Exception e) {
+        return "Error: " + e.getMessage();  // 표준화되지 않은 응답
+    }
+}
+
+// ✅ 올바른 예시
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
+        log.error("예상치 못한 예외 발생: {} - URI: {}", e.getMessage(), request.getRequestURI(), e);
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode("INTERNAL_ERROR")
+            .message("서버 내부 오류가 발생했습니다.")
+            .timestamp(LocalDateTime.now())
+            .path(request.getRequestURI())
+            .method(request.getMethod())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+}
+```
+
+### **📋 에러 처리 구현 체크리스트**
+
+#### **새로운 예외 클래스 생성 시**
+- [ ] `BusinessException` 또는 `SystemException` 상속
+- [ ] 에러 코드와 메시지 명확히 정의
+- [ ] 적절한 생성자 구현
+- [ ] 로깅 메시지 포함
+
+#### **글로벌 핸들러 구현**
+- [ ] `@RestControllerAdvice` 어노테이션 사용
+- [ ] 구체적인 예외부터 일반적인 예외 순서로 처리
+- [ ] 표준화된 `ErrorResponse` 사용
+- [ ] 적절한 HTTP 상태 코드 반환
+- [ ] 상세한 로깅 구현
+
+#### **비동기 에러 처리**
+- [ ] `CompletableFuture`의 `exceptionally` 사용
+- [ ] `@Async` 메서드에서 예외 처리
+- [ ] Circuit Breaker 패턴 적용 (필요시)
+- [ ] 타임아웃 설정
+- [ ] 재시도 로직 구현 (필요시)
+
+#### **에러 응답 표준화**
+- [ ] 일관된 에러 코드 체계
+- [ ] 명확한 에러 메시지
+- [ ] 타임스탬프 포함
+- [ ] 요청 정보 포함 (경로, 메서드)
+- [ ] 추적 ID 포함 (필요시)
+
+### **🔧 특별한 에러 처리 패턴**
+
+#### **1. 계층별 에러 처리**
+```java
+/**
+ * AS 레이어 에러 처리
+ */
+@Service
+@Transactional
+public class ASUserManagement implements NewIApplicationService {
+    
+    private static final NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    
+    public NewKBData execute(NewKBData reqData) throws NewBusinessException {
+        try {
+            // 비즈니스 로직 실행
+            return processBusinessLogic(reqData);
+        } catch (NewBusinessException e) {
+            logger.error("AS 레이어 비즈니스 예외: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("AS 레이어 시스템 예외: {}", e.getMessage(), e);
+            throw new NewBusinessException("사용자 관리 처리 중 오류가 발생했습니다.", e);
+        }
+    }
+}
+
+/**
+ * PC 레이어 에러 처리
+ */
+@Service
+public class PCUserManagement {
+    
+    private static final NewIKesaLogger logger = NewKesaLogHelper.getBiz();
+    
+    public UserDto createUser(UserPDTO userPDTO) throws NewBusinessException {
+        try {
+            // 비즈니스 규칙 검증
+            validateBusinessRules(userPDTO);
+            
+            // DC 호출
+            return dcUser.createUser(userPDTO);
+        } catch (NewBusinessException e) {
+            logger.error("PC 레이어 비즈니스 예외: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("PC 레이어 시스템 예외: {}", e.getMessage(), e);
+            throw new NewBusinessException("사용자 생성 처리 중 오류가 발생했습니다.", e);
+        }
+    }
+}
+```
+
+#### **2. 에러 코드 표준화**
+```java
+/**
+ * 에러 코드 상수 정의
+ */
+public final class ErrorCodes {
+    
+    // 비즈니스 에러 (B로 시작)
+    public static final String USER_NOT_FOUND = "B001";
+    public static final String DUPLICATE_USER = "B002";
+    public static final String INVALID_USER_DATA = "B003";
+    
+    // 시스템 에러 (S로 시작)
+    public static final String DATABASE_ERROR = "S001";
+    public static final String NETWORK_ERROR = "S002";
+    public static final String TIMEOUT_ERROR = "S003";
+    
+    // 검증 에러 (V로 시작)
+    public static final String VALIDATION_ERROR = "V001";
+    public static final String REQUIRED_FIELD_MISSING = "V002";
+    public static final String INVALID_FORMAT = "V003";
+    
+    // 인증/인가 에러 (A로 시작)
+    public static final String UNAUTHORIZED = "A001";
+    public static final String FORBIDDEN = "A002";
+    public static final String TOKEN_EXPIRED = "A003";
+}
+```
+
+#### **3. 에러 메시지 국제화**
+```java
+/**
+ * 에러 메시지 국제화
+ */
+@Component
+public class ErrorMessageResolver {
+    
+    @Autowired
+    private MessageSource messageSource;
+    
+    public String resolveMessage(String errorCode, Locale locale) {
+        return messageSource.getMessage(errorCode, null, "알 수 없는 오류", locale);
+    }
+    
+    public String resolveMessage(String errorCode, Object[] args, Locale locale) {
+        return messageSource.getMessage(errorCode, args, "알 수 없는 오류", locale);
+    }
+}
+
+// messages.properties
+user.not.found=사용자를 찾을 수 없습니다: {0}
+user.duplicate=이미 존재하는 사용자입니다: {0}
+validation.required=필수 필드가 누락되었습니다: {0}
+```
+
+### **⚠️ 주의사항**
+
+1. **예외 전파**: 적절한 예외를 상위로 전파하고 무시하지 않음
+2. **로깅**: 모든 예외 발생 시 적절한 로깅
+3. **보안**: 민감한 정보가 에러 응답에 노출되지 않도록 주의
+4. **성능**: 에러 처리로 인한 성능 저하 방지
+5. **모니터링**: 에러 발생 패턴 모니터링 및 알림 설정
+
+이 가이드를 따라 에러 처리를 구현하면 안정적이고 유지보수하기 쉬운 백엔드 서비스를 구축할 수 있습니다.
+description:
+globs:
+alwaysApply: false
+---
