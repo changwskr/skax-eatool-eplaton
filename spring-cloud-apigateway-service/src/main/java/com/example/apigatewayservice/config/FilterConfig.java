@@ -12,11 +12,11 @@ import com.example.apigatewayservice.filter.LoggingFilter;
 import com.example.apigatewayservice.filter.AuthorizationHeaderFilter;
 
 /**
- * Spring Cloud Gateway Filter Configuration
- * 
+ * Spring Cloud Gateway Filter Configuration.
+ *
  * 현재 application.yml에서 사용되는 라우팅과 필터 구성을 Java 코드로 구현한 버전입니다.
  * application.yml과 동일한 라우팅 규칙을 제공합니다.
- * 
+ *
  * @author SKAX
  * @version 1.0.0
  * @since 2024
@@ -24,32 +24,39 @@ import com.example.apigatewayservice.filter.AuthorizationHeaderFilter;
 @Configuration
 public class FilterConfig {
 
+    /** Custom Filter 인스턴스 */
     @Autowired
     private CustomFilter customFilter;
-    
+
+    /** Logging Filter 인스턴스 */
     @Autowired
     private LoggingFilter loggingFilter;
-    
+
+    /** Environment 인스턴스 */
     @Autowired
     private Environment environment;
 
     /**
-     * Gateway Routes Configuration
+     * Gateway Routes Configuration.
      * application.yml의 라우팅 설정과 동일한 구성을 Java 코드로 구현
+     *
+     * @param builder RouteLocatorBuilder 인스턴스
+     * @return RouteLocator 설정된 라우터
      */
     @Bean
-    public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
-        
+    public RouteLocator gatewayRoutes(final RouteLocatorBuilder builder) {
+
         System.out.println("★★★★★★FilterConfig.gatewayRoutes()-호출★★★★★★★");
-        
+
         // AuthorizationHeaderFilter 인스턴스 생성
-        AuthorizationHeaderFilter authorizationHeaderFilter = new AuthorizationHeaderFilter(environment);
-        
+        AuthorizationHeaderFilter authorizationHeaderFilter = 
+            new AuthorizationHeaderFilter(environment);
+
         return builder.routes()
                 // ========================================
                 // SKAX EA Tool 서비스 라우팅
                 // ========================================
-                
+
                 // MBA (Master Business Application) 서비스
                 .route(r -> r.path("/mba/**")
                         .filters(f -> f
@@ -62,7 +69,7 @@ public class FilterConfig {
                                     setPostLogger(true);
                                 }})))
                         .uri("http://localhost:8084"))
-                
+
                 // KSA (Kesa Service Application) 서비스
                 .route(r -> r.path("/ksa/**")
                         .filters(f -> f
@@ -70,7 +77,7 @@ public class FilterConfig {
                                 .addResponseHeader("ksa-response", "ksa-response-header")
                                 .filter(customFilter.apply(new CustomFilter.Config())))
                         .uri("http://localhost:8082"))
-                
+
                 // KJI (Kesa Java Interface) 서비스
                 .route(r -> r.path("/kji/**")
                         .filters(f -> f
@@ -78,7 +85,7 @@ public class FilterConfig {
                                 .addResponseHeader("kji-response", "kji-response-header")
                                 .filter(customFilter.apply(new CustomFilter.Config())))
                         .uri("http://localhost:8083"))
-                
+
                 // MBC (Master Business Component) 서비스
                 .route(r -> r.path("/mbc/**")
                         .filters(f -> f
@@ -86,7 +93,7 @@ public class FilterConfig {
                                 .addResponseHeader("mbc-response", "mbc-response-header")
                                 .filter(customFilter.apply(new CustomFilter.Config())))
                         .uri("http://localhost:8085"))
-                
+
                 // MBC01 서비스
                 .route(r -> r.path("/mbc01/**")
                         .filters(f -> f
@@ -94,97 +101,67 @@ public class FilterConfig {
                                 .addResponseHeader("mbc01-response", "mbc01-response-header")
                                 .filter(customFilter.apply(new CustomFilter.Config())))
                         .uri("http://localhost:8085"))
-                
+
                 // ========================================
                 // 기존 서비스 라우팅 (참고용)
                 // ========================================
-                
-                // First Service
-                .route(r -> r.path("/first-service/**")
+
+                // User Service
+                .route(r -> r.path("/user/**")
                         .filters(f -> f
-                                .addRequestHeader("first-request", "first-request-header2")
-                                .addResponseHeader("first-response", "first-response-header2")
+                                .addRequestHeader("user-request", "user-request-header")
+                                .addResponseHeader("user-response", "user-response-header")
                                 .filter(customFilter.apply(new CustomFilter.Config())))
                         .uri("http://localhost:8081"))
-                
-                // Second Service
-                .route(r -> r.path("/second-service/**")
+
+                // Account Service
+                .route(r -> r.path("/account/**")
                         .filters(f -> f
-                                .addRequestHeader("second-request", "second-request-header2")
-                                .addResponseHeader("second-response", "second-response-header2")
-                                .filter(customFilter.apply(new CustomFilter.Config()))
-                                .filter(loggingFilter.apply(new LoggingFilter.Config() {{
-                                    setBaseMessage("Hi, there.");
-                                    setPreLogger(true);
-                                    setPostLogger(true);
-                                }})))
-                        .uri("http://localhost:8082"))
-                
-                // Third Service
-                .route(r -> r.path("/third-service/**")
-                        .filters(f -> f
-                                .addRequestHeader("third-request", "third-request-header2")
-                                .addResponseHeader("third-response", "third-response-header2")
+                                .addRequestHeader("account-request", "account-request-header")
+                                .addResponseHeader("account-response", "account-response-header")
                                 .filter(customFilter.apply(new CustomFilter.Config())))
-                        .uri("http://localhost:8083"))
-                
-                // User Service - Login
-                .route(r -> r.path("/user-service/login")
-                        .and().method("POST")
-                        .filters(f -> f
-                                .removeRequestHeader("Cookie")
-                                .rewritePath("/user-service/(?<segment>.*)", "/${segment}"))
                         .uri("http://localhost:8081"))
-                
-                // User Service - Users
-                .route(r -> r.path("/user-service/users")
-                        .and().method("POST")
+
+                // Report Service
+                .route(r -> r.path("/report/**")
                         .filters(f -> f
-                                .removeRequestHeader("Cookie")
-                                .rewritePath("/user-service/(?<segment>.*)", "/${segment}"))
+                                .addRequestHeader("report-request", "report-request-header")
+                                .addResponseHeader("report-response", "report-response-header")
+                                .filter(customFilter.apply(new CustomFilter.Config())))
                         .uri("http://localhost:8081"))
-                
-                // User Service - Actuator
-                .route(r -> r.path("/user-service/actuator/**")
-                        .and().method("GET", "POST")
+
+                // ========================================
+                // 공통 서비스 라우팅
+                // ========================================
+
+                // Health Check
+                .route(r -> r.path("/health/**")
                         .filters(f -> f
-                                .removeRequestHeader("Cookie")
-                                .rewritePath("/user-service/(?<segment>.*)", "/${segment}"))
+                                .addRequestHeader("health-request", "health-request-header")
+                                .addResponseHeader("health-response", "health-response-header"))
                         .uri("http://localhost:8081"))
-                
-                // User Service - GET (with Authorization)
-                .route(r -> r.path("/user-service/**")
-                        .and().method("GET")
+
+                // Actuator
+                .route(r -> r.path("/actuator/**")
                         .filters(f -> f
-                                .removeRequestHeader("Cookie")
-                                .rewritePath("/user-service/(?<segment>.*)", "/${segment}")
-                                .filter(authorizationHeaderFilter.apply(new AuthorizationHeaderFilter.Config())))
+                                .addRequestHeader("actuator-request", "actuator-request-header")
+                                .addResponseHeader("actuator-response", "actuator-response-header"))
                         .uri("http://localhost:8081"))
-                
-                // Order Service - Actuator
-                .route(r -> r.path("/order-service/actuator/**")
-                        .and().method("GET", "POST")
+
+                // Swagger UI
+                .route(r -> r.path("/swagger-ui/**")
                         .filters(f -> f
-                                .removeRequestHeader("Cookie")
-                                .rewritePath("/order-service/(?<segment>.*)", "/${segment}"))
-                        .uri("http://localhost:8082"))
-                
-                // Order Service
-                .route(r -> r.path("/order-service/**")
-                        .uri("http://localhost:8082"))
-                
-                // Catalog Service - Actuator
-                .route(r -> r.path("/catalog-service/actuator/**")
-                        .and().method("GET", "POST")
+                                .addRequestHeader("swagger-request", "swagger-request-header")
+                                .addResponseHeader("swagger-response", "swagger-response-header"))
+                        .uri("http://localhost:8081"))
+
+                // API Documentation
+                .route(r -> r.path("/api-docs/**")
                         .filters(f -> f
-                                .removeRequestHeader("Cookie")
-                                .rewritePath("/catalog-service/(?<segment>.*)", "/${segment}"))
-                        .uri("http://localhost:8083"))
-                
-                // Catalog Service
-                .route(r -> r.path("/catalog-service/**")
-                        .uri("http://localhost:8083"))
-                
+                                .addRequestHeader("api-docs-request", "api-docs-request-header")
+                                .addResponseHeader("api-docs-response", "api-docs-response-header"))
+                        .uri("http://localhost:8081"))
+
                 .build();
     }
 }

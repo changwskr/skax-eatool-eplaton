@@ -1,0 +1,94 @@
+# Java 명명 규칙
+
+## 컴포넌트별 명명 규칙
+
+### 컨트롤러
+- **PC (Presentation Controller)**: `XXXPC` - 화면 컨트롤러
+  ```java
+  @Controller
+  public class UserManagementPC {
+      // 사용자 관리 화면 컨트롤러
+  }
+  ```
+
+- **DC (Data Controller)**: `XXXDC` - API 컨트롤러
+  ```java
+  @RestController
+  public class UserApiDC {
+      // 사용자 API 컨트롤러
+  }
+  ```
+
+### 데이터 전송 객체
+- **DTO**: `XXXDto` - 데이터 전송 객체
+  ```java
+  public class UserDto {
+      private Long id;
+      private String name;
+      private String email;
+      // getter, setter, builder
+  }
+  ```
+
+### 데이터 액세스
+- **Mapper**: `XXXMapper` - MyBatis 매퍼
+  ```java
+  @Mapper
+  public interface UserMapper {
+      List<User> selectAllUsers();
+      User selectUserById(Long id);
+      int insertUser(User user);
+      int updateUser(User user);
+      int deleteUser(Long id);
+  }
+  ```
+
+### 비즈니스 로직
+- **Service**: `XXXService` / `XXXServiceImpl` - 비즈니스 로직
+  ```java
+  public interface UserService {
+      UserDto createUser(CreateUserRequest request);
+  }
+  
+  @Service
+  public class UserServiceImpl implements UserService {
+      // 구현 로직
+  }
+  ```
+
+### 엔티티 및 유틸리티
+- **Entity**: `XXX` - 엔티티 클래스 (명사형, 단수형)
+  ```java
+  public class User { }
+  public class Account { }
+  ```
+
+- **Exception**: `XXXException` - 예외 클래스
+  ```java
+  public class UserNotFoundException extends BusinessException { }
+  ```
+
+- **Util**: `XXXUtil` - 유틸리티 클래스
+  ```java
+  public class DateUtil { }
+  ```
+
+## 패키지 구조
+```
+com.skax.eatool.{module}/
+├── config/           # 설정 클래스
+├── web/             # 웹 레이어
+│   ├── controller/  # 컨트롤러
+│   └── dto/         # DTO
+├── service/         # 서비스 레이어
+│   └── impl/        # 서비스 구현체
+├── repository/      # 데이터 액세스 레이어
+│   └── mapper/      # MyBatis 매퍼
+├── entity/          # 엔티티
+├── exception/       # 예외 클래스
+└── util/            # 유틸리티
+```
+description:
+globs:
+alwaysApply: false
+---

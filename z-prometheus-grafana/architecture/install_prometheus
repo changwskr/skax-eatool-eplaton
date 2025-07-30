@@ -1,0 +1,32 @@
+
+Prometheus 다운로드
+-----------------
+- https://prometheus.io/download/
+설치한다.
+
+환경파일을 작업한다.prometheus.yml
+-------------------------------
+- job_name: 'apigateway-service'
+    scrape_interval: 15s
+    metrics_path: '/actuator/prometheus'    
+    static_configs:
+      - targets: ['127.0.0.1:8000']
+            
+  - job_name: 'user-service'
+    scrape_interval: 15s
+    metrics_path: '/user-service/actuator/prometheus'    
+    static_configs:
+      - targets: ['127.0.0.1:8000']
+
+  - job_name: 'order-service'
+    scrape_interval: 15s
+    metrics_path: '/order-service/actuator/prometheus'    
+    static_configs:
+      - targets: ['127.0.0.1:8000']
+
+  - job_name: 'catalog-service'
+    scrape_interval: 15s
+    metrics_path: '/catalog-service/actuator/prometheus'    
+    static_configs:
+      - targets: ['127.0.0.1:8000']
+            

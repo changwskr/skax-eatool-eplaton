@@ -1,0 +1,285 @@
+# 🎯 Spring Boot 패턴 가이드 - Few-shot Learning
+
+## 📚 학습 예시 (Learning Examples)
+
+### 1. 컨트롤러 패턴 학습
+
+#### ✅ 올바른 예시 (CORRECT)
+```java
+@RestController
+@RequestMapping("/api/users")
+@Slf4j
+public class UserApiDC {
+    
+    private final UserService userService;
+    
+    public UserApiDC(UserService userService) {
+        this.userService = userService;
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+        log.info("사용자 조회 요청: id={}", id);
+        UserDto user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+    
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody CreateUserRequest request) {
+        log.info("사용자 생성 요청: email={}", request.getEmail());
+        UserDto createdUser = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
+}
+```
+
+#### ❌ 잘못된 예시 (INCORRECT)
+```java
+// 잘못된 예시 - 절대 하지 말 것
+@Controller
+public class UserController {  // DC 접미사 누락
+    
+    @Autowired  // 필드 주입 사용
+    private UserService userService;
+    
+    @GetMapping("/users/{id}")
+    public UserDto getUser(@PathVariable Long id) {  // ResponseEntity 없음
+        return userService.getUserById(id);
+    }
+    
+    @PostMapping("/users")
+    public void createUser(@RequestBody CreateUserRequest request) {  // 응답 없음
+        userService.createUser(request);
+    }
+}
+```
+
+### 2. 서비스 패턴 학습
+
+#### ✅ 올바른 예시 (CORRECT)
+```java
+@Service
+@Transactional
+@Slf4j
+public class UserServiceImpl implements UserService {
+    
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+    
+    @Override
+    public UserDto createUser(CreateUserRequest request) {
+        log.info("사용자 생성 시작: email={}", request.getEmail());
+        
+        try {
+            // 중복 검사
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new DuplicateEmailException("이미 등록된 이메일입니다.");
+            }
+            
+            // 비밀번호 암호화
+            String encodedPassword = passwordEncoder.encode(request.getPassword());
+            
+            // 엔티티 생성
+            User user = User.builder()
+                .email(request.getEmail())
+                .password(encodedPassword)
+                .name(request.getName())
+                .role(Role.USER)
+                .build();
+            
+            // 저장
+            User savedUser = userRepository.save(user);
+            
+            log.info("사용자 생성 완료: userId={}", savedUser.getId());
+            return UserDto.from(savedUser);
+            
+        } catch (Exception e) {
+            log.error("사용자 생성 실패: email={}, error={}", 
+                     request.getEmail(), e.getMessage(), e);
+            throw e;
+        }
+    }
+}
+```
+
+#### ❌ 잘못된 예시 (INCORRECT)
+```java
+// 잘못된 예시 - 절대 하지 말 것
+public class UserService {  // @Service 어노테이션 누락
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    public UserDto createUser(CreateUserRequest request) {  // @Transactional 누락
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());  // 암호화 없음
+        userRepository.save(user);
+        return new UserDto();  // 매핑 없음
+    }
+}
+```
+
+### 3. DTO 패턴 학습
+
+#### ✅ 올바른 예시 (CORRECT)
+```java
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CreateUserRequest {
+    
+    @NotBlank(message = "이메일은 필수입니다")
+    @Email(message = "올바른 이메일 형식이 아닙니다")
+    private String email;
+    
+    @NotBlank(message = "비밀번호는 필수입니다")
+    @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다")
+    private String password;
+    
+    @NotBlank(message = "이름은 필수입니다")
+    private String name;
+}
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class UserDto {
+    private Long id;
+    private String email;
+    private String name;
+    private String role;
+    private LocalDateTime createdAt;
+    
+    public static UserDto from(User user) {
+        return UserDto.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .name(user.getName())
+            .role(user.getRole().name())
+            .createdAt(user.getCreatedAt())
+            .build();
+    }
+}
+```
+
+#### ❌ 잘못된 예시 (INCORRECT)
+```java
+// 잘못된 예시 - 절대 하지 말 것
+public class CreateUser {  // Request 접미사 누락, 검증 없음
+    private String email;
+    private String password;
+    private String name;
+    // getter/setter 없음
+}
+
+public class User {  // Dto 접미사 누락
+    private Long id;
+    private String email;
+    // 매핑 메서드 없음
+}
+```
+
+### 4. 예외 처리 패턴 학습
+
+#### ✅ 올바른 예시 (CORRECT)
+```java
+public abstract class BusinessException extends RuntimeException {
+    private final String errorCode;
+    
+    protected BusinessException(String message, String errorCode) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+    
+    public String getErrorCode() {
+        return errorCode;
+    }
+}
+
+public class UserNotFoundException extends BusinessException {
+    public UserNotFoundException(String message) {
+        super(message, "USER_NOT_FOUND");
+    }
+}
+
+public class DuplicateEmailException extends BusinessException {
+    public DuplicateEmailException(String message) {
+        super(message, "DUPLICATE_EMAIL");
+    }
+}
+
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
+        log.warn("사용자를 찾을 수 없음: {}", e.getMessage());
+        
+        ErrorResponse error = ErrorResponse.builder()
+            .errorCode(e.getErrorCode())
+            .message(e.getMessage())
+            .timestamp(LocalDateTime.now())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+}
+```
+
+#### ❌ 잘못된 예시 (INCORRECT)
+```java
+// 잘못된 예시 - 절대 하지 말 것
+public class UserException extends Exception {  // RuntimeException 사용 안 함
+    // 에러 코드 없음
+}
+
+// 예외 처리 없이 null 반환
+public UserDto getUserById(Long id) {
+    Optional<User> user = userRepository.findById(id);
+    return user.orElse(null);  // 예외 처리 없음
+}
+```
+
+## 🎯 핵심 패턴 요약
+
+### 반드시 지켜야 할 패턴 (MUST FOLLOW)
+1. **컨트롤러**: `@RestController` + `ResponseEntity` 사용
+2. **서비스**: `@Service` + `@Transactional` + 생성자 주입
+3. **DTO**: `@Valid` 검증 + `from()` 매핑 메서드
+4. **예외**: 구체적 예외 클래스 + 글로벌 핸들러
+5. **로깅**: `@Slf4j` + 적절한 로그 레벨
+
+### 절대 하지 말아야 할 패턴 (NEVER DO)
+1. **컨트롤러**: 필드 주입 + `ResponseEntity` 생략
+2. **서비스**: 어노테이션 생략 + 예외 처리 없음
+3. **DTO**: 검증 없음 + 매핑 메서드 없음
+4. **예외**: `RuntimeException`만 사용 + 핸들러 없음
+5. **로깅**: `System.out.println()` 사용
+
+## 🔥 우선순위 체크리스트
+
+코드 생성 시 반드시 확인:
+
+- [ ] 적절한 Spring Boot 어노테이션 사용?
+- [ ] 생성자 주입 사용?
+- [ ] ResponseEntity로 응답 래핑?
+- [ ] @Valid로 입력 검증?
+- [ ] 구체적 예외 클래스 사용?
+- [ ] SLF4J 로깅 사용?
+- [ ] DTO 매핑 메서드 구현?
+- [ ] 트랜잭션 어노테이션 사용?
+description:
+globs:
+alwaysApply: false
+---

@@ -1,0 +1,317 @@
+# Spring Boot 패턴 및 모범 사례
+
+## 컨트롤러 패턴
+
+### REST API 컨트롤러
+```java
+@RestController
+@RequestMapping("/api/users")
+@Slf4j
+public class UserController {
+    
+    private final UserService userService;
+    
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+        log.info("사용자 조회 요청: {}", id);
+        UserDto user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+    
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody CreateUserRequest request) {
+        log.info("사용자 생성 요청: email={}", request.getEmail());
+        UserDto createdUser = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
+}
+```
+
+### 화면 컨트롤러
+```java
+@Controller
+@RequestMapping("/users")
+public class UserManagementPC {
+    
+    private final UserService userService;
+    
+    public UserManagementPC(UserService userService) {
+        this.userService = userService;
+    }
+    
+    @GetMapping("/list")
+    public String listUsers(Model model) {
+        List<UserDto> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "user/list";
+    }
+}
+```
+
+## 서비스 패턴
+
+### 서비스 인터페이스
+```java
+public interface UserService {
+    UserDto createUser(CreateUserRequest request);
+    UserDto getUserById(Long id);
+    List<UserDto> getAllUsers();
+    UserDto updateUser(Long id, UpdateUserRequest request);
+    void deleteUser(Long id);
+}
+```
+
+### 서비스 구현체
+```java
+@Service
+@Transactional
+@Slf4j
+public class UserServiceImpl implements UserService {
+    
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+    
+    @Override
+    public UserDto createUser(CreateUserRequest request) {
+        log.info("사용자 생성 시작: email={}", request.getEmail());
+        
+        // 중복 검사
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new DuplicateEmailException("이미 등록된 이메일입니다.");
+        }
+        
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        
+        // 엔티티 생성
+        User user = User.builder()
+            .email(request.getEmail())
+            .password(encodedPassword)
+            .name(request.getName())
+            .role(Role.USER)
+            .build();
+        
+        // 저장
+        User savedUser = userRepository.save(user);
+        
+        log.info("사용자 생성 완료: userId={}", savedUser.getId());
+        return UserDto.from(savedUser);
+    }
+}
+```
+
+## 설정 클래스 패턴
+
+### 데이터베이스 설정
+```java
+@Configuration
+@EnableTransactionManagement
+public class DatabaseConfig {
+    
+    @Bean
+    @Primary
+    public DataSource dataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:h2:mem:testdb");
+        config.setDriverClassName("org.h2.Driver");
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(5);
+        return new HikariDataSource(config);
+    }
+    
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+        SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+        factoryBean.setDataSource(dataSource);
+        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
+            .getResources("classpath:mapper/*.xml"));
+        return factoryBean.getObject();
+    }
+}
+```
+
+### 보안 설정
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .csrf().disable()
+            .authorizeRequests()
+                .antMatchers("/api/public/**").permitAll()
+                .antMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            .and()
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+```
+
+## 예외 처리 패턴
+
+### 글로벌 예외 핸들러
+```java
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
+        log.warn("사용자를 찾을 수 없음: {}", e.getMessage());
+        
+        ErrorResponse error = ErrorResponse.builder()
+            .errorCode(e.getErrorCode())
+            .message(e.getMessage())
+            .timestamp(LocalDateTime.now())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+    
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(ValidationException e) {
+        log.warn("유효성 검사 실패: {}", e.getMessage());
+        
+        ErrorResponse error = ErrorResponse.builder()
+            .errorCode("VALIDATION_ERROR")
+            .message(e.getMessage())
+            .timestamp(LocalDateTime.now())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+}
+```
+
+## DTO 패턴
+
+### 요청 DTO
+```java
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CreateUserRequest {
+    
+    @NotBlank(message = "이메일은 필수입니다")
+    @Email(message = "올바른 이메일 형식이 아닙니다")
+    private String email;
+    
+    @NotBlank(message = "비밀번호는 필수입니다")
+    @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다")
+    private String password;
+    
+    @NotBlank(message = "이름은 필수입니다")
+    private String name;
+}
+```
+
+### 응답 DTO
+```java
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class UserDto {
+    private Long id;
+    private String email;
+    private String name;
+    private String role;
+    private LocalDateTime createdAt;
+    
+    public static UserDto from(User user) {
+        return UserDto.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .name(user.getName())
+            .role(user.getRole().name())
+            .createdAt(user.getCreatedAt())
+            .build();
+    }
+}
+```
+
+## MyBatis 매퍼 패턴
+
+### 매퍼 인터페이스
+```java
+@Mapper
+public interface UserMapper {
+    
+    List<User> selectAllUsers();
+    
+    User selectUserById(Long id);
+    
+    User selectUserByEmail(String email);
+    
+    int insertUser(User user);
+    
+    int updateUser(User user);
+    
+    int deleteUser(Long id);
+    
+    boolean existsByEmail(String email);
+}
+```
+
+### XML 매퍼
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skax.eatool.mbc.repository.mapper.UserMapper">
+    
+    <resultMap id="userResultMap" type="com.skax.eatool.mbc.entity.User">
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
+        <result property="name" column="name"/>
+        <result property="role" column="role"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <select id="selectAllUsers" resultMap="userResultMap">
+        SELECT id, email, name, role, created_at
+        FROM users
+        ORDER BY created_at DESC
+    </select>
+    
+    <select id="selectUserById" parameterType="long" resultMap="userResultMap">
+        SELECT id, email, name, role, created_at
+        FROM users
+        WHERE id = #{id}
+    </select>
+    
+    <insert id="insertUser" parameterType="com.skax.eatool.mbc.entity.User" 
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (email, password, name, role, created_at)
+        VALUES (#{email}, #{password}, #{name}, #{role}, #{createdAt})
+    </insert>
+    
+</mapper>
+```
+description:
+globs:
+alwaysApply: false
+---

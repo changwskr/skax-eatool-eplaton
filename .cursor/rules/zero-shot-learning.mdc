@@ -1,0 +1,285 @@
+# 🚀 Zero-Shot Learning - 새로운 상황 대응 가이드
+
+## 🎯 새로운 기능 구현 시 접근 방법
+
+### 1. 🧠 패턴 인식 (Pattern Recognition)
+**새로운 요구사항이 주어졌을 때:**
+
+#### 사고 과정:
+```
+1. 이 요구사항은 어떤 패턴과 유사한가?
+2. 기존 코드베이스에서 참고할 수 있는 예시가 있는가?
+3. 어떤 컴포넌트들이 필요한가?
+4. 어떤 명명 규칙을 적용해야 하는가?
+```
+
+#### 반드시 해야 할 것:
+- 기존 패턴을 먼저 분석
+- 유사한 기능의 기존 코드 참고
+- 컴포넌트별 명명 규칙 적용
+- 패키지 구조 규칙 준수
+
+#### 절대 하지 말 것:
+- 기존 패턴 무시하고 새로 시작
+- 명명 규칙 위반
+- 패키지 구조 위반
+
+### 2. 🔍 컨텍스트 분석 (Context Analysis)
+**새로운 기능의 컨텍스트를 파악할 때:**
+
+#### 사고 과정:
+```
+1. 이 기능은 어떤 모듈에 속하는가?
+2. 어떤 레이어에 배치해야 하는가?
+3. 어떤 의존성이 필요한가?
+4. 어떤 예외 상황이 발생할 수 있는가?
+```
+
+#### 반드시 해야 할 것:
+- 모듈별 역할 이해
+- 레이어별 책임 분리
+- 의존성 주입 사용
+- 예외 상황 고려
+
+#### 절대 하지 말 것:
+- 모듈 역할 무시
+- 레이어 책임 혼재
+- 필드 주입 사용
+- 예외 처리 무시
+
+### 3. 🎨 아키텍처 적용 (Architecture Application)
+**새로운 기능의 아키텍처를 설계할 때:**
+
+#### 사고 과정:
+```
+1. 3-Tier 아키텍처에 어떻게 맞출 것인가?
+2. EPlaton 프레임워크 패턴을 어떻게 적용할 것인가?
+3. Spring Boot 패턴을 어떻게 적용할 것인가?
+4. 확장성은 어떻게 고려할 것인가?
+```
+
+#### 반드시 해야 할 것:
+- 3-Tier 아키텍처 준수
+- EPlaton 프레임워크 패턴 적용
+- Spring Boot 베스트 프랙티스 적용
+- 확장 가능한 구조 설계
+
+#### 절대 하지 말 것:
+- 아키텍처 원칙 위반
+- 프레임워크 패턴 무시
+- 확장 불가능한 구조 설계
+
+## 🔄 새로운 상황별 대응 전략
+
+### 1. 🆕 새로운 API 엔드포인트 생성
+**상황**: 새로운 REST API 엔드포인트가 필요할 때
+
+#### Zero-Shot 접근 방법:
+```java
+// 1단계: 패턴 인식 - 기존 API 구조 분석
+@RestController
+@RequestMapping("/api/{domain}")
+@Slf4j
+public class {Domain}ApiDC {
+    
+    private final {Domain}Service {domain}Service;
+    
+    public {Domain}ApiDC({Domain}Service {domain}Service) {
+        this.{domain}Service = {domain}Service;
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<{Domain}Dto> get{Domain}(@PathVariable Long id) {
+        log.info("{도메인} 조회 요청: id={}", id);
+        {Domain}Dto {domain} = {domain}Service.get{Domain}ById(id);
+        return ResponseEntity.ok({domain});
+    }
+}
+```
+
+#### 반드시 지켜야 할 규칙:
+- DC 접미사 사용
+- ResponseEntity로 응답 래핑
+- 로깅 구현
+- 생성자 주입 사용
+
+#### 절대 하지 말 것:
+- DC 접미사 생략
+- ResponseEntity 생략
+- 로깅 무시
+- 필드 주입 사용
+
+### 2. 🆕 새로운 서비스 로직 생성
+**상황**: 새로운 비즈니스 로직이 필요할 때
+
+#### Zero-Shot 접근 방법:
+```java
+// 1단계: 패턴 인식 - 기존 서비스 구조 분석
+@Service
+@Transactional
+@Slf4j
+public class {Domain}ServiceImpl implements {Domain}Service {
+    
+    private final {Domain}Repository {domain}Repository;
+    
+    public {Domain}ServiceImpl({Domain}Repository {domain}Repository) {
+        this.{domain}Repository = {domain}Repository;
+    }
+    
+    @Override
+    public {Domain}Dto create{Domain}(Create{Domain}Request request) {
+        log.info("{도메인} 생성 시작: {}", request.getKeyField());
+        
+        try {
+            // 비즈니스 로직 구현
+            {Domain} {domain} = mapTo{Domain}(request);
+            {Domain} saved{Domain} = {domain}Repository.save({domain});
+            
+            log.info("{도메인} 생성 완료: id={}", saved{Domain}.getId());
+            return {Domain}Dto.from(saved{Domain});
+            
+        } catch (Exception e) {
+            log.error("{도메인} 생성 실패: {}, error={}", 
+                     request.getKeyField(), e.getMessage(), e);
+            throw e;
+        }
+    }
+}
+```
+
+#### 반드시 지켜야 할 규칙:
+- @Service 어노테이션 사용
+- @Transactional 어노테이션 사용
+- @Slf4j 어노테이션 사용
+- 생성자 주입 사용
+- 예외 처리 구현
+- 로깅 구현
+
+#### 절대 하지 말 것:
+- 어노테이션 생략
+- 필드 주입 사용
+- 예외 처리 무시
+- 로깅 무시
+
+### 3. 🆕 새로운 DTO 생성
+**상황**: 새로운 데이터 전송 객체가 필요할 때
+
+#### Zero-Shot 접근 방법:
+```java
+// 1단계: 패턴 인식 - 기존 DTO 구조 분석
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Create{Domain}Request {
+    
+    @NotBlank(message = "{필드명}은 필수입니다")
+    private String {fieldName};
+    
+    // 추가 필드들...
+}
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class {Domain}Dto {
+    private Long id;
+    private String {fieldName};
+    private LocalDateTime createdAt;
+    
+    public static {Domain}Dto from({Domain} {domain}) {
+        return {Domain}Dto.builder()
+            .id({domain}.getId())
+            .{fieldName}({domain}.get{FieldName}())
+            .createdAt({domain}.getCreatedAt())
+            .build();
+    }
+}
+```
+
+#### 반드시 지켜야 할 규칙:
+- Dto 접미사 사용
+- @Valid 검증 어노테이션 사용
+- from() 매핑 메서드 구현
+- Lombok 어노테이션 사용
+
+#### 절대 하지 말 것:
+- Dto 접미사 생략
+- 검증 어노테이션 생략
+- 매핑 메서드 생략
+
+### 4. 🆕 새로운 예외 클래스 생성
+**상황**: 새로운 예외 상황이 필요할 때
+
+#### Zero-Shot 접근 방법:
+```java
+// 1단계: 패턴 인식 - 기존 예외 구조 분석
+public class {Domain}NotFoundException extends BusinessException {
+    public {Domain}NotFoundException(String message) {
+        super(message, "{DOMAIN}_NOT_FOUND");
+    }
+}
+
+public class Duplicate{Domain}Exception extends BusinessException {
+    public Duplicate{Domain}Exception(String message) {
+        super(message, "DUPLICATE_{DOMAIN}");
+    }
+}
+```
+
+#### 반드시 지켜야 할 규칙:
+- BusinessException 상속
+- 에러 코드 정의
+- 한글 메시지 사용
+
+#### 절대 하지 말 것:
+- RuntimeException 직접 사용
+- 에러 코드 생략
+- 영어 메시지만 사용
+
+## 🎯 Zero-Shot Learning 체크리스트
+
+### 새로운 기능 구현 시 체크리스트:
+- [ ] 기존 패턴을 분석했는가?
+- [ ] 유사한 기능의 코드를 참고했는가?
+- [ ] 컴포넌트별 명명 규칙을 적용했는가?
+- [ ] 패키지 구조 규칙을 준수했는가?
+- [ ] 적절한 어노테이션을 사용했는가?
+- [ ] 생성자 주입을 사용했는가?
+- [ ] 예외 처리를 구현했는가?
+- [ ] 로깅을 구현했는가?
+
+### 새로운 상황 대응 체크리스트:
+- [ ] 컨텍스트를 정확히 파악했는가?
+- [ ] 아키텍처 원칙을 준수했는가?
+- [ ] 확장 가능한 구조로 설계했는가?
+- [ ] 테스트 가능한 구조로 설계했는가?
+
+## 🚨 Zero-Shot Learning 주의사항
+
+### 절대 하지 말 것 (NEVER DO):
+1. **패턴 무시**: 기존 패턴을 분석하지 않고 새로 시작
+2. **명명 규칙 위반**: 컴포넌트별 명명 규칙 무시
+3. **패키지 구조 위반**: 올바른 패키지 구조 무시
+4. **어노테이션 생략**: 필요한 어노테이션 생략
+5. **예외 처리 무시**: 예외 상황 고려하지 않음
+
+### 반드시 해야 할 것 (MUST DO):
+1. **패턴 분석**: 기존 패턴을 먼저 분석
+2. **명명 규칙 준수**: 컴포넌트별 명명 규칙 엄격 준수
+3. **패키지 구조 준수**: 올바른 패키지 구조 사용
+4. **어노테이션 사용**: 적절한 어노테이션 사용
+5. **예외 처리**: 모든 예외 상황 고려
+
+## 📚 Zero-Shot Learning 참고 문서
+- [핵심 규칙](mdc:.cursor/rules/critical-rules.mdc)
+- [Spring Boot 패턴](mdc:.cursor/rules/spring-boot-patterns-optimized.mdc)
+- [명명 규칙](mdc:.cursor/rules/naming-conventions.mdc)
+- [Chain of Thought](mdc:.cursor/rules/chain-of-thought.mdc)
+description:
+globs:
+alwaysApply: false
+---

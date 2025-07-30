@@ -1,0 +1,119 @@
+# Java 코딩 표준
+
+## 코드 스타일 (Google Java Style Guide 준수)
+
+### 클래스 작성 규칙
+```java
+/**
+ * 클래스 설명
+ * 
+ * @author 작성자
+ * @version 1.0
+ * @since 2024-01-01
+ */
+@Service
+@Transactional
+@Slf4j
+public class UserService {
+    
+    // 상수는 대문자와 언더스코어
+    private static final String DEFAULT_ROLE = "USER";
+    
+    // 필드는 private final 우선
+    private final UserRepository userRepository;
+    
+    // 생성자 주입 권장
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+    
+    // 메서드는 public, protected, private 순서
+    public UserDto createUser(CreateUserRequest request) {
+        // 구현 로직
+    }
+}
+```
+
+### 들여쓰기 및 포맷팅
+- **들여쓰기**: 4칸 스페이스
+- **최대 줄 길이**: 120자
+- **한글 주석** 허용 및 권장
+- **Javadoc** 적극 활용
+
+### 로깅 가이드
+```java
+@Slf4j
+public class UserService {
+    
+    public UserDto createUser(CreateUserRequest request) {
+        log.info("사용자 생성 시작: email={}", request.getEmail());
+        
+        try {
+            // 비즈니스 로직
+            log.info("사용자 생성 완료: userId={}", savedUser.getId());
+            return UserDto.from(savedUser);
+        } catch (Exception e) {
+            log.error("사용자 생성 실패: email={}, error={}", 
+                     request.getEmail(), e.getMessage(), e);
+            throw e;
+        }
+    }
+}
+```
+
+### 예외 처리
+```java
+// 커스텀 예외 클래스
+public abstract class BusinessException extends RuntimeException {
+    private final String errorCode;
+    
+    protected BusinessException(String message, String errorCode) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+}
+
+// 구체적인 예외
+public class UserNotFoundException extends BusinessException {
+    public UserNotFoundException(String message) {
+        super(message, "USER_NOT_FOUND");
+    }
+}
+```
+
+### 메서드 길이 및 복잡도
+- **메서드 최대 길이**: 150줄
+- **매개변수 최대 개수**: 7개
+- **복잡한 로직은 별도 메서드로 분리**
+
+### 테스트 코드 작성
+```java
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+    
+    @Mock
+    private UserRepository userRepository;
+    
+    @InjectMocks
+    private UserService userService;
+    
+    @Test
+    @DisplayName("사용자 생성 성공")
+    void createUser_Success() {
+        // Given
+        CreateUserRequest request = CreateUserRequest.builder()
+            .email("test@example.com")
+            .build();
+        
+        // When
+        UserDto result = userService.createUser(request);
+        
+        // Then
+        assertThat(result.getEmail()).isEqualTo("test@example.com");
+    }
+}
+```
+description:
+globs:
+alwaysApply: false
+---

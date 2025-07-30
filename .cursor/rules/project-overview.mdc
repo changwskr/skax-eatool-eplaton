@@ -1,0 +1,35 @@
+# SKAX EA Tool Eplaton 프로젝트 개요
+
+## 프로젝트 정보
+- **프로젝트명**: SKAX EA Tool Eplaton
+- **패키지명**: `com.skax.eatool`
+- **기술 스택**: Spring Boot 2.7.18, Java 11, Maven
+- **아키텍처**: 멀티모듈 레이어드 아키텍처
+
+## 주요 모듈 구조
+- **ksa-lib**: KSA 라이브러리 모듈
+- **ksa-java**: KSA Java 구현 모듈
+- **kji-lib**: KJI 라이브러리 모듈
+- **kji-java**: KJI Java 구현 모듈
+- **mbc01-lib**: MBC01 외부 JAR 공유 모듈
+- **mbc01-java**: MBC01 메인 애플리케이션 모듈
+- **mbc-java**: MBC 메인 애플리케이션 모듈
+- **mba-java**: MBA 애플리케이션 모듈
+- **spring-cloud-apigateway-service**: API 게이트웨이 서비스
+
+## 핵심 설정 파일
+- [pom.xml](mdc:pom.xml) - 메인 Maven 설정
+- [checkstyle.xml](mdc:checkstyle.xml) - 코드 스타일 검사 설정
+- [CURSOR_RULES_README.md](mdc:CURSOR_RULES_README.md) - 커서룰 가이드
+- [PROJECT_STRUCTURE.md](mdc:PROJECT_STRUCTURE.md) - 프로젝트 구조 문서
+- [zDoc/mbc-java-guide.md](mdc:zDoc/mbc-java-guide.md) - 개발 가이드
+
+## 개발 환경
+- **Java 버전**: 11
+- **Spring Boot**: 2.7.18
+- **인코딩**: UTF-8
+- **코드 스타일**: Google Java Style Guide
+description:
+globs:
+alwaysApply: false
+---
