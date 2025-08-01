@@ -1,4 +1,4 @@
-package com.skax.eatool.mbb.workflow.business.helper;
+package com.skax.eatool.mbb.web.controller.apitestcontroller.helper;
 
 import com.skax.eatool.mbb.workflow.transfer.WorkflowRequestDto;
 import com.skax.eatool.mbb.workflow.transfer.WorkflowResponseDto;

@@ -2,7 +2,7 @@ package com.skax.eatool.mbb.workflow.business.as;
 
 import com.skax.eatool.mbb.workflow.business.dc.dto.WorkflowDomainDto;
 import com.skax.eatool.mbb.workflow.business.pc.WorkflowPC;
-import com.skax.eatool.mbb.workflow.business.helper.WorkflowHelper;
+import com.skax.eatool.mbb.web.controller.apitestcontroller.helper.WorkflowHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

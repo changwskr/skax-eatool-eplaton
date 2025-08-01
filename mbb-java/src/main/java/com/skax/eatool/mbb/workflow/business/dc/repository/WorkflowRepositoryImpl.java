@@ -1,7 +1,7 @@
 package com.skax.eatool.mbb.workflow.business.dc.repository;
 
 import com.skax.eatool.mbb.workflow.business.dc.dto.WorkflowDomainDto;
-import com.skax.eatool.mbb.workflow.business.helper.WorkflowHelper;
+import com.skax.eatool.mbb.web.controller.apitestcontroller.helper.WorkflowHelper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;

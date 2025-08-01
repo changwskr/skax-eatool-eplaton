@@ -32,7 +32,8 @@ public class DCEntityGeneration {
      */
     public List<String> getAvailableTables() {
         String className = this.getClass().getSimpleName();
-        logger.info(className, "테이블 목록 조회 시작");
+        String methodName = "getAvailableTables";
+        logger.info(className, "[" + methodName + "] 테이블 목록 조회 DC 시작");
         
         List<String> tables = new ArrayList<>();
         
@@ -44,11 +45,11 @@ public class DCEntityGeneration {
                 tables.add(rs.getString("TABLE_NAME"));
             }
             
-            logger.info(className, "테이블 목록 조회 완료: " + tables.size() + "개 테이블");
+            logger.info(className, "[" + methodName + "] 테이블 목록 조회 DC 완료: " + tables.size() + "개 테이블");
             return tables;
             
         } catch (Exception e) {
-            logger.error(className, "테이블 목록 조회 중 오류 발생: " + e.getMessage(), e);
+            logger.error(className, "[" + methodName + "] 테이블 목록 조회 DC 중 오류 발생: " + e.getMessage(), e);
             return new ArrayList<>();
         }
     }
@@ -61,7 +62,8 @@ public class DCEntityGeneration {
      */
     public List<TableColumnInfoDDTO> getTableColumns(String tableName) {
         String className = this.getClass().getSimpleName();
-        logger.info(className, "테이블 컬럼 정보 조회 시작: " + tableName);
+        String methodName = "getTableColumns";
+        logger.info(className, "[" + methodName + "] 테이블 컬럼 정보 조회 DC 시작: " + tableName);
         
         List<TableColumnInfoDDTO> columns = new ArrayList<>();
         
@@ -85,11 +87,11 @@ public class DCEntityGeneration {
                 columns.add(column);
             }
             
-            logger.info(className, "테이블 컬럼 정보 조회 완료: " + tableName + " (" + columns.size() + "개 컬럼)");
+            logger.info(className, "[" + methodName + "] 테이블 컬럼 정보 조회 DC 완료: " + tableName + " (" + columns.size() + "개 컬럼)");
             return columns;
             
         } catch (Exception e) {
-            logger.error(className, "테이블 컬럼 정보 조회 중 오류 발생: " + e.getMessage(), e);
+            logger.error(className, "[" + methodName + "] 테이블 컬럼 정보 조회 DC 중 오류 발생: " + e.getMessage(), e);
             return new ArrayList<>();
         }
     }
@@ -98,37 +100,58 @@ public class DCEntityGeneration {
      * 테이블 정보를 조회하여 Entity를 생성합니다.
      *
      * @param tableName 테이블명
+     * @param packageName 패키지명
      * @return Entity 생성 결과
      */
-    public EntityGenerationDDTO generateEntityFromTable(String tableName) {
+    public EntityGenerationDDTO generateEntityFromTable(String tableName, String packageName) {
         String className = this.getClass().getSimpleName();
-        logger.info(className, "Entity 생성 시작: " + tableName);
+        String methodName = "generateEntityFromTable";
+        logger.info(className, "[" + methodName + "] Entity 생성 DC 시작: " + tableName);
         
         try {
-            // 테이블 정보 조회
-            List<TableColumnInfoDDTO> columns = getTableColumns(tableName);
-            
-            if (columns.isEmpty()) {
-                logger.error(className, "테이블 정보를 찾을 수 없습니다: " + tableName);
-                return createErrorResult("테이블 정보를 찾을 수 없습니다: " + tableName);
+            // 입력값 검증
+            if (tableName == null || tableName.trim().isEmpty()) {
+                logger.error(className, "[" + methodName + "] 테이블명이 비어있습니다.");
+                return createErrorResult("테이블명이 비어있습니다.");
             }
             
-            // Entity 클래스 생성
-            String entityCode = generateEntityCode(tableName, columns);
+            // 패키지명이 없으면 기본값 설정
+            if (packageName == null || packageName.trim().isEmpty()) {
+                packageName = "com.skax.eatool.entity";
+            }
             
+            // 테이블 컬럼 정보 조회
+            List<TableColumnInfoDDTO> columns = getTableColumns(tableName.trim());
+            
+            if (columns.isEmpty()) {
+                logger.error(className, "[" + methodName + "] 테이블 컬럼 정보가 없습니다: " + tableName);
+                return createErrorResult("테이블 컬럼 정보가 없습니다: " + tableName);
+            }
+            
+            // Entity 코드 생성
+            String entityCode = generateEntityCodeWithPackage(tableName, packageName, columns);
+            
+            // Entity 파일 생성
+            String classNameStr = convertToClassName(tableName);
+            String filePath = createEntityFile(packageName, classNameStr, entityCode);
+            
+            // 결과 생성
             EntityGenerationDDTO result = new EntityGenerationDDTO();
-            result.setTableName(tableName);
-            result.setColumns(columns);
-            result.setEntityCode(entityCode);
             result.setSuccess(true);
             result.setMessage("Entity 생성 성공");
+            result.setEntityCode(entityCode);
+            result.setTableName(tableName);
+            result.setColumns(columns);
+            result.setClassName(classNameStr);
+            result.setPackageName(packageName);
+            result.setFilePath(filePath);
             
-            logger.info(className, "Entity 생성 완료: " + tableName);
+            logger.info(className, "[" + methodName + "] Entity 생성 DC 완료: " + tableName);
             return result;
             
         } catch (Exception e) {
-            logger.error(className, "Entity 생성 중 오류 발생: " + e.getMessage(), e);
-            return createErrorResult("Entity 생성 실패: " + e.getMessage());
+            logger.error(className, "[" + methodName + "] Entity 생성 DC 중 오류 발생: " + e.getMessage(), e);
+            return createErrorResult("Entity 생성 중 오류 발생: " + e.getMessage());
         }
     }
 
@@ -137,42 +160,54 @@ public class DCEntityGeneration {
      *
      * @param tableName 테이블명
      * @param packageName 패키지명
-     * @param columns 컬럼 정보 리스트
+     * @param columns 컬럼 정보 목록
      * @return Entity 생성 결과
      */
     public EntityGenerationDDTO generateEntityWithColumns(String tableName, String packageName, List<TableColumnInfoDDTO> columns) {
         String className = this.getClass().getSimpleName();
-        logger.info(className, "Entity 생성 시작 (컬럼 정보 포함): " + tableName);
+        String methodName = "generateEntityWithColumns";
+        logger.info(className, "[" + methodName + "] Entity 생성 DC 시작 (컬럼 정보 포함): " + tableName);
         
         try {
-            if (columns == null || columns.isEmpty()) {
-                logger.error(className, "컬럼 정보가 비어있습니다: " + tableName);
-                return createErrorResult("컬럼 정보가 비어있습니다: " + tableName);
+            // 입력값 검증
+            if (tableName == null || tableName.trim().isEmpty()) {
+                logger.error(className, "[" + methodName + "] 테이블명이 비어있습니다.");
+                return createErrorResult("테이블명이 비어있습니다.");
             }
             
-            // Entity 클래스 생성
+            if (packageName == null || packageName.trim().isEmpty()) {
+                packageName = "com.skax.eatool.entity";
+            }
+            
+            if (columns == null || columns.isEmpty()) {
+                logger.error(className, "[" + methodName + "] 컬럼 정보가 비어있습니다.");
+                return createErrorResult("컬럼 정보가 비어있습니다.");
+            }
+            
+            // Entity 코드 생성
             String entityCode = generateEntityCodeWithPackage(tableName, packageName, columns);
-            String className2 = convertToClassName(tableName);
             
-            // 파일 시스템에 실제 파일 생성
-            String filePath = createEntityFile(packageName, className2, entityCode);
+            // Entity 파일 생성
+            String classNameStr = convertToClassName(tableName);
+            String filePath = createEntityFile(packageName, classNameStr, entityCode);
             
+            // 결과 생성
             EntityGenerationDDTO result = new EntityGenerationDDTO();
-            result.setTableName(tableName);
-            result.setPackageName(packageName);
-            result.setColumns(columns);
-            result.setEntityCode(entityCode);
-            result.setClassName(className2);
-            result.setFilePath(filePath);
             result.setSuccess(true);
             result.setMessage("Entity 생성 성공");
+            result.setEntityCode(entityCode);
+            result.setTableName(tableName);
+            result.setColumns(columns);
+            result.setClassName(classNameStr);
+            result.setPackageName(packageName);
+            result.setFilePath(filePath);
             
-            logger.info(className, "Entity 생성 완료 (컬럼 정보 포함): " + tableName + " -> " + filePath);
+            logger.info(className, "[" + methodName + "] Entity 생성 DC 완료 (컬럼 정보 포함): " + tableName);
             return result;
             
         } catch (Exception e) {
-            logger.error(className, "Entity 생성 중 오류 발생: " + e.getMessage(), e);
-            return createErrorResult("Entity 생성 실패: " + e.getMessage());
+            logger.error(className, "[" + methodName + "] Entity 생성 DC 중 오류 발생: " + e.getMessage(), e);
+            return createErrorResult("Entity 생성 중 오류 발생: " + e.getMessage());
         }
     }
 
@@ -399,7 +434,8 @@ public class DCEntityGeneration {
      */
     private String createEntityFile(String packageName, String className, String entityCode) throws Exception {
         String className3 = this.getClass().getSimpleName();
-        logger.info(className3, "Entity 파일 생성 시작: " + className);
+        String methodName = "createEntityFile";
+        logger.info(className3, "[" + methodName + "] Entity 파일 생성 시작: " + className);
         
         // 프로젝트 루트 디렉토리 찾기
         String projectRoot = System.getProperty("user.dir");
@@ -409,7 +445,7 @@ public class DCEntityGeneration {
         File dir = new File(generatedDir);
         if (!dir.exists()) {
             dir.mkdirs();
-            logger.info(className3, "Entity 파일 디렉토리 생성: " + generatedDir);
+            logger.info(className3, "[" + methodName + "] Entity 파일 디렉토리 생성: " + generatedDir);
         }
         
         // 패키지 디렉토리 생성
@@ -417,7 +453,7 @@ public class DCEntityGeneration {
         File packageDir = new File(generatedDir + "/" + packagePath);
         if (!packageDir.exists()) {
             packageDir.mkdirs();
-            logger.info(className3, "패키지 디렉토리 생성: " + packageDir.getAbsolutePath());
+            logger.info(className3, "[" + methodName + "] 패키지 디렉토리 생성: " + packageDir.getAbsolutePath());
         }
         
         // 파일 생성
@@ -430,7 +466,7 @@ public class DCEntityGeneration {
         }
         
         String filePath = entityFile.getAbsolutePath();
-        logger.info(className3, "Entity 파일 생성 완료: " + filePath);
+        logger.info(className3, "[" + methodName + "] Entity 파일 생성 완료: " + filePath);
         
         return filePath;
     }

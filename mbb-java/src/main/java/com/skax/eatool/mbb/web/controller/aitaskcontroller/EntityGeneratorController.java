@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skax.eatool.ksa.logger.NewIKesaLogger;
 import com.skax.eatool.ksa.logger.NewKesaLogHelper;
-import com.skax.eatool.mbb.pc.entitypc.PCEntityGeneration;
+import com.skax.eatool.mbb.as.entityas.ASEntityGeneration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +27,7 @@ public class EntityGeneratorController {
     private final NewIKesaLogger logger = NewKesaLogHelper.getLogger(this.getClass());
     
     @Autowired
-    private PCEntityGeneration pcEntityGeneration;
+    private ASEntityGeneration asEntityGeneration;
     
     /**
      * Entity 생성기 페이지를 표시합니다.
@@ -42,22 +42,14 @@ public class EntityGeneratorController {
         
         try {
             // AS 서비스를 통해 테이블 목록 조회
-            var result = pcEntityGeneration.getAvailableTables();
+            List<String> tables = asEntityGeneration.getAvailableTables();
             
-            if (result.getValid()) {
-                @SuppressWarnings("unchecked")
-                List<String> tables = (List<String>) result.getOutputGenericDto().get("tables");
-                
-                // 테이블 목록을 JSON 문자열로 변환
-                ObjectMapper objectMapper = new ObjectMapper();
-                String tablesJson = objectMapper.writeValueAsString(tables);
-                
-                model.addAttribute("availableTables", tablesJson);
-                logger.info(className, "테이블 목록 로드 완료: " + tables.size() + "개 테이블");
-            } else {
-                logger.error(className, "테이블 목록 로드 실패: " + result.getErrorMessage());
-                model.addAttribute("availableTables", "[]");
-            }
+            // 테이블 목록을 JSON 문자열로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            String tablesJson = objectMapper.writeValueAsString(tables);
+            
+            model.addAttribute("availableTables", tablesJson);
+            logger.info(className, "테이블 목록 로드 완료: " + tables.size() + "개 테이블");
             
         } catch (Exception e) {
             logger.error(className, "테이블 목록 로드 중 오류 발생: " + e.getMessage(), e);
