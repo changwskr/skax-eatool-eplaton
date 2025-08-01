@@ -471,7 +471,7 @@
             }
         });
 
-        // 폼 데이터 제출
+        // 폼 데이터 제출 (기존 URL 사용)
         function submitFormData(form) {
             // 폼 데이터 수집
             const formData = new FormData(form);
@@ -503,7 +503,7 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...';
             submitBtn.disabled = true;
             
-            // API 호출 (기존 URL 사용)
+            // 기존 URL로 API 호출
             fetch('/mbb/table-definition/create-table', {
                 method: 'POST',
                 headers: {
@@ -529,7 +529,7 @@
             });
         }
 
-        // JSON 데이터 제출
+        // JSON 데이터 제출 (기존 URL 사용)
         function submitJsonData(data) {
             // 로딩 표시
             const submitBtn = document.querySelector('#json-tab-pane .btn-gradient');
@@ -537,7 +537,7 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...';
             submitBtn.disabled = true;
             
-            // API 호출 (기존 URL 사용)
+            // 기존 URL로 API 호출
             fetch('/mbb/table-definition/create-table', {
                 method: 'POST',
                 headers: {
