@@ -3,217 +3,462 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title}">DDL 생성 - MBB Java</title>
+    <title>DDL 생성 - MBB</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .form-section { background: #f8f9fa; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; }
-        .preview-section { background: #fff; padding: 2rem; border-radius: 10px; border: 1px solid #dee2e6; }
-        .code-preview { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 1rem; }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+        }
+        .result-card {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+        }
+        .error-card {
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+        }
+        .ddl-output {
+            font-family: 'Courier New', monospace;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/mbb/">MBB Java</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/mbb/">홈</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/mbb/entity-generator">Entity 생성</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/mbb/ddl-generator">DDL 생성</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/mbb/api-test">API 테스트</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div th:replace="fragments/navigation :: sidebar"></div>
 
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="mb-2">DDL 생성</h1>
-                <p class="lead mb-0">Entity 기반으로 데이터베이스 DDL을 자동 생성합니다.</p>
-            </div>
-            <a href="/mbb/" class="btn btn-outline-primary">
-                <i class="fas fa-home"></i> 홈으로
-            </a>
-        </div>
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">DDL 생성</h1>
+                    <a href="/mbb/" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i> 홈으로
+                    </a>
+                </div>
 
-        <!-- DDL Generation Form -->
-        <div class="form-section">
-            <h3 class="mb-3">DDL 설정</h3>
-            
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="entityName" class="form-label">Entity 클래스명</label>
-                    <input type="text" class="form-control" id="entityName" placeholder="예: Mbbuser, Product, Order">
-                </div>
-                <div class="col-md-6">
-                    <label for="tableName" class="form-label">테이블명</label>
-                    <input type="text" class="form-control" id="tableName" placeholder="예: users, products, orders">
-                </div>
-            </div>
+                <!-- DDL 생성 폼 -->
+                <div class="card form-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-database"></i> DDL 생성
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="ddlGeneratorForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="tableName" class="form-label">테이블명</label>
+                                    <input type="text" class="form-control" id="tableName" name="tableName" 
+                                           placeholder="예: MBB_USER" required>
+                                    <div class="form-text">대문자로 입력 (예: MBB_USER, PRODUCT)</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="tableComment" class="form-label">테이블 설명</label>
+                                    <input type="text" class="form-control" id="tableComment" name="tableComment" 
+                                           placeholder="예: 사용자 정보 테이블" required>
+                                    <div class="form-text">테이블의 용도를 설명합니다</div>
+                                </div>
+                            </div>
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="databaseType" class="form-label">데이터베이스 타입</label>
-                    <select class="form-select" id="databaseType">
-                        <option value="mysql">MySQL</option>
-                        <option value="postgresql">PostgreSQL</option>
-                        <option value="oracle">Oracle</option>
-                        <option value="sqlserver">SQL Server</option>
-                        <option value="h2">H2</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="schemaName" class="form-label">스키마명</label>
-                    <input type="text" class="form-control" id="schemaName" placeholder="예: public, dbo">
-                </div>
-            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="databaseType" class="form-label">데이터베이스 타입</label>
+                                    <select class="form-control" id="databaseType" name="databaseType" required>
+                                        <option value="MYSQL">MySQL</option>
+                                        <option value="POSTGRESQL">PostgreSQL</option>
+                                        <option value="ORACLE">Oracle</option>
+                                        <option value="H2">H2</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="schemaName" class="form-label">스키마명</label>
+                                    <input type="text" class="form-control" id="schemaName" name="schemaName" 
+                                           placeholder="예: public, dbo" value="public">
+                                    <div class="form-text">데이터베이스 스키마명</div>
+                                </div>
+                            </div>
 
-            <div class="mb-3">
-                <label class="form-label">DDL 옵션</label>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="createTable" checked>
-                    <label class="form-check-label" for="createTable">
-                        CREATE TABLE 문
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="createIndex" checked>
-                    <label class="form-check-label" for="createIndex">
-                        인덱스 생성
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="createSequence" checked>
-                    <label class="form-check-label" for="createSequence">
-                        시퀀스 생성 (Oracle, PostgreSQL)
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="addComments" checked>
-                    <label class="form-check-label" for="addComments">
-                        컬럼 주석 추가
-                    </label>
-                </div>
-            </div>
+                            <hr class="my-4">
 
-            <button type="button" class="btn btn-primary" onclick="generateDdl()">
-                <i class="fas fa-code"></i> DDL 생성
-            </button>
-        </div>
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-columns"></i> 컬럼 정의
+                            </h6>
+                            
+                            <div id="columnsContainer">
+                                <div class="column-row mb-3 p-3 border rounded">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label class="form-label">컬럼명</label>
+                                            <input type="text" class="form-control" name="columns[0].columnName" 
+                                                   placeholder="USER_ID" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">데이터 타입</label>
+                                            <select class="form-control" name="columns[0].dataType" required>
+                                                <option value="BIGINT">BIGINT</option>
+                                                <option value="INT">INT</option>
+                                                <option value="VARCHAR" selected>VARCHAR</option>
+                                                <option value="TEXT">TEXT</option>
+                                                <option value="DATE">DATE</option>
+                                                <option value="TIMESTAMP">TIMESTAMP</option>
+                                                <option value="BOOLEAN">BOOLEAN</option>
+                                                <option value="DECIMAL">DECIMAL</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">크기</label>
+                                            <input type="number" class="form-control" name="columns[0].columnSize" 
+                                                   placeholder="255">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">기본값</label>
+                                            <input type="text" class="form-control" name="columns[0].defaultValue" 
+                                                   placeholder="NULL">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">옵션</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="columns[0].nullable" checked>
+                                                <label class="form-check-label">NULL 허용</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="columns[0].primaryKey">
+                                                <label class="form-check-label">Primary Key</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="columns[0].autoIncrement">
+                                                <label class="form-check-label">Auto Increment</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <label class="form-label">컬럼 설명</label>
+                                            <input type="text" class="form-control" name="columns[0].comment" 
+                                                   placeholder="컬럼에 대한 설명을 입력하세요">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-        <!-- Generated Code Preview -->
-        <div class="preview-section">
-            <h3 class="mb-3">생성된 DDL</h3>
-            <div class="code-preview">
-                <pre id="ddlCode">DDL 설정을 입력하고 생성 버튼을 클릭하세요.</pre>
-            </div>
-            <div class="mt-3">
-                <button type="button" class="btn btn-secondary" onclick="copyCode()">
-                    <i class="fas fa-copy"></i> 코드 복사
-                </button>
-                <button type="button" class="btn btn-success" onclick="downloadCode()">
-                    <i class="fas fa-download"></i> 파일 다운로드
-                </button>
-            </div>
+                            <div class="text-center mb-3">
+                                <button type="button" class="btn btn-outline-primary" onclick="addColumn()">
+                                    <i class="fas fa-plus"></i> 컬럼 추가
+                                </button>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-gradient btn-lg">
+                                    <i class="fas fa-code"></i> DDL 생성
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- DDL 결과 표시 영역 -->
+                <div id="ddlResultArea" style="display: none;">
+                    <div class="card result-card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-code text-success"></i> 생성된 DDL
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <button class="btn btn-outline-primary btn-sm" onclick="copyDDL()">
+                                    <i class="fas fa-copy"></i> DDL 복사
+                                </button>
+                                <button class="btn btn-outline-success btn-sm" onclick="downloadDDL()">
+                                    <i class="fas fa-download"></i> DDL 다운로드
+                                </button>
+                            </div>
+                            <div id="ddlContent" class="ddl-output"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오류 표시 영역 -->
+                <div id="errorArea" style="display: none;">
+                    <div class="card error-card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-exclamation-triangle text-danger"></i> 오류
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="errorContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function generateDdl() {
-            const entityName = document.getElementById('entityName').value;
-            const tableName = document.getElementById('tableName').value;
-            const databaseType = document.getElementById('databaseType').value;
-            const schemaName = document.getElementById('schemaName').value;
-            const createTable = document.getElementById('createTable').checked;
-            const createIndex = document.getElementById('createIndex').checked;
-            const createSequence = document.getElementById('createSequence').checked;
-            const addComments = document.getElementById('addComments').checked;
+        let columnIndex = 1;
 
-            if (!entityName || !tableName) {
-                alert('모든 필수 필드를 입력해주세요.');
-                return;
-            }
-
-            let ddlCode = `-- ${entityName} 테이블 DDL (${databaseType.toUpperCase()})
-
--- 테이블 생성
-CREATE TABLE ${schemaName ? schemaName + '.' : ''}${tableName} (
-    id BIGINT PRIMARY KEY ${databaseType === 'mysql' ? 'AUTO_INCREMENT' : databaseType === 'postgresql' ? 'GENERATED BY DEFAULT AS IDENTITY' : 'IDENTITY(1,1)'},
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE,
-    phone VARCHAR(20),
-    age INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ${databaseType === 'mysql' ? 'ON UPDATE CURRENT_TIMESTAMP' : ''}
-);
-
--- 인덱스 생성
-CREATE INDEX idx_${tableName}_email ON ${schemaName ? schemaName + '.' : ''}${tableName} (email);
-CREATE INDEX idx_${tableName}_name ON ${schemaName ? schemaName + '.' : ''}${tableName} (name);
-CREATE INDEX idx_${tableName}_created_at ON ${schemaName ? schemaName + '.' : ''}${tableName} (created_at);
-
--- 컬럼 주석 (Oracle, PostgreSQL)
-${databaseType === 'oracle' || databaseType === 'postgresql' ? `
-COMMENT ON TABLE ${schemaName ? schemaName + '.' : ''}${tableName} IS '${entityName} 정보 테이블';
-COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.id IS '고유 식별자';
-COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.name IS '이름';
-COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.email IS '이메일 주소';
-COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.phone IS '전화번호';
-COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.age IS '나이';
-COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.created_at IS '생성일시';
-COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.updated_at IS '수정일시';` : ''}
-
--- 시퀀스 생성 (Oracle, PostgreSQL)
-${(databaseType === 'oracle' || databaseType === 'postgresql') && createSequence ? `
-CREATE SEQUENCE ${schemaName ? schemaName + '.' : ''}seq_${tableName}_id
-    START WITH 1
-    INCREMENT BY 1
-    NO CYCLE;` : ''}
-
--- 샘플 데이터 삽입
-INSERT INTO ${schemaName ? schemaName + '.' : ''}${tableName} (name, email, phone, age) VALUES
-('홍길동', 'hong@example.com', '010-1234-5678', 30),
-('김철수', 'kim@example.com', '010-2345-6789', 25),
-('이영희', 'lee@example.com', '010-3456-7890', 28);`;
-
-            document.getElementById('ddlCode').textContent = ddlCode;
+        function addColumn() {
+            const container = document.getElementById('columnsContainer');
+            const newColumn = document.createElement('div');
+            newColumn.className = 'column-row mb-3 p-3 border rounded';
+            newColumn.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">컬럼명</label>
+                        <input type="text" class="form-control" name="columns[${columnIndex}].columnName" 
+                               placeholder="USER_NAME" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">데이터 타입</label>
+                        <select class="form-control" name="columns[${columnIndex}].dataType" required>
+                            <option value="BIGINT">BIGINT</option>
+                            <option value="INT">INT</option>
+                            <option value="VARCHAR" selected>VARCHAR</option>
+                            <option value="TEXT">TEXT</option>
+                            <option value="DATE">DATE</option>
+                            <option value="TIMESTAMP">TIMESTAMP</option>
+                            <option value="BOOLEAN">BOOLEAN</option>
+                            <option value="DECIMAL">DECIMAL</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">크기</label>
+                        <input type="number" class="form-control" name="columns[${columnIndex}].columnSize" 
+                               placeholder="100">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">기본값</label>
+                        <input type="text" class="form-control" name="columns[${columnIndex}].defaultValue" 
+                               placeholder="NULL">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">옵션</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].nullable" checked>
+                            <label class="form-check-label">NULL 허용</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].primaryKey">
+                            <label class="form-check-label">Primary Key</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].autoIncrement">
+                            <label class="form-check-label">Auto Increment</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-11">
+                        <label class="form-label">컬럼 설명</label>
+                        <input type="text" class="form-control" name="columns[${columnIndex}].comment" 
+                               placeholder="컬럼에 대한 설명을 입력하세요">
+                    </div>
+                    <div class="col-1">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeColumn(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newColumn);
+            columnIndex++;
         }
 
-        function copyCode() {
-            const codeText = document.getElementById('ddlCode').textContent;
-            navigator.clipboard.writeText(codeText).then(() => {
-                alert('코드가 클립보드에 복사되었습니다.');
+        function removeColumn(button) {
+            button.closest('.column-row').remove();
+        }
+
+        // 폼 제출 처리
+        document.getElementById('ddlGeneratorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitFormData(this);
+        });
+
+        // 폼 데이터 제출
+        function submitFormData(form) {
+            // 폼 데이터를 올바른 DTO 구조로 변환
+            const formData = new FormData(form);
+            const data = {
+                tableName: formData.get('tableName'),
+                tableComment: formData.get('tableComment'),
+                databaseType: formData.get('databaseType'),
+                schemaName: formData.get('schemaName'),
+                columns: []
+            };
+            
+            // 컬럼 데이터 처리
+            const columnRows = document.querySelectorAll('.column-row');
+            
+            columnRows.forEach((row, index) => {
+                const column = {
+                    name: row.querySelector('input[name*="columnName"]').value,
+                    type: row.querySelector('select[name*="dataType"]').value,
+                    length: row.querySelector('input[name*="columnSize"]').value || null,
+                    defaultValue: row.querySelector('input[name*="defaultValue"]').value || null,
+                    nullable: row.querySelector('input[name*="nullable"]').checked,
+                    pk: row.querySelector('input[name*="primaryKey"]').checked,
+                    autoIncrement: row.querySelector('input[name*="autoIncrement"]').checked,
+                    comment: row.querySelector('input[name*="comment"]').value || null
+                };
+                data.columns.push(column);
+            });
+            
+            // 로딩 표시
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DDL 생성 중...';
+            submitBtn.disabled = true;
+            
+            // DDL 생성 API 호출
+            fetch('/mbb/ddl-generator/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                if (result.success) {
+                    showDDLResult(result);
+                } else {
+                    showError(result.message || 'DDL 생성 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                showError('네트워크 오류가 발생했습니다: ' + error.message);
             });
         }
 
-        function downloadCode() {
-            const codeText = document.getElementById('ddlCode').textContent;
-            const tableName = document.getElementById('tableName').value || 'table';
-            const databaseType = document.getElementById('databaseType').value;
-            const blob = new Blob([codeText], { type: 'text/sql' });
-            const url = URL.createObjectURL(blob);
+        // DDL 결과 표시
+        function showDDLResult(result) {
+            document.getElementById('ddlResultArea').style.display = 'block';
+            document.getElementById('errorArea').style.display = 'none';
+            
+            let ddlContent = '';
+            if (result.ddl) {
+                ddlContent = result.ddl;
+            } else {
+                ddlContent = generateDDL(result.data || {});
+            }
+            
+            document.getElementById('ddlContent').textContent = ddlContent;
+        }
+
+        function showError(message) {
+            document.getElementById('ddlResultArea').style.display = 'none';
+            document.getElementById('errorArea').style.display = 'block';
+            document.getElementById('errorContent').innerHTML = `<div class="alert alert-danger">${message}</div>`;
+        }
+
+        // DDL 복사
+        function copyDDL() {
+            const ddlContent = document.getElementById('ddlContent').textContent;
+            navigator.clipboard.writeText(ddlContent).then(function() {
+                alert('DDL이 클립보드에 복사되었습니다.');
+            });
+        }
+
+        // DDL 다운로드
+        function downloadDDL() {
+            const ddlContent = document.getElementById('ddlContent').textContent;
+            const blob = new Blob([ddlContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${tableName}_${databaseType}.sql`;
+            a.download = 'table_ddl.sql';
             document.body.appendChild(a);
             a.click();
+            window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        }
+
+        // 클라이언트 사이드 DDL 생성 (임시)
+        function generateDDL(data) {
+            let ddl = `-- ${data.tableName} 테이블 DDL\n`;
+            ddl += `-- 생성일시: ${new Date().toLocaleString()}\n\n`;
+            
+            if (data.databaseType === 'MYSQL') {
+                ddl += `CREATE TABLE ${data.tableName} (\n`;
+            } else if (data.databaseType === 'POSTGRESQL') {
+                ddl += `CREATE TABLE ${data.schemaName}.${data.tableName} (\n`;
+            } else {
+                ddl += `CREATE TABLE ${data.tableName} (\n`;
+            }
+            
+            const columns = data.columns || [];
+            const columnDefs = columns.map(col => {
+                let def = `    ${col.name} ${col.type}`;
+                if (col.length && col.type === 'VARCHAR') {
+                    def += `(${col.length})`;
+                }
+                if (!col.nullable) {
+                    def += ' NOT NULL';
+                }
+                if (col.defaultValue && col.defaultValue !== 'NULL') {
+                    def += ` DEFAULT ${col.defaultValue}`;
+                }
+                if (col.autoIncrement) {
+                    def += ' AUTO_INCREMENT';
+                }
+                if (col.comment) {
+                    def += ` COMMENT '${col.comment}'`;
+                }
+                return def;
+            });
+            
+            ddl += columnDefs.join(',\n');
+            
+            // Primary Key 추가
+            const primaryKeys = columns.filter(col => col.pk).map(col => col.name);
+            if (primaryKeys.length > 0) {
+                ddl += `,\n    PRIMARY KEY (${primaryKeys.join(', ')})`;
+            }
+            
+            ddl += '\n);\n\n';
+            
+            // 테이블 코멘트 추가
+            if (data.tableComment) {
+                ddl += `-- 테이블 설명: ${data.tableComment}\n`;
+            }
+            
+            return ddl;
         }
     </script>
 </body>

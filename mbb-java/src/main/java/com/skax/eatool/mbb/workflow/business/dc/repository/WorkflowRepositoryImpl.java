@@ -498,19 +498,19 @@ public class WorkflowRepositoryImpl implements IWorkflowRepository {
      */
     private String generateResponseDtoCode(String entityName, String packageName, String className) {
         return "package " + packageName + ";\n\n" +
-               "import lombok.Data;\n" +
+                            "import lombok.Data;\n" +
                "import java.time.LocalDateTime;\n\n" +
-               "@Data\n" +
+                            "@Data\n" +
                "public class " + className + " {\n" +
-               "    private Long id;\n" +
-               "    private String name;\n" +
+                            "    private Long id;\n" +
+                            "    private String name;\n" +
                "    private String email;\n" +
                "    private String phone;\n" +
                "    private Integer age;\n" +
                "    private LocalDateTime createdAt;\n" +
                "    private LocalDateTime updatedAt;\n\n" +
-               "    // Add more fields as needed\n" +
-               "}";
+                            "    // Add more fields as needed\n" +
+                            "}";
     }
 
     /**

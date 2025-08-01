@@ -66,10 +66,10 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">테이블 정의</h1>
-                    <a href="/mbb/" class="btn btn-outline-primary">
-                        <i class="fas fa-home"></i> 홈으로
-                    </a>
-                </div>
+            <a href="/mbb/" class="btn btn-outline-primary">
+                <i class="fas fa-home"></i> 홈으로
+            </a>
+        </div>
 
                 <!-- 입력 방식 선택 탭 -->
                 <div class="card form-card mb-4">
@@ -110,8 +110,8 @@
                                             <div class="form-text">테이블의 용도를 설명합니다</div>
                                         </div>
                                     </div>
-
-                                    <div class="row">
+            
+            <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="databaseType" class="form-label">데이터베이스 타입</label>
                                             <select class="form-control" id="databaseType" name="databaseType" required>
@@ -190,14 +190,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                </div>
 
                                     <div class="text-center mb-3">
                                         <button type="button" class="btn btn-outline-primary" onclick="addColumn()">
                                             <i class="fas fa-plus"></i> 컬럼 추가
-                                        </button>
-                                    </div>
-
+                        </button>
+                    </div>
+                    
                                     <div class="text-center mt-4">
                                         <button type="submit" class="btn btn-gradient btn-lg">
                                             <i class="fas fa-save"></i> 테이블 정의 저장
@@ -219,42 +219,42 @@
   "schemaName": "public",
   "columns": [
     {
-      "columnName": "USER_ID",
-      "dataType": "BIGINT",
-      "columnSize": null,
+      "name": "USER_ID",
+      "type": "BIGINT",
+      "length": null,
       "defaultValue": null,
       "nullable": false,
-      "primaryKey": true,
+      "pk": true,
       "autoIncrement": true,
       "comment": "사용자 고유 ID"
     },
     {
-      "columnName": "USER_NAME",
-      "dataType": "VARCHAR",
-      "columnSize": 100,
+      "name": "USER_NAME",
+      "type": "VARCHAR",
+      "length": 100,
       "defaultValue": null,
       "nullable": false,
-      "primaryKey": false,
+      "pk": false,
       "autoIncrement": false,
       "comment": "사용자 이름"
     },
     {
-      "columnName": "EMAIL",
-      "dataType": "VARCHAR",
-      "columnSize": 255,
+      "name": "EMAIL",
+      "type": "VARCHAR",
+      "length": 255,
       "defaultValue": null,
       "nullable": false,
-      "primaryKey": false,
+      "pk": false,
       "autoIncrement": false,
       "comment": "이메일 주소"
     },
     {
-      "columnName": "CREATED_AT",
-      "dataType": "TIMESTAMP",
-      "columnSize": null,
+      "name": "CREATED_AT",
+      "type": "TIMESTAMP",
+      "length": null,
       "defaultValue": "CURRENT_TIMESTAMP",
       "nullable": false,
-      "primaryKey": false,
+      "pk": false,
       "autoIncrement": false,
       "comment": "생성일시"
     }
@@ -272,11 +272,11 @@
                                                     <div id="jsonPreview" class="small">
                                                         <p class="text-muted">JSON을 입력하면 미리보기가 표시됩니다.</p>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
+                    </div>
+                </div>
+            </div>
+        </div>
+
                                     <div class="text-center mt-4">
                                         <button type="button" class="btn btn-outline-info me-2" onclick="validateJson()">
                                             <i class="fas fa-check"></i> JSON 검증
@@ -284,13 +284,13 @@
                                         <button type="button" class="btn btn-gradient" onclick="submitJson()">
                                             <i class="fas fa-save"></i> JSON으로 테이블 생성
                                         </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
+                </div>
+            </div>
+            </div>
+        </div>
+            </div>
+            
                 <!-- 결과 표시 영역 -->
                 <div id="resultArea" style="display: none;">
                     <div class="card result-card mb-3">
@@ -314,9 +314,9 @@
                         </div>
                         <div class="card-body">
                             <div id="errorContent"></div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+        </div>
+            </div>
             </main>
         </div>
     </div>
@@ -330,13 +330,13 @@
             const newColumn = document.createElement('div');
             newColumn.className = 'column-row mb-3 p-3 border rounded';
             newColumn.innerHTML = `
-                <div class="row">
-                    <div class="col-md-3">
-                        <label class="form-label">컬럼명</label>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">컬럼명</label>
                         <input type="text" class="form-control" name="columns[${columnIndex}].columnName" 
                                placeholder="USER_NAME" required>
-                    </div>
-                    <div class="col-md-2">
+                        </div>
+                        <div class="col-md-2">
                         <label class="form-label">데이터 타입</label>
                         <select class="form-control" name="columns[${columnIndex}].dataType" required>
                             <option value="BIGINT">BIGINT</option>
@@ -347,40 +347,40 @@
                             <option value="TIMESTAMP">TIMESTAMP</option>
                             <option value="BOOLEAN">BOOLEAN</option>
                             <option value="DECIMAL">DECIMAL</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
+                            </select>
+                        </div>
+                        <div class="col-md-2">
                         <label class="form-label">크기</label>
                         <input type="number" class="form-control" name="columns[${columnIndex}].columnSize" 
                                placeholder="100">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">기본값</label>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">기본값</label>
                         <input type="text" class="form-control" name="columns[${columnIndex}].defaultValue" 
                                placeholder="NULL">
-                    </div>
+                        </div>
                     <div class="col-md-3">
-                        <label class="form-label">옵션</label>
-                        <div class="form-check">
+                            <label class="form-label">옵션</label>
+                            <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].nullable" checked>
                             <label class="form-check-label">NULL 허용</label>
-                        </div>
-                        <div class="form-check">
+                            </div>
+                            <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].primaryKey">
                             <label class="form-check-label">Primary Key</label>
-                        </div>
+                            </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].autoIncrement">
                             <label class="form-check-label">Auto Increment</label>
                         </div>
+                        </div>
                     </div>
-                </div>
-                <div class="row mt-2">
+                    <div class="row mt-2">
                     <div class="col-11">
                         <label class="form-label">컬럼 설명</label>
                         <input type="text" class="form-control" name="columns[${columnIndex}].comment" 
                                placeholder="컬럼에 대한 설명을 입력하세요">
-                    </div>
+                        </div>
                     <div class="col-1">
                         <label class="form-label">&nbsp;</label>
                         <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeColumn(this)">
@@ -460,7 +460,7 @@
                 if (data.columns && data.columns.length > 0) {
                     previewHtml += '<hr><strong>컬럼 목록:</strong><ul class="list-unstyled">';
                     data.columns.forEach((col, index) => {
-                        previewHtml += `<li>${index + 1}. ${col.columnName} (${col.dataType})</li>`;
+                        previewHtml += `<li>${index + 1}. ${col.name} (${col.type})</li>`;
                     });
                     previewHtml += '</ul>';
                 }
@@ -473,29 +473,32 @@
 
         // 폼 데이터 제출 (기존 URL 사용)
         function submitFormData(form) {
-            // 폼 데이터 수집
+            // 폼 데이터를 올바른 DTO 구조로 변환
             const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+            const data = {
+                tableName: formData.get('tableName'),
+                tableComment: formData.get('tableComment'),
+                databaseType: formData.get('databaseType'),
+                schemaName: formData.get('schemaName'),
+                columns: []
+            };
             
             // 컬럼 데이터 처리
-            const columns = [];
             const columnRows = document.querySelectorAll('.column-row');
             
             columnRows.forEach((row, index) => {
                 const column = {
-                    columnName: row.querySelector('input[name*="columnName"]').value,
-                    dataType: row.querySelector('select[name*="dataType"]').value,
-                    columnSize: row.querySelector('input[name*="columnSize"]').value || null,
+                    name: row.querySelector('input[name*="columnName"]').value,
+                    type: row.querySelector('select[name*="dataType"]').value,
+                    length: row.querySelector('input[name*="columnSize"]').value || null,
                     defaultValue: row.querySelector('input[name*="defaultValue"]').value || null,
                     nullable: row.querySelector('input[name*="nullable"]').checked,
-                    primaryKey: row.querySelector('input[name*="primaryKey"]').checked,
+                    pk: row.querySelector('input[name*="primaryKey"]').checked,
                     autoIncrement: row.querySelector('input[name*="autoIncrement"]').checked,
                     comment: row.querySelector('input[name*="comment"]').value || null
                 };
-                columns.push(column);
+                data.columns.push(column);
             });
-            
-            data.columns = columns;
             
             // 로딩 표시
             const submitBtn = form.querySelector('button[type="submit"]');
