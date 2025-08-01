@@ -137,7 +137,7 @@ mvn package
 
 ## 📚 참고 자료
 
-- [MBC Java 개발 가이드](zDoc/mbc-java-guide.md)
+- [MBC Java 개발 가이드](z-doc/mbc-java-guide.md)
 - [프로젝트 구조 문서](PROJECT_STRUCTURE.md)
 - [빌드 문제 해결](BUILD_TROUBLESHOOTING.md)
 - [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)

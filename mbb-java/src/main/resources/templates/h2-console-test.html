@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H2 Console Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-database"></i> H2 Console Test</h3>
+                    </div>
+                    <div class="card-body">
+                        <h5>H2 Console 접근 테스트</h5>
+                        <p>아래 링크를 클릭하여 H2 콘솔에 접근해보세요:</p>
+                        
+                        <div class="mb-3">
+                            <a href="/mbb/h2-console" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> H2 Console 열기
+                            </a>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle"></i> H2 Console 연결 정보</h6>
+                            <ul class="mb-0">
+                                <li><strong>JDBC URL:</strong> <code>jdbc:h2:mem:testdb</code></li>
+                                <li><strong>Username:</strong> <code>sa</code></li>
+                                <li><strong>Password:</strong> <code>(비어있음)</code></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-exclamation-triangle"></i> 문제 해결</h6>
+                            <p class="mb-0">H2 콘솔에 접근할 수 없는 경우:</p>
+                            <ul class="mb-0">
+                                <li>애플리케이션이 실행 중인지 확인</li>
+                                <li>포트 8086이 사용 가능한지 확인</li>
+                                <li>브라우저 캐시를 삭제하고 다시 시도</li>
+                                <li>다른 브라우저로 시도</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <a href="/mbb/" class="btn btn-secondary">
+                                <i class="fas fa-home"></i> 홈으로 돌아가기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html> 

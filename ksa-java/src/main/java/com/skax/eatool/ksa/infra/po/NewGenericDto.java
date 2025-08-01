@@ -76,6 +76,17 @@ public class NewGenericDto {
         data.put(key, value);
     }
 
+    public boolean getBoolean(String key) {
+        Object value = data.get(key);
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value instanceof String) {
+            return Boolean.parseBoolean((String) value);
+        }
+        return false;
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T[] getArray(Class<T> clazz) {
         // Return empty array for now, can be enhanced later

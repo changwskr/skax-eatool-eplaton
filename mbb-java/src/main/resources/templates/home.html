@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">MBB Java - AI 코딩 워크플로우</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        .pipeline-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .pipeline-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        .pipeline-status {
+            margin-top: 1rem;
+        }
+        .pipeline-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+        }
+        .step-number {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        .tool-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/mbb/">
+                <i class="fas fa-robot"></i> MBB Java
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/api/code-generation">코드 생성</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/api/users">사용자 관리</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/entity-generator">Entity 생성</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/api-test">API 테스트</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/swagger-ui.html">API 문서</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">
+                <i class="fas fa-robot"></i> AI 코딩 워크플로우
+            </h1>
+            <p class="lead mb-4">테이블 정의서만 입력하면 Entity부터 배포까지 모든 코드가 자동 생성됩니다</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/mbb/workflow-generator" class="btn btn-light btn-lg">
+                    <i class="fas fa-rocket"></i> 전체 워크플로우 시작
+                </a>
+                <a href="/mbb/swagger-ui.html" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-book"></i> API 문서
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI TASK PIPELINE 섹션 -->
+    <section class="py-5">
+        <div class="container">
+            <div class="pipeline-header text-center">
+                <h2 class="mb-3">
+                    <i class="fas fa-robot"></i> AI TASK PIPELINE
+                </h2>
+                <p class="lead mb-0">테이블 정의서부터 배포까지 완전 자동화된 AI 코딩 워크플로우</p>
+            </div>
+
+            <!-- Pipeline Step 1-3 -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-primary">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">1</span> 테이블 정의
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-table fa-3x text-primary"></i>
+                            </div>
+                            <p class="card-text">테이블 구조와 컬럼을 정의하여 데이터베이스 스키마를 설계합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/table-definition" class="btn btn-primary btn-sm">
+                                <i class="fas fa-table"></i> 테이블 정의
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-success">
+                        <div class="card-header bg-success text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">2</span> DDL 자동 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-database fa-3x text-success"></i>
+                            </div>
+                            <p class="card-text">테이블 정의를 기반으로 데이터베이스 DDL을 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/ddl-generator" class="btn btn-success btn-sm">
+                                <i class="fas fa-database"></i> DDL 생성
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-warning">
+                        <div class="card-header bg-warning text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">3</span> Entity 자동 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-code fa-3x text-warning"></i>
+                            </div>
+                            <p class="card-text">JPA Entity 클래스를 자동 생성하여 데이터베이스 매핑을 설정합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/entity-generator" class="btn btn-warning btn-sm">
+                                <i class="fas fa-code"></i> Entity 생성
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Step 4-6 -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-danger">
+                        <div class="card-header bg-danger text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">4</span> DTO & Validator 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-file-alt fa-3x text-danger"></i>
+                            </div>
+                            <p class="card-text">Request/Response DTO 생성 및 Validator를 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/dto-generator" class="btn btn-danger btn-sm">
+                                <i class="fas fa-file-alt"></i> DTO & Validator
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-info">
+                        <div class="card-header bg-info text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">5</span> Repository 자동 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-database fa-3x text-info"></i>
+                            </div>
+                            <p class="card-text">Entity에 대한 Spring Data JPA Repository를 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/repository-generator" class="btn btn-info btn-sm">
+                                <i class="fas fa-database"></i> Repository 생성
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-secondary">
+                        <div class="card-header bg-secondary text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">6</span> Service 자동 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-cogs fa-3x text-secondary"></i>
+                            </div>
+                            <p class="card-text">비즈니스 로직을 위한 Service 클래스를 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/service-generator" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-cogs"></i> Service 생성
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Step 7-9 -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-dark">
+                        <div class="card-header bg-dark text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">7</span> Process 자동 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-sitemap fa-3x text-dark"></i>
+                            </div>
+                            <p class="card-text">비즈니스 프로세스 로직을 위한 Process 클래스를 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/workflow/process-generator" class="btn btn-dark btn-sm">
+                                <i class="fas fa-sitemap"></i> Process 생성
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-primary">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">8</span> Domain Service 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-layer-group fa-3x text-primary"></i>
+                            </div>
+                            <p class="card-text">도메인 비즈니스 로직을 위한 Domain Service를 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/workflow/domain-service-generator" class="btn btn-primary btn-sm">
+                                <i class="fas fa-layer-group"></i> Domain Service
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-success">
+                        <div class="card-header bg-success text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">9</span> Controller 자동 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-globe fa-3x text-success"></i>
+                            </div>
+                            <p class="card-text">REST API 엔드포인트를 위한 Controller를 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/controller-generator" class="btn btn-success btn-sm">
+                                <i class="fas fa-globe"></i> Controller 생성
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Step 10-11 -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-warning">
+                        <div class="card-header bg-warning text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">10</span> HTML 템플릿 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-file-code fa-3x text-warning"></i>
+                            </div>
+                            <p class="card-text">웹 화면을 위한 HTML 템플릿을 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/template-generator" class="btn btn-warning btn-sm">
+                                <i class="fas fa-file-code"></i> HTML 템플릿
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-info">
+                        <div class="card-header bg-info text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">11</span> Swagger 자동 문서화
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-book fa-3x text-info"></i>
+                            </div>
+                            <p class="card-text">API 문서를 위한 Swagger 설정을 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/swagger-generator" class="btn btn-info btn-sm">
+                                <i class="fas fa-book"></i> Swagger 문서화
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card pipeline-card h-100 border-danger">
+                        <div class="card-header bg-danger text-white text-center">
+                            <h5 class="mb-0">
+                                <span class="step-number">12</span> 초기 데이터 생성
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-download fa-3x text-danger"></i>
+                            </div>
+                            <p class="card-text">테스트 및 초기 데이터를 자동 생성합니다.</p>
+                            <div class="pipeline-status">
+                                <span class="badge bg-secondary">Waiting</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/data-generator" class="btn btn-danger btn-sm">
+                                <i class="fas fa-download"></i> 초기 데이터
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Tools Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h3 class="text-center mb-4">
+                        <i class="fas fa-tools"></i> 추가 도구
+                    </h3>
+                </div>
+            </div>
+
+            <!-- Additional Tools Row 1 -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100 border-info">
+                        <div class="card-header bg-info text-white text-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-vial"></i> API 테스트
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-vial fa-3x text-info"></i>
+                            </div>
+                            <p class="card-text">PowerShell curl 명령어로 API를 테스트할 수 있습니다.</p>
+                            <div class="tool-status">
+                                <span class="badge bg-success">Ready</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/api-test" class="btn btn-info btn-sm">
+                                <i class="fas fa-vial"></i> 테스트 페이지
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100 border-dark">
+                        <div class="card-header bg-dark text-white text-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-rocket"></i> 전체 워크플로우
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-rocket fa-3x text-dark"></i>
+                            </div>
+                            <p class="card-text">모든 단계를 한 번에 실행하는 통합 워크플로우입니다.</p>
+                            <div class="tool-status">
+                                <span class="badge bg-primary">Pipeline</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/workflow-generator" class="btn btn-dark btn-sm">
+                                <i class="fas fa-rocket"></i> 전체 실행
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100 border-success">
+                        <div class="card-header bg-success text-white text-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-database"></i> H2 Console
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-database fa-3x text-success"></i>
+                            </div>
+                            <p class="card-text">H2 데이터베이스 콘솔에 접근하여 데이터를 확인합니다.</p>
+                            <div class="tool-status">
+                                <span class="badge bg-success">Ready</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/h2-console" target="_blank" class="btn btn-success btn-sm">
+                                <i class="fas fa-database"></i> H2 Console
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Tools Row 2 -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100 border-warning">
+                        <div class="card-header bg-warning text-white text-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-code"></i> Entity 생성 (고급)
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-code fa-3x text-warning"></i>
+                            </div>
+                            <p class="card-text">고급 옵션을 포함한 Entity 생성 기능입니다.</p>
+                            <div class="tool-status">
+                                <span class="badge bg-warning">Advanced</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/entity-generator" class="btn btn-warning btn-sm">
+                                <i class="fas fa-code"></i> 고급 Entity
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100 border-primary">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-table"></i> 테이블 정의
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-table fa-3x text-primary"></i>
+                            </div>
+                            <p class="card-text">Excel, JSON 등으로 테이블 정의서를 입력합니다.</p>
+                            <div class="tool-status">
+                                <span class="badge bg-success">Ready</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/mbb/table-definition" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit"></i> 테이블 정의
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100 border-secondary">
+                        <div class="card-header bg-secondary text-white text-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-book"></i> Swagger UI
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-book fa-3x text-secondary"></i>
+                            </div>
+                            <p class="card-text">API 문서를 확인하고 테스트할 수 있는 Swagger UI입니다.</p>
+                            <div class="tool-status">
+                                <span class="badge bg-success">Ready</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/swagger-ui.html" target="_blank" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-book"></i> API 문서
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="container">
+            <p class="mb-0">&copy; 2024 MBB Java - AI 코딩 워크플로우 시스템</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

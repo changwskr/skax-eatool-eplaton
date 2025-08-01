@@ -1,0 +1,116 @@
+{
+  "standardHeader": {
+    "stdGramLen": "00000000",
+    "gramEncDvcd": "2",
+    "gblId": "202401011234567890123456789000",
+    "gramRqstDtti": "20240101123456789",
+    "gramRspDtti": "20240101123457890",
+    "rqstRspDvcd": "R",
+    "ttlUseDvcd": "2",
+    "fstSti": "123456",
+    "keepHrSecCnt": "060"
+  },
+  "transmissionInfo": {
+    "chnlTpcd": "01",
+    "cliIp": "192.168.0.101",
+    "cliMac": "00A0C9FFEE11",
+    "confInfoDvcd": "P",
+    "fstTrsSysCd": "MCI",
+    "trsSysCd": "CBS",
+    "trsNodeNo": "01",
+    "mciNodeNo": "01",
+    "fepNodeNo": "02",
+    "eaiNodeNo": "03",
+    "rcvSvCd": "DEP01001",
+    "rsltRcvSvCd": "DEP01002",
+    "frgMciIfId": "MCI001",
+    "eaiIfId": "EAI001"
+  },
+  "transactionInfo": {
+    "xaTrnsDvcd": "2",
+    "trnsSyncDvcd": "S",
+    "gramLangDvcd": "KR",
+    "chnlGramCompartLen": "0056"
+  },
+  "approvalInfo": {
+    "apvlTypeDvcd": "2",
+    "apperRspRscd": "2",
+    "otm1ApvlEnob": "1234567",
+    "otm1ApvlTuno": "002",
+    "otm2ApvlEnob": null,
+    "otm2ApvlTuno": null
+  },
+  "controlInfo": {
+    "screnId": "A001000001",
+    "inputGramId": "DEP01001",
+    "inputGramLwrId": "01",
+    "msgCotiCd": "1",
+    "nextPgeReuCd": "1",
+    "nonRqstMsgOutptCd": "1",
+    "canCorrDvcd": "1",
+    "autoTrnsReuCd": "1",
+    "inputGramEditDvcd": "1",
+    "smltTrnsDvcd": "1",
+    "vdTrnsDvcd": "1",
+    "gramCotiSeq": "00",
+    "outptGramTpcd": "1",
+    "rspRsltDvcd": "1"
+  },
+  "terminalInfo": {
+    "blgCmgrCd": "01",
+    "ttBrno": "123",
+    "mtbcno": "100",
+    "enob": "654321",
+    "shpDvcd": "1",
+    "trnsCmgrCd": "01",
+    "tuBrno": "123",
+    "trnsTuno": "002",
+    "veBrno": "000"
+  },
+  "externalInfo": {
+    "frgOrgtcd": "BANK",
+    "frgBizCd": "TR01",
+    "ttOpenDvcd": "1"
+  },
+  "securityInfo": {
+    "rrnoInfoPrtcDvcd": "2",
+    "custNmInfoPrtcDvcd": "2",
+    "acnoInfoPrtcDvcd": "2",
+    "cdnoInfoPrtcDvcd": "2",
+    "tlnoInfoPrtcDvcd": "2",
+    "addrInfoPrtcDvcd": "2"
+  },
+  "miscInfo": {
+    "aitmRnwlModeDvcd": "1",
+    "tadyTrnsNdvCanReuCd": "1",
+    "bnkbPrtrCnntDvcd": "2",
+    "iccrdMdmDvcd": "2",
+    "msUseDvcd": "1",
+    "trlgKeyVal": "KEY20240101123456789",
+    "dlngStcd": "L",
+    "ttRspInputRsrnDvcd": "1",
+    "ttRspInputRsrnEditId": "EDT0001",
+    "outptWatStcd": "1"
+  },
+  "businessData": {
+    "resultMessage": "급여이체가 성공적으로 처리되었습니다.",
+    "processedBy": {
+      "system": "CBS",
+      "processDate": "20240101",
+      "processTime": "123458"
+    },
+    "transactionId": "TXN20240101123456789",
+    "balance": 1500000,
+    "accountNumber": "110234567890",
+    "accountHolder": "홍길동",
+    "transactionAmount": 500000,
+    "currencyCode": "KRW",
+    "transactionType": "DEP",
+    "description": "급여이체",
+    "referenceNo": "PAY20240101-1234567890"
+  },
+  "footer": {
+    "stdGramEndVal": "@@"
+  },
+  "errorInfo": null
+} 

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">DDL 생성 - MBB Java</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .form-section { background: #f8f9fa; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; }
+        .preview-section { background: #fff; padding: 2rem; border-radius: 10px; border: 1px solid #dee2e6; }
+        .code-preview { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 1rem; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/mbb/">MBB Java</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/entity-generator">Entity 생성</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/ddl-generator">DDL 생성</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/api-test">API 테스트</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="mb-2">DDL 생성</h1>
+                <p class="lead mb-0">Entity 기반으로 데이터베이스 DDL을 자동 생성합니다.</p>
+            </div>
+            <a href="/mbb/" class="btn btn-outline-primary">
+                <i class="fas fa-home"></i> 홈으로
+            </a>
+        </div>
+
+        <!-- DDL Generation Form -->
+        <div class="form-section">
+            <h3 class="mb-3">DDL 설정</h3>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="entityName" class="form-label">Entity 클래스명</label>
+                    <input type="text" class="form-control" id="entityName" placeholder="예: Mbbuser, Product, Order">
+                </div>
+                <div class="col-md-6">
+                    <label for="tableName" class="form-label">테이블명</label>
+                    <input type="text" class="form-control" id="tableName" placeholder="예: users, products, orders">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="databaseType" class="form-label">데이터베이스 타입</label>
+                    <select class="form-select" id="databaseType">
+                        <option value="mysql">MySQL</option>
+                        <option value="postgresql">PostgreSQL</option>
+                        <option value="oracle">Oracle</option>
+                        <option value="sqlserver">SQL Server</option>
+                        <option value="h2">H2</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="schemaName" class="form-label">스키마명</label>
+                    <input type="text" class="form-control" id="schemaName" placeholder="예: public, dbo">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">DDL 옵션</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="createTable" checked>
+                    <label class="form-check-label" for="createTable">
+                        CREATE TABLE 문
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="createIndex" checked>
+                    <label class="form-check-label" for="createIndex">
+                        인덱스 생성
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="createSequence" checked>
+                    <label class="form-check-label" for="createSequence">
+                        시퀀스 생성 (Oracle, PostgreSQL)
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="addComments" checked>
+                    <label class="form-check-label" for="addComments">
+                        컬럼 주석 추가
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="generateDdl()">
+                <i class="fas fa-code"></i> DDL 생성
+            </button>
+        </div>
+
+        <!-- Generated Code Preview -->
+        <div class="preview-section">
+            <h3 class="mb-3">생성된 DDL</h3>
+            <div class="code-preview">
+                <pre id="ddlCode">DDL 설정을 입력하고 생성 버튼을 클릭하세요.</pre>
+            </div>
+            <div class="mt-3">
+                <button type="button" class="btn btn-secondary" onclick="copyCode()">
+                    <i class="fas fa-copy"></i> 코드 복사
+                </button>
+                <button type="button" class="btn btn-success" onclick="downloadCode()">
+                    <i class="fas fa-download"></i> 파일 다운로드
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function generateDdl() {
+            const entityName = document.getElementById('entityName').value;
+            const tableName = document.getElementById('tableName').value;
+            const databaseType = document.getElementById('databaseType').value;
+            const schemaName = document.getElementById('schemaName').value;
+            const createTable = document.getElementById('createTable').checked;
+            const createIndex = document.getElementById('createIndex').checked;
+            const createSequence = document.getElementById('createSequence').checked;
+            const addComments = document.getElementById('addComments').checked;
+
+            if (!entityName || !tableName) {
+                alert('모든 필수 필드를 입력해주세요.');
+                return;
+            }
+
+            let ddlCode = `-- ${entityName} 테이블 DDL (${databaseType.toUpperCase()})
+
+-- 테이블 생성
+CREATE TABLE ${schemaName ? schemaName + '.' : ''}${tableName} (
+    id BIGINT PRIMARY KEY ${databaseType === 'mysql' ? 'AUTO_INCREMENT' : databaseType === 'postgresql' ? 'GENERATED BY DEFAULT AS IDENTITY' : 'IDENTITY(1,1)'},
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    phone VARCHAR(20),
+    age INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ${databaseType === 'mysql' ? 'ON UPDATE CURRENT_TIMESTAMP' : ''}
+);
+
+-- 인덱스 생성
+CREATE INDEX idx_${tableName}_email ON ${schemaName ? schemaName + '.' : ''}${tableName} (email);
+CREATE INDEX idx_${tableName}_name ON ${schemaName ? schemaName + '.' : ''}${tableName} (name);
+CREATE INDEX idx_${tableName}_created_at ON ${schemaName ? schemaName + '.' : ''}${tableName} (created_at);
+
+-- 컬럼 주석 (Oracle, PostgreSQL)
+${databaseType === 'oracle' || databaseType === 'postgresql' ? `
+COMMENT ON TABLE ${schemaName ? schemaName + '.' : ''}${tableName} IS '${entityName} 정보 테이블';
+COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.id IS '고유 식별자';
+COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.name IS '이름';
+COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.email IS '이메일 주소';
+COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.phone IS '전화번호';
+COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.age IS '나이';
+COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.created_at IS '생성일시';
+COMMENT ON COLUMN ${schemaName ? schemaName + '.' : ''}${tableName}.updated_at IS '수정일시';` : ''}
+
+-- 시퀀스 생성 (Oracle, PostgreSQL)
+${(databaseType === 'oracle' || databaseType === 'postgresql') && createSequence ? `
+CREATE SEQUENCE ${schemaName ? schemaName + '.' : ''}seq_${tableName}_id
+    START WITH 1
+    INCREMENT BY 1
+    NO CYCLE;` : ''}
+
+-- 샘플 데이터 삽입
+INSERT INTO ${schemaName ? schemaName + '.' : ''}${tableName} (name, email, phone, age) VALUES
+('홍길동', 'hong@example.com', '010-1234-5678', 30),
+('김철수', 'kim@example.com', '010-2345-6789', 25),
+('이영희', 'lee@example.com', '010-3456-7890', 28);`;
+
+            document.getElementById('ddlCode').textContent = ddlCode;
+        }
+
+        function copyCode() {
+            const codeText = document.getElementById('ddlCode').textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                alert('코드가 클립보드에 복사되었습니다.');
+            });
+        }
+
+        function downloadCode() {
+            const codeText = document.getElementById('ddlCode').textContent;
+            const tableName = document.getElementById('tableName').value || 'table';
+            const databaseType = document.getElementById('databaseType').value;
+            const blob = new Blob([codeText], { type: 'text/sql' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${tableName}_${databaseType}.sql`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html> 

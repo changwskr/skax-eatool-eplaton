@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테이블 정의 - MBB</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+        }
+        .result-card {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+        }
+        .error-card {
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+        }
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+        .json-editor {
+            font-family: 'Courier New', monospace;
+            min-height: 400px;
+        }
+        .preview-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div th:replace="fragments/navigation :: sidebar"></div>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">테이블 정의</h1>
+                    <a href="/mbb/" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i> 홈으로
+                    </a>
+                </div>
+
+                <!-- 입력 방식 선택 탭 -->
+                <div class="card form-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-table"></i> 테이블 정의서 입력
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="inputTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="form-tab" data-bs-toggle="tab" data-bs-target="#form-tab-pane" type="button" role="tab">
+                                    <i class="fas fa-edit"></i> 폼 입력
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="json-tab" data-bs-toggle="tab" data-bs-target="#json-tab-pane" type="button" role="tab">
+                                    <i class="fas fa-code"></i> JSON 입력
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="inputTabsContent">
+                            <!-- 폼 입력 탭 -->
+                            <div class="tab-pane fade show active" id="form-tab-pane" role="tabpanel">
+                                <form id="tableDefinitionForm" class="mt-3">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="tableName" class="form-label">테이블명</label>
+                                            <input type="text" class="form-control" id="tableName" name="tableName" 
+                                                   placeholder="예: MBB_USER" required>
+                                            <div class="form-text">대문자로 입력 (예: MBB_USER, PRODUCT)</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="tableComment" class="form-label">테이블 설명</label>
+                                            <input type="text" class="form-control" id="tableComment" name="tableComment" 
+                                                   placeholder="예: 사용자 정보 테이블" required>
+                                            <div class="form-text">테이블의 용도를 설명합니다</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="databaseType" class="form-label">데이터베이스 타입</label>
+                                            <select class="form-control" id="databaseType" name="databaseType" required>
+                                                <option value="MYSQL">MySQL</option>
+                                                <option value="POSTGRESQL">PostgreSQL</option>
+                                                <option value="ORACLE">Oracle</option>
+                                                <option value="H2">H2</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="schemaName" class="form-label">스키마명</label>
+                                            <input type="text" class="form-control" id="schemaName" name="schemaName" 
+                                                   placeholder="예: public, dbo" value="public">
+                                            <div class="form-text">데이터베이스 스키마명</div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <h6 class="text-primary mb-3">
+                                        <i class="fas fa-columns"></i> 컬럼 정의
+                                    </h6>
+                                    
+                                    <div id="columnsContainer">
+                                        <div class="column-row mb-3 p-3 border rounded">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label class="form-label">컬럼명</label>
+                                                    <input type="text" class="form-control" name="columns[0].columnName" 
+                                                           placeholder="USER_ID" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">데이터 타입</label>
+                                                    <select class="form-control" name="columns[0].dataType" required>
+                                                        <option value="BIGINT">BIGINT</option>
+                                                        <option value="INT">INT</option>
+                                                        <option value="VARCHAR" selected>VARCHAR</option>
+                                                        <option value="TEXT">TEXT</option>
+                                                        <option value="DATE">DATE</option>
+                                                        <option value="TIMESTAMP">TIMESTAMP</option>
+                                                        <option value="BOOLEAN">BOOLEAN</option>
+                                                        <option value="DECIMAL">DECIMAL</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">크기</label>
+                                                    <input type="number" class="form-control" name="columns[0].columnSize" 
+                                                           placeholder="255">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">기본값</label>
+                                                    <input type="text" class="form-control" name="columns[0].defaultValue" 
+                                                           placeholder="NULL">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">옵션</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="columns[0].nullable" checked>
+                                                        <label class="form-check-label">NULL 허용</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="columns[0].primaryKey">
+                                                        <label class="form-check-label">Primary Key</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="columns[0].autoIncrement">
+                                                        <label class="form-check-label">Auto Increment</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-12">
+                                                    <label class="form-label">컬럼 설명</label>
+                                                    <input type="text" class="form-control" name="columns[0].comment" 
+                                                           placeholder="컬럼에 대한 설명을 입력하세요">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center mb-3">
+                                        <button type="button" class="btn btn-outline-primary" onclick="addColumn()">
+                                            <i class="fas fa-plus"></i> 컬럼 추가
+                                        </button>
+                                    </div>
+
+                                    <div class="text-center mt-4">
+                                        <button type="submit" class="btn btn-gradient btn-lg">
+                                            <i class="fas fa-save"></i> 테이블 정의 저장
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- JSON 입력 탭 -->
+                            <div class="tab-pane fade" id="json-tab-pane" role="tabpanel">
+                                <div class="mt-3">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <label for="jsonInput" class="form-label">JSON 테이블 정의</label>
+                                            <textarea class="form-control json-editor" id="jsonInput" rows="20" placeholder="JSON 형식으로 테이블 정의를 입력하세요...">{
+  "tableName": "MBB_USER",
+  "tableComment": "사용자 정보 테이블",
+  "databaseType": "MYSQL",
+  "schemaName": "public",
+  "columns": [
+    {
+      "columnName": "USER_ID",
+      "dataType": "BIGINT",
+      "columnSize": null,
+      "defaultValue": null,
+      "nullable": false,
+      "primaryKey": true,
+      "autoIncrement": true,
+      "comment": "사용자 고유 ID"
+    },
+    {
+      "columnName": "USER_NAME",
+      "dataType": "VARCHAR",
+      "columnSize": 100,
+      "defaultValue": null,
+      "nullable": false,
+      "primaryKey": false,
+      "autoIncrement": false,
+      "comment": "사용자 이름"
+    },
+    {
+      "columnName": "EMAIL",
+      "dataType": "VARCHAR",
+      "columnSize": 255,
+      "defaultValue": null,
+      "nullable": false,
+      "primaryKey": false,
+      "autoIncrement": false,
+      "comment": "이메일 주소"
+    },
+    {
+      "columnName": "CREATED_AT",
+      "dataType": "TIMESTAMP",
+      "columnSize": null,
+      "defaultValue": "CURRENT_TIMESTAMP",
+      "nullable": false,
+      "primaryKey": false,
+      "autoIncrement": false,
+      "comment": "생성일시"
+    }
+  ]
+}</textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card preview-card">
+                                                <div class="card-header">
+                                                    <h6 class="mb-0">
+                                                        <i class="fas fa-eye"></i> JSON 미리보기
+                                                    </h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div id="jsonPreview" class="small">
+                                                        <p class="text-muted">JSON을 입력하면 미리보기가 표시됩니다.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-center mt-4">
+                                        <button type="button" class="btn btn-outline-info me-2" onclick="validateJson()">
+                                            <i class="fas fa-check"></i> JSON 검증
+                                        </button>
+                                        <button type="button" class="btn btn-gradient" onclick="submitJson()">
+                                            <i class="fas fa-save"></i> JSON으로 테이블 생성
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 결과 표시 영역 -->
+                <div id="resultArea" style="display: none;">
+                    <div class="card result-card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-check-circle text-success"></i> 저장 결과
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="resultContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="errorArea" style="display: none;">
+                    <div class="card error-card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-exclamation-triangle text-danger"></i> 오류
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="errorContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let columnIndex = 1;
+
+        function addColumn() {
+            const container = document.getElementById('columnsContainer');
+            const newColumn = document.createElement('div');
+            newColumn.className = 'column-row mb-3 p-3 border rounded';
+            newColumn.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">컬럼명</label>
+                        <input type="text" class="form-control" name="columns[${columnIndex}].columnName" 
+                               placeholder="USER_NAME" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">데이터 타입</label>
+                        <select class="form-control" name="columns[${columnIndex}].dataType" required>
+                            <option value="BIGINT">BIGINT</option>
+                            <option value="INT">INT</option>
+                            <option value="VARCHAR" selected>VARCHAR</option>
+                            <option value="TEXT">TEXT</option>
+                            <option value="DATE">DATE</option>
+                            <option value="TIMESTAMP">TIMESTAMP</option>
+                            <option value="BOOLEAN">BOOLEAN</option>
+                            <option value="DECIMAL">DECIMAL</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">크기</label>
+                        <input type="number" class="form-control" name="columns[${columnIndex}].columnSize" 
+                               placeholder="100">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">기본값</label>
+                        <input type="text" class="form-control" name="columns[${columnIndex}].defaultValue" 
+                               placeholder="NULL">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">옵션</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].nullable" checked>
+                            <label class="form-check-label">NULL 허용</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].primaryKey">
+                            <label class="form-check-label">Primary Key</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="columns[${columnIndex}].autoIncrement">
+                            <label class="form-check-label">Auto Increment</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-11">
+                        <label class="form-label">컬럼 설명</label>
+                        <input type="text" class="form-control" name="columns[${columnIndex}].comment" 
+                               placeholder="컬럼에 대한 설명을 입력하세요">
+                    </div>
+                    <div class="col-1">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeColumn(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newColumn);
+            columnIndex++;
+        }
+
+        function removeColumn(button) {
+            button.closest('.column-row').remove();
+        }
+
+        // 폼 제출 처리
+        document.getElementById('tableDefinitionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitFormData(this);
+        });
+
+        // JSON 입력 처리
+        function submitJson() {
+            const jsonInput = document.getElementById('jsonInput').value;
+            if (!jsonInput.trim()) {
+                showError('JSON을 입력해주세요.');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(jsonInput);
+                submitJsonData(data);
+            } catch (error) {
+                showError('JSON 형식이 올바르지 않습니다: ' + error.message);
+            }
+        }
+
+        // JSON 검증
+        function validateJson() {
+            const jsonInput = document.getElementById('jsonInput').value;
+            if (!jsonInput.trim()) {
+                showError('JSON을 입력해주세요.');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(jsonInput);
+                showResult({
+                    success: true,
+                    message: 'JSON 형식이 올바릅니다.',
+                    data: data
+                });
+            } catch (error) {
+                showError('JSON 형식이 올바르지 않습니다: ' + error.message);
+            }
+        }
+
+        // JSON 미리보기 업데이트
+        document.getElementById('jsonInput').addEventListener('input', function() {
+            const jsonInput = this.value;
+            const preview = document.getElementById('jsonPreview');
+            
+            if (!jsonInput.trim()) {
+                preview.innerHTML = '<p class="text-muted">JSON을 입력하면 미리보기가 표시됩니다.</p>';
+                return;
+            }
+
+            try {
+                const data = JSON.parse(jsonInput);
+                let previewHtml = '<div class="alert alert-success mb-2">✅ 유효한 JSON</div>';
+                previewHtml += '<strong>테이블명:</strong> ' + (data.tableName || 'N/A') + '<br>';
+                previewHtml += '<strong>설명:</strong> ' + (data.tableComment || 'N/A') + '<br>';
+                previewHtml += '<strong>DB 타입:</strong> ' + (data.databaseType || 'N/A') + '<br>';
+                previewHtml += '<strong>컬럼 수:</strong> ' + (data.columns ? data.columns.length : 0) + '개<br>';
+                
+                if (data.columns && data.columns.length > 0) {
+                    previewHtml += '<hr><strong>컬럼 목록:</strong><ul class="list-unstyled">';
+                    data.columns.forEach((col, index) => {
+                        previewHtml += `<li>${index + 1}. ${col.columnName} (${col.dataType})</li>`;
+                    });
+                    previewHtml += '</ul>';
+                }
+                
+                preview.innerHTML = previewHtml;
+            } catch (error) {
+                preview.innerHTML = '<div class="alert alert-danger">❌ JSON 형식 오류: ' + error.message + '</div>';
+            }
+        });
+
+        // 폼 데이터 제출
+        function submitFormData(form) {
+            // 폼 데이터 수집
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // 컬럼 데이터 처리
+            const columns = [];
+            const columnRows = document.querySelectorAll('.column-row');
+            
+            columnRows.forEach((row, index) => {
+                const column = {
+                    columnName: row.querySelector('input[name*="columnName"]').value,
+                    dataType: row.querySelector('select[name*="dataType"]').value,
+                    columnSize: row.querySelector('input[name*="columnSize"]').value || null,
+                    defaultValue: row.querySelector('input[name*="defaultValue"]').value || null,
+                    nullable: row.querySelector('input[name*="nullable"]').checked,
+                    primaryKey: row.querySelector('input[name*="primaryKey"]').checked,
+                    autoIncrement: row.querySelector('input[name*="autoIncrement"]').checked,
+                    comment: row.querySelector('input[name*="comment"]').value || null
+                };
+                columns.push(column);
+            });
+            
+            data.columns = columns;
+            
+            // 로딩 표시
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...';
+            submitBtn.disabled = true;
+            
+            // API 호출 (기존 URL 사용)
+            fetch('/mbb/table-definition/create-table', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                if (result.success) {
+                    showResult(result);
+                } else {
+                    showError(result.message || '테이블 정의 저장 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                showError('네트워크 오류가 발생했습니다: ' + error.message);
+            });
+        }
+
+        // JSON 데이터 제출
+        function submitJsonData(data) {
+            // 로딩 표시
+            const submitBtn = document.querySelector('#json-tab-pane .btn-gradient');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...';
+            submitBtn.disabled = true;
+            
+            // API 호출 (기존 URL 사용)
+            fetch('/mbb/table-definition/create-table', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                if (result.success) {
+                    showResult(result);
+                } else {
+                    showError(result.message || '테이블 정의 저장 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                showError('네트워크 오류가 발생했습니다: ' + error.message);
+            });
+        }
+
+        function showResult(result) {
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('errorArea').style.display = 'none';
+            
+            let content = '<div class="alert alert-success">';
+            content += '<h6><i class="fas fa-check-circle"></i> 테이블 정의 저장 완료!</h6>';
+            content += '<ul class="list-unstyled mb-0">';
+            
+            if (result.generatedFiles) {
+                result.generatedFiles.forEach(file => {
+                    content += `<li><i class="fas fa-file-code"></i> ${file}</li>`;
+                });
+            }
+            
+            content += '</ul></div>';
+            
+            if (result.message) {
+                content += `<div class="mt-3"><strong>메시지:</strong> ${result.message}</div>`;
+            }
+            
+            document.getElementById('resultContent').innerHTML = content;
+        }
+
+        function showError(message) {
+            document.getElementById('resultArea').style.display = 'none';
+            document.getElementById('errorArea').style.display = 'block';
+            document.getElementById('errorContent').innerHTML = `<div class="alert alert-danger">${message}</div>`;
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- Sidebar Navigation Fragment -->
+    <nav th:fragment="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+        <div class="position-sticky pt-3">
+            <div class="text-center mb-4">
+                <h4 class="text-white">
+                    <i class="fas fa-cube"></i> MBB
+                </h4>
+                <p class="text-white-50">AI 워크플로우</p>
+            </div>
+            
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI == '/mbb/' ? 'active' : ''}" href="/mbb/">
+                        <i class="fas fa-home"></i> 홈으로
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/table-definition') ? 'active' : ''}" href="/mbb/table-definition">
+                        <i class="fas fa-table"></i> 테이블 정의
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/ddl-generator') ? 'active' : ''}" href="/mbb/ddl-generator">
+                        <i class="fas fa-database"></i> DDL 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/entity-generator') ? 'active' : ''}" href="/mbb/entity-generator">
+                        <i class="fas fa-code"></i> Entity 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/dto-generator') ? 'active' : ''}" href="/mbb/dto-generator">
+                        <i class="fas fa-file-alt"></i> DTO 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/repository-generator') ? 'active' : ''}" href="/mbb/repository-generator">
+                        <i class="fas fa-database"></i> Repository 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/service-generator') ? 'active' : ''}" href="/mbb/service-generator">
+                        <i class="fas fa-cogs"></i> Service 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/process-generator') ? 'active' : ''}" href="/mbb/workflow/process-generator">
+                        <i class="fas fa-sitemap"></i> Process 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/domain-service-generator') ? 'active' : ''}" href="/mbb/workflow/domain-service-generator">
+                        <i class="fas fa-layer-group"></i> Domain Service 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/controller-generator') ? 'active' : ''}" href="/mbb/controller-generator">
+                        <i class="fas fa-globe"></i> Controller 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/template-generator') ? 'active' : ''}" href="/mbb/template-generator">
+                        <i class="fas fa-file-code"></i> HTML 템플릿 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/data-generator') ? 'active' : ''}" href="/mbb/data-generator">
+                        <i class="fas fa-download"></i> 초기 데이터 생성
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/api-test') ? 'active' : ''}" href="/mbb/api-test">
+                        <i class="fas fa-vial"></i> API 테스트
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:classappend="${#httpServletRequest.requestURI.contains('/workflow-generator') ? 'active' : ''}" href="/mbb/workflow-generator">
+                        <i class="fas fa-rocket"></i> 전체 워크플로우
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</body>
+</html> 

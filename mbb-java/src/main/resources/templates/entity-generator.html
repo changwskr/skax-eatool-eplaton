@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Entity 생성 - MBB Java</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .column-row {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .column-row:hover {
+            background-color: #f8f9fa;
+        }
+        .btn-add-column {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-remove-column {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-generate {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 1.1em;
+            padding: 12px 30px;
+        }
+        .preview-section {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .code-preview {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .field-type-select {
+            min-width: 150px;
+        }
+        .table-name-input {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/mbb/">MBB Java</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/entity-generator">Entity 생성</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/api-test">API 테스트</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mbb/swagger-ui.html">API 문서</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="mb-2">Entity 생성</h1>
+                <p class="lead mb-0">테이블 정의를 기반으로 JPA Entity 클래스를 자동 생성합니다.</p>
+            </div>
+            <a href="/mbb/" class="btn btn-outline-primary">
+                <i class="fas fa-home"></i> 홈으로
+            </a>
+        </div>
+
+        <!-- 테이블 정의 폼 -->
+        <div class="form-section">
+            <h3><i class="fas fa-table"></i> 테이블 정의</h3>
+            
+            <!-- 테이블 기본 정보 -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label for="tableName" class="form-label">테이블명 *</label>
+                    <input type="text" class="form-control table-name-input" id="tableName" 
+                           placeholder="예: MBBUSER, product, order" required>
+                    <div class="form-text">JPA Entity 클래스명으로 변환됩니다. (예: MBBUSER → Mbbuser)</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="entityName" class="form-label">Entity 클래스명</label>
+                    <input type="text" class="form-control" id="entityName" readonly>
+                    <div class="form-text">테이블명을 기반으로 자동 생성됩니다.</div>
+                </div>
+            </div>
+
+            <!-- 컬럼 정의 -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4><i class="fas fa-columns"></i> 컬럼 정의</h4>
+                    <button type="button" class="btn btn-add-column" onclick="addColumn()">
+                        <i class="fas fa-plus"></i> 컬럼 추가
+                    </button>
+                </div>
+                
+                <div id="columnsContainer">
+                    <!-- 컬럼 행들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+
+            <!-- 생성 버튼 -->
+            <div class="text-center">
+                <button type="button" class="btn btn-generate" onclick="generateEntity()">
+                    <i class="fas fa-magic"></i> Entity 생성
+                </button>
+            </div>
+        </div>
+
+        <!-- 생성된 코드 미리보기 -->
+        <div class="preview-section" id="previewSection" style="display: none;">
+            <h3><i class="fas fa-eye"></i> 생성된 Entity 코드</h3>
+            <div class="code-preview" id="entityCode"></div>
+            <div class="mt-3">
+                <button type="button" class="btn btn-success" onclick="downloadEntity()">
+                    <i class="fas fa-download"></i> Entity 파일 다운로드
+                </button>
+                <button type="button" class="btn btn-primary" onclick="copyToClipboard()">
+                    <i class="fas fa-copy"></i> 코드 복사
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 필드 타입 옵션들
+        const fieldTypes = [
+            { value: 'BIGINT', label: 'BIGINT (Long)', javaType: 'Long' },
+            { value: 'INT', label: 'INT (Integer)', javaType: 'Integer' },
+            { value: 'VARCHAR(255)', label: 'VARCHAR(255) (String)', javaType: 'String' },
+            { value: 'VARCHAR(50)', label: 'VARCHAR(50) (String)', javaType: 'String' },
+            { value: 'VARCHAR(100)', label: 'VARCHAR(100) (String)', javaType: 'String' },
+            { value: 'TEXT', label: 'TEXT (String)', javaType: 'String' },
+            { value: 'BOOLEAN', label: 'BOOLEAN (Boolean)', javaType: 'Boolean' },
+            { value: 'DATETIME', label: 'DATETIME (LocalDateTime)', javaType: 'LocalDateTime' },
+            { value: 'DATE', label: 'DATE (LocalDate)', javaType: 'LocalDate' },
+            { value: 'TIME', label: 'TIME (LocalTime)', javaType: 'LocalTime' },
+            { value: 'DECIMAL(10,2)', label: 'DECIMAL(10,2) (BigDecimal)', javaType: 'BigDecimal' },
+            { value: 'DOUBLE', label: 'DOUBLE (Double)', javaType: 'Double' },
+            { value: 'FLOAT', label: 'FLOAT (Float)', javaType: 'Float' }
+        ];
+
+        let columnCounter = 0;
+
+        // 페이지 로드 시 초기 컬럼 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            addColumn();
+            updateEntityName();
+        });
+
+        // 테이블명 입력 시 Entity 클래스명 자동 업데이트
+        document.getElementById('tableName').addEventListener('input', updateEntityName);
+
+        // Entity 클래스명 업데이트
+        function updateEntityName() {
+            const tableName = document.getElementById('tableName').value;
+            const entityName = tableName.charAt(0).toUpperCase() + tableName.slice(1);
+            document.getElementById('entityName').value = entityName;
+        }
+
+        // 컬럼 추가
+        function addColumn() {
+            columnCounter++;
+            const container = document.getElementById('columnsContainer');
+            
+            const columnRow = document.createElement('div');
+            columnRow.className = 'column-row';
+            columnRow.id = `column-${columnCounter}`;
+            
+            columnRow.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">필드명 *</label>
+                        <input type="text" class="form-control column-name" 
+                               placeholder="예: id, username, email" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">컬럼명</label>
+                        <input type="text" class="form-control column-db-name" 
+                               placeholder="DB 컬럼명 (선택사항)">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">필드 타입 *</label>
+                        <select class="form-select field-type-select">
+                            ${fieldTypes.map(type => 
+                                `<option value="${type.value}" data-java-type="${type.javaType}">${type.label}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">제약조건</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="primaryKey-${columnCounter}">
+                            <label class="form-check-label" for="primaryKey-${columnCounter}">
+                                Primary Key
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="nullable-${columnCounter}" checked>
+                            <label class="form-check-label" for="nullable-${columnCounter}">
+                                Nullable
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">액션</label>
+                        <button type="button" class="btn btn-remove-column btn-sm" 
+                                onclick="removeColumn(${columnCounter})">
+                            <i class="fas fa-trash"></i> 삭제
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(columnRow);
+        }
+
+        // 컬럼 삭제
+        function removeColumn(counter) {
+            const columnRow = document.getElementById(`column-${counter}`);
+            if (columnRow) {
+                columnRow.remove();
+            }
+        }
+
+        // Entity 생성
+        function generateEntity() {
+            const tableName = document.getElementById('tableName').value;
+            const entityName = document.getElementById('entityName').value;
+            
+            if (!tableName) {
+                alert('테이블명을 입력해주세요.');
+                return;
+            }
+
+            // 컬럼 정보 수집
+            const columns = [];
+            const columnRows = document.querySelectorAll('.column-row');
+            
+            columnRows.forEach((row, index) => {
+                const fieldName = row.querySelector('.column-name').value;
+                const columnName = row.querySelector('.column-db-name').value || fieldName;
+                const fieldType = row.querySelector('.field-type-select').value;
+                const javaType = row.querySelector('.field-type-select option:checked').dataset.javaType;
+                const isPrimaryKey = row.querySelector(`#primaryKey-${row.id.split('-')[1]}`).checked;
+                const isNullable = row.querySelector(`#nullable-${row.id.split('-')[1]}`).checked;
+                
+                if (fieldName) {
+                    columns.push({
+                        fieldName: fieldName,
+                        columnName: columnName,
+                        fieldType: fieldType,
+                        javaType: javaType,
+                        isPrimaryKey: isPrimaryKey,
+                        isNullable: isNullable
+                    });
+                }
+            });
+
+            if (columns.length === 0) {
+                alert('최소 하나의 컬럼을 정의해주세요.');
+                return;
+            }
+
+            // Entity 코드 생성
+            const entityCode = generateEntityCode(tableName, entityName, columns);
+            
+            // 미리보기 표시
+            document.getElementById('entityCode').textContent = entityCode;
+            document.getElementById('previewSection').style.display = 'block';
+            
+            // 페이지 스크롤
+            document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Entity 코드 생성
+        function generateEntityCode(tableName, entityName, columns) {
+            const primaryKeyColumn = columns.find(col => col.isPrimaryKey);
+            const hasPrimaryKey = primaryKeyColumn != null;
+            
+            let code = `package com.skax.eatool.mbb.entity;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.math.BigDecimal;
+
+/**
+ * ${entityName} Entity 클래스
+ * 
+ * @author MBB Generator
+ * @since ${new Date().toISOString().split('T')[0]}
+ */
+@Entity
+@Table(name = "${tableName}")
+public class ${entityName} {
+    
+`;
+
+            // 필드 정의
+            columns.forEach(column => {
+                code += `    /**
+     * ${column.fieldName}
+     */
+    @Column(name = "${column.columnName}"`;
+                
+                if (!column.isNullable) {
+                    code += `, nullable = false`;
+                }
+                
+                if (column.fieldType.includes('VARCHAR')) {
+                    const length = column.fieldType.match(/VARCHAR\\((\d+)\\)/);
+                    if (length) {
+                        code += `, length = ${length[1]}`;
+                    }
+                }
+                
+                if (column.fieldType.includes('DECIMAL')) {
+                    const decimal = column.fieldType.match(/DECIMAL\\((\d+),(\d+)\\)/);
+                    if (decimal) {
+                        code += `, precision = ${decimal[1]}, scale = ${decimal[2]}`;
+                    }
+                }
+                
+                code += `)
+    private ${column.javaType} ${column.fieldName};
+    
+`;
+            });
+
+            // 생성자
+            code += `    // 기본 생성자
+    public ${entityName}() {
+    }
+    
+    // 전체 필드 생성자
+    public ${entityName}(${columns.map(col => `${col.javaType} ${col.fieldName}`).join(', ')}) {
+`;
+            columns.forEach(column => {
+                code += `        this.${column.fieldName} = ${column.fieldName};
+`;
+            });
+            code += `    }
+    
+`;
+
+            // Getter/Setter
+            columns.forEach(column => {
+                const capitalizedFieldName = column.fieldName.charAt(0).toUpperCase() + column.fieldName.slice(1);
+                
+                code += `    public ${column.javaType} get${capitalizedFieldName}() {
+        return ${column.fieldName};
+    }
+    
+    public void set${capitalizedFieldName}(${column.javaType} ${column.fieldName}) {
+        this.${column.fieldName} = ${column.fieldName};
+    }
+    
+`;
+            });
+
+            // toString 메서드
+            code += `    @Override
+    public String toString() {
+        return "${entityName}{" +
+`;
+            columns.forEach((column, index) => {
+                code += `                "${column.fieldName}=" + ${column.fieldName}${index < columns.length - 1 ? ' + "," +' : ''}
+`;
+            });
+            code += `                "}";
+    }
+}`;
+
+            return code;
+        }
+
+        // Entity 파일 다운로드
+        function downloadEntity() {
+            const tableName = document.getElementById('tableName').value;
+            const entityName = document.getElementById('entityName').value;
+            const code = document.getElementById('entityCode').textContent;
+            
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${entityName}.java`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // 코드 복사
+        function copyToClipboard() {
+            const code = document.getElementById('entityCode').textContent;
+            navigator.clipboard.writeText(code).then(function() {
+                alert('코드가 클립보드에 복사되었습니다.');
+            }).catch(function(err) {
+                console.error('클립보드 복사 실패:', err);
+                alert('클립보드 복사에 실패했습니다.');
+            });
+        }
+    </script>
+</body>
+</html> 

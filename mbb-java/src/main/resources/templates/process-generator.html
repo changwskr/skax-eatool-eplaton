@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process 생성 - MBB</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+        }
+        .result-card {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+        }
+        .error-card {
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div th:replace="fragments/navigation :: sidebar"></div>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Process 생성</h1>
+                    <a href="/mbb/" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i> 홈으로
+                    </a>
+                </div>
+
+                <!-- Process 생성 폼 -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card form-card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-sitemap"></i> Process 생성 설정
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="processForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="entityName" class="form-label">Entity 클래스명</label>
+                                            <input type="text" class="form-control" id="entityName" name="entityName" 
+                                                   placeholder="예: User" required>
+                                            <div class="form-text">파스칼케이스로 입력 (예: User, Product)</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="packageName" class="form-label">패키지명</label>
+                                            <input type="text" class="form-control" id="packageName" name="packageName" 
+                                                   value="com.skax.eatool.mbb.process" required>
+                                            <div class="form-text">Process가 생성될 패키지명</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="servicePackage" class="form-label">Service 패키지명</label>
+                                            <input type="text" class="form-control" id="servicePackage" name="servicePackage" 
+                                                   value="com.skax.eatool.mbb.service" required>
+                                            <div class="form-text">Service가 위치한 패키지명</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="dtoPackage" class="form-label">DTO 패키지명</label>
+                                            <input type="text" class="form-control" id="dtoPackage" name="dtoPackage" 
+                                                   value="com.skax.eatool.mbb.dto" required>
+                                            <div class="form-text">DTO가 위치한 패키지명</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="processType" class="form-label">Process 타입</label>
+                                            <select class="form-control" id="processType" name="processType" required>
+                                                <option value="SIMPLE">Simple Process</option>
+                                                <option value="COMPLEX">Complex Process</option>
+                                                <option value="WORKFLOW">Workflow Process</option>
+                                                <option value="BATCH">Batch Process</option>
+                                            </select>
+                                            <div class="form-text">Process의 복잡도와 타입</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="transactionType" class="form-label">트랜잭션 타입</label>
+                                            <select class="form-control" id="transactionType" name="transactionType" required>
+                                                <option value="REQUIRED">Required</option>
+                                                <option value="REQUIRES_NEW">Requires New</option>
+                                                <option value="SUPPORTS">Supports</option>
+                                                <option value="NOT_SUPPORTED">Not Supported</option>
+                                            </select>
+                                            <div class="form-text">트랜잭션 전파 설정</div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <h6 class="text-primary mb-3">
+                                        <i class="fas fa-cogs"></i> 생성 옵션
+                                    </h6>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateInterface" name="generateInterface" checked>
+                                                <label class="form-check-label" for="generateInterface">
+                                                    Interface 생성
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateImpl" name="generateImpl" checked>
+                                                <label class="form-check-label" for="generateImpl">
+                                                    Implementation 생성
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateValidation" name="generateValidation" checked>
+                                                <label class="form-check-label" for="generateValidation">
+                                                    Validation 포함
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateTransaction" name="generateTransaction" checked>
+                                                <label class="form-check-label" for="generateTransaction">
+                                                    Transaction 관리
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateException" name="generateException" checked>
+                                                <label class="form-check-label" for="generateException">
+                                                    Exception 처리
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateLogging" name="generateLogging" checked>
+                                                <label class="form-check-label" for="generateLogging">
+                                                    Logging 포함
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateAudit" name="generateAudit" checked>
+                                                <label class="form-check-label" for="generateAudit">
+                                                    Audit 기능
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateAsync" name="generateAsync">
+                                                <label class="form-check-label" for="generateAsync">
+                                                    비동기 처리
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="generateRetry" name="generateRetry">
+                                                <label class="form-check-label" for="generateRetry">
+                                                    재시도 로직
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center mt-4">
+                                        <button type="submit" class="btn btn-gradient btn-lg">
+                                            <i class="fas fa-magic"></i> Process 생성
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 결과 표시 영역 -->
+                    <div class="col-lg-4">
+                        <div id="resultArea" style="display: none;">
+                            <div class="card result-card mb-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-check-circle text-success"></i> 생성 결과
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="resultContent"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="errorArea" style="display: none;">
+                            <div class="card error-card mb-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-exclamation-triangle text-danger"></i> 오류
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="errorContent"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('processForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 폼 데이터 수집
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            // 체크박스 값 처리
+            data.generateInterface = document.getElementById('generateInterface').checked;
+            data.generateImpl = document.getElementById('generateImpl').checked;
+            data.generateValidation = document.getElementById('generateValidation').checked;
+            data.generateTransaction = document.getElementById('generateTransaction').checked;
+            data.generateException = document.getElementById('generateException').checked;
+            data.generateLogging = document.getElementById('generateLogging').checked;
+            data.generateAudit = document.getElementById('generateAudit').checked;
+            data.generateAsync = document.getElementById('generateAsync').checked;
+            data.generateRetry = document.getElementById('generateRetry').checked;
+            
+            // 로딩 표시
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 생성 중...';
+            submitBtn.disabled = true;
+            
+            // API 호출
+            fetch('/mbb/workflow/process/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                if (result.success) {
+                    showResult(result);
+                } else {
+                    showError(result.message || 'Process 생성 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                showError('네트워크 오류가 발생했습니다: ' + error.message);
+            });
+        });
+
+        function showResult(result) {
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('errorArea').style.display = 'none';
+            
+            let content = '<div class="alert alert-success">';
+            content += '<h6><i class="fas fa-check-circle"></i> Process 생성 완료!</h6>';
+            content += '<ul class="list-unstyled mb-0">';
+            
+            if (result.generatedFiles) {
+                result.generatedFiles.forEach(file => {
+                    content += `<li><i class="fas fa-file-code"></i> ${file}</li>`;
+                });
+            }
+            
+            content += '</ul></div>';
+            
+            if (result.message) {
+                content += `<div class="mt-3"><strong>메시지:</strong> ${result.message}</div>`;
+            }
+            
+            document.getElementById('resultContent').innerHTML = content;
+        }
+
+        function showError(message) {
+            document.getElementById('resultArea').style.display = 'none';
+            document.getElementById('errorArea').style.display = 'block';
+            document.getElementById('errorContent').innerHTML = `<div class="alert alert-danger">${message}</div>`;
+        }
+    </script>
+</body>
+</html> 

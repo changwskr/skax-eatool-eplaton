@@ -1,0 +1,129 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /mbb
+  # 보안 헤더 설정
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+spring:
+  application:
+    name: mbb-java
+  
+  # 데이터베이스 설정
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  # H2 콘솔 설정
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+        web-port: 8086
+        trace: false
+        web-admin-password: admin
+  
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+  
+  # Thymeleaf 설정
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML
+  
+  # 파일 업로드 설정
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# Swagger 설정
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    com.skax.eatool.mbb: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web.servlet: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+    org.springframework.web.servlet.handler.SimpleUrlHandlerMapping: TRACE
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter: TRACE
+    org.springframework.boot.autoconfigure: DEBUG
+    org.springframework.context.annotation: DEBUG
+    org.springframework.beans.factory: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/mbb-application.log
+    max-size: 10MB
+    max-history: 30
+
+# AI 코딩 워크플로우 설정
+mbb:
+  code-generation:
+    output-dir: generated
+    template-dir: templates
+    max-file-size: 10MB
+    supported-tasks:
+      - generate-entity
+      - generate-repository
+      - generate-service
+      - generate-controller
+      - generate-html
+      - generate-ddl
+      - generate-init-data
+  
+  # URL 규칙 설정
+  urls:
+    # 홈 페이지
+    home: "/"
+    # AI TASK PIPELINE 페이지들
+    table-definition: "/table-definition"
+    entity-generator: "/entity-generator"
+    repository-generator: "/repository-generator"
+    service-generator: "/service-generator"
+    controller-generator: "/controller-generator"
+    dto-generator: "/dto-generator"
+    template-generator: "/template-generator"
+    ddl-generator: "/ddl-generator"
+    data-generator: "/data-generator"
+    workflow-generator: "/workflow-generator"
+    api-test: "/api-test"
+    # API 엔드포인트들
+    api-users: "/api/users"
+    api-code-generation: "/api/code-generation"
+    api-mcp: "/api/mcp"
+    # 개발 도구들
+    swagger-ui: "/swagger-ui.html"
+    h2-console: "/h2-console"
+    actuator: "/actuator"
+
+# Spring Security 설정 (SecurityConfig에서 관리) 
