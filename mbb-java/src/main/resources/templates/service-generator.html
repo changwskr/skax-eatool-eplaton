@@ -49,10 +49,10 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Service 생성</h1>
-                    <a href="/mbb/" class="btn btn-outline-primary">
-                        <i class="fas fa-home"></i> 홈으로
-                    </a>
-                </div>
+            <a href="/mbb/" class="btn btn-outline-primary">
+                <i class="fas fa-home"></i> 홈으로
+            </a>
+        </div>
 
                 <!-- Service 생성 폼 -->
                 <div class="row">
@@ -67,18 +67,18 @@
                                 <form id="serviceForm">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="entityName" class="form-label">Entity 클래스명</label>
+                    <label for="entityName" class="form-label">Entity 클래스명</label>
                                             <input type="text" class="form-control" id="entityName" name="entityName" 
                                                    placeholder="예: User" required>
                                             <div class="form-text">파스칼케이스로 입력 (예: User, Product)</div>
-                                        </div>
+                </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="packageName" class="form-label">패키지명</label>
                                             <input type="text" class="form-control" id="packageName" name="packageName" 
                                                    value="com.skax.eatool.mbb.service" required>
                                             <div class="form-text">Service가 생성될 패키지명</div>
-                                        </div>
-                                    </div>
+                </div>
+            </div>
 
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -86,14 +86,14 @@
                                             <input type="text" class="form-control" id="entityPackage" name="entityPackage" 
                                                    value="com.skax.eatool.mbb.entity" required>
                                             <div class="form-text">Entity가 위치한 패키지명</div>
-                                        </div>
+                </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="repositoryPackage" class="form-label">Repository 패키지명</label>
                                             <input type="text" class="form-control" id="repositoryPackage" name="repositoryPackage" 
                                                    value="com.skax.eatool.mbb.repository" required>
                                             <div class="form-text">Repository가 위치한 패키지명</div>
-                                        </div>
-                                    </div>
+                </div>
+            </div>
 
                                     <hr class="my-4">
 
@@ -103,57 +103,57 @@
                                     
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <div class="form-check">
+                <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="generateInterface" name="generateInterface" checked>
                                                 <label class="form-check-label" for="generateInterface">
                                                     Interface 생성
-                                                </label>
-                                            </div>
+                    </label>
+                </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <div class="form-check">
+                <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="generateImpl" name="generateImpl" checked>
                                                 <label class="form-check-label" for="generateImpl">
                                                     Implementation 생성
-                                                </label>
-                                            </div>
+                    </label>
+                </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <div class="form-check">
+                <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="generateValidation" name="generateValidation" checked>
                                                 <label class="form-check-label" for="generateValidation">
                                                     Validation 포함
-                                                </label>
-                                            </div>
+                    </label>
+                </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <div class="form-check">
+                <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="generateTransaction" name="generateTransaction" checked>
                                                 <label class="form-check-label" for="generateTransaction">
                                                     Transaction 관리
-                                                </label>
-                                            </div>
+                    </label>
+                </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <div class="form-check">
+                <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="generateException" name="generateException" checked>
                                                 <label class="form-check-label" for="generateException">
                                                     Exception 처리
-                                                </label>
-                                            </div>
+                    </label>
+                </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <div class="form-check">
+                <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="generateLogging" name="generateLogging" checked>
                                                 <label class="form-check-label" for="generateLogging">
                                                     Logging 포함
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
+                    </label>
+                </div>
+            </div>
+        </div>
 
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
@@ -180,13 +180,13 @@
                                                 </label>
                                             </div>
                                         </div>
-                                    </div>
+            </div>
 
                                     <div class="text-center mt-4">
                                         <button type="submit" class="btn btn-gradient btn-lg">
                                             <i class="fas fa-magic"></i> Service 생성
-                                        </button>
-                                    </div>
+                </button>
+            </div>
                                 </form>
                             </div>
                         </div>
