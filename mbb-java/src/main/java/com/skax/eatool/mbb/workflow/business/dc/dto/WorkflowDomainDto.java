@@ -41,6 +41,16 @@ public class WorkflowDomainDto {
     private ServiceGenerationDomain serviceGeneration;
     
     /**
+     * Process 생성 정보
+     */
+    private ProcessGenerationDomain processGeneration;
+    
+    /**
+     * Domain Service 생성 정보
+     */
+    private DomainServiceGenerationDomain domainServiceGeneration;
+    
+    /**
      * Controller 생성 정보
      */
     private ControllerGenerationDomain controllerGeneration;
@@ -185,6 +195,36 @@ public class WorkflowDomainDto {
         private List<String> businessMethods;
         private boolean useTransaction;
         private boolean useValidation;
+    }
+    
+    /**
+     * Process 생성 도메인
+     */
+    @Data
+    public static class ProcessGenerationDomain {
+        private String processName;
+        private String entityName;
+        private String packageName;
+        private String baseProcessClass;
+        private List<String> processMethods;
+        private boolean useTransaction;
+        private boolean useValidation;
+        private String processType; // BUSINESS, WORKFLOW, BATCH
+    }
+    
+    /**
+     * Domain Service 생성 도메인
+     */
+    @Data
+    public static class DomainServiceGenerationDomain {
+        private String domainServiceName;
+        private String entityName;
+        private String packageName;
+        private String baseDomainServiceClass;
+        private List<String> domainMethods;
+        private boolean useTransaction;
+        private boolean useValidation;
+        private String domainType; // CORE, APPLICATION, INFRASTRUCTURE
     }
     
     /**
@@ -352,21 +392,27 @@ public class WorkflowDomainDto {
      */
     @Data
     public static class GeneratedCodeDomain {
+        private String ddlCode;
         private String entityCode;
         private String repositoryCode;
-        private String serviceCode;
-        private String controllerCode;
-        private String dtoCode;
         private String requestDtoCode;
         private String responseDtoCode;
         private String domainDtoCode;
-        private String ddlCode;
+        private String controllerCode;
+        private String serviceCode;
+        private String pcCode;
+        private String dcCode;
+        private String validatorCode;
+        private String mapperCode;
         private String templateCode;
         private String swaggerCode;
-        private String dataCode;
         private String initialDataCode;
+        private String processCode;
+        private String domainServiceCode;
+        private String dataCode;
         private Map<String, String> filePaths;
         private Map<String, String> additionalFiles;
+        private List<String> generatedFiles;
     }
     
     // ==================== 유틸리티 메서드들 ====================

@@ -89,7 +89,7 @@ public class UrlMappingLogger implements CommandLineRunner {
         logger.info(className, "GET  /mbb/table-definition     → TableDefinitionController.showTableDefinitionPage");
         logger.info(className, "GET  /mbb/entity-generator     → EntityGeneratorController.showEntityGeneratorPage");
         logger.info(className, "GET  /mbb/repository-generator → RepositoryGeneratorController.showRepositoryGeneratorPage");
-        logger.info(className, "GET  /mbb/service-generator    → ServiceGeneratorController.showServiceGeneratorPage");
+        logger.info(className, "GET  /mbb/service-generator-sample    → ServiceGeneratorController.showServiceGeneratorPage (Sample)");
         logger.info(className, "GET  /mbb/controller-generator → ControllerGeneratorController.showControllerGeneratorPage");
         logger.info(className, "GET  /mbb/dto-generator        → DtoGeneratorController.showDtoGeneratorPage");
         logger.info(className, "GET  /mbb/template-generator   → TemplateGeneratorController.showTemplateGeneratorPage");

@@ -3,8 +3,8 @@
     <!-- 프로퍼티 정의 -->
     <property name="LOG_PATH" value="logs"/>
     <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive"/>
-    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%method - %msg%n"/>
-    <property name="LOG_PATTERN_COLOR" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36}.%method - %msg%n"/>
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n"/>
+    <property name="LOG_PATTERN_COLOR" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36}.%M - %msg%n"/>
 
     <!-- 콘솔 출력 설정 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -85,63 +85,54 @@
 
     <!-- 프로파일별 설정 -->
     <springProfile name="dev">
-        <!-- 개발 환경: 콘솔과 파일 모두 출력 -->
         <root level="DEBUG">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
             <appender-ref ref="ERROR_FILE"/>
         </root>
-        
-        <!-- MBB 애플리케이션 로그 -->
+
         <logger name="com.skax.eatool.mbb" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
         </logger>
-        
-        <!-- SQL 로그 -->
+
         <logger name="jdbc.sqlonly" level="DEBUG" additivity="false">
             <appender-ref ref="SQL_FILE"/>
         </logger>
-        
-        <!-- 보안 로그 -->
+
         <logger name="org.springframework.security" level="DEBUG" additivity="false">
             <appender-ref ref="SECURITY_FILE"/>
         </logger>
     </springProfile>
 
     <springProfile name="prod">
-        <!-- 운영 환경: 파일만 출력 -->
         <root level="INFO">
             <appender-ref ref="FILE"/>
             <appender-ref ref="ERROR_FILE"/>
         </root>
-        
-        <!-- MBB 애플리케이션 로그 -->
+
         <logger name="com.skax.eatool.mbb" level="INFO" additivity="false">
             <appender-ref ref="FILE"/>
         </logger>
-        
-        <!-- SQL 로그 -->
+
         <logger name="jdbc.sqlonly" level="INFO" additivity="false">
             <appender-ref ref="SQL_FILE"/>
         </logger>
-        
-        <!-- 보안 로그 -->
+
         <logger name="org.springframework.security" level="INFO" additivity="false">
             <appender-ref ref="SECURITY_FILE"/>
         </logger>
     </springProfile>
 
-    <!-- 기본 설정 (프로파일이 지정되지 않은 경우) -->
+    <!-- 기본 설정 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </root>
-    
-    <!-- MBB 애플리케이션 로그 -->
+
     <logger name="com.skax.eatool.mbb" level="INFO" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
-</configuration> 
+</configuration>

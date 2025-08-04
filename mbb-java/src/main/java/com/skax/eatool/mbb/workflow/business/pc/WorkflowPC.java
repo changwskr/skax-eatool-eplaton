@@ -157,7 +157,7 @@ public class WorkflowPC {
     public WorkflowDomainDto generateService(WorkflowDomainDto domainDto) {
         try {
             // 프레젠테이션 로직 처리
-            String entityName = domainDto.getServiceGeneration().getEntityName();
+            String serviceName = domainDto.getServiceGeneration().getServiceName();
             String packageName = domainDto.getServiceGeneration().getPackageName();
             
             // DC 호출하여 Service 생성
@@ -167,7 +167,43 @@ public class WorkflowPC {
         }
     }
 
-    // ==================== 7단계: Controller 자동 생성 ====================
+    // ==================== 7단계: Process 자동 생성 ====================
+    
+    /**
+     * Process 생성 (Domain DTO 사용)
+     */
+    public WorkflowDomainDto generateProcess(WorkflowDomainDto domainDto) {
+        try {
+            // 프레젠테이션 로직 처리
+            String processName = domainDto.getProcessGeneration().getProcessName();
+            String packageName = domainDto.getProcessGeneration().getPackageName();
+            
+            // DC 호출하여 Process 생성
+            return workflowDC.generateProcess(domainDto);
+        } catch (Exception e) {
+            throw new RuntimeException("Process 생성 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    // ==================== 8단계: Domain Service 자동 생성 ====================
+    
+    /**
+     * Domain Service 생성 (Domain DTO 사용)
+     */
+    public WorkflowDomainDto generateDomainService(WorkflowDomainDto domainDto) {
+        try {
+            // 프레젠테이션 로직 처리
+            String domainServiceName = domainDto.getDomainServiceGeneration().getDomainServiceName();
+            String packageName = domainDto.getDomainServiceGeneration().getPackageName();
+            
+            // DC 호출하여 Domain Service 생성
+            return workflowDC.generateDomainService(domainDto);
+        } catch (Exception e) {
+            throw new RuntimeException("Domain Service 생성 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    // ==================== 9단계: Controller 자동 생성 ====================
     
     /**
      * Controller 생성 (Domain DTO 사용)

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.math.BigDecimal;
 
 /**
- * MbbUser Entity
+ * Mbbuser Entity
  * 
  * @author AI Assistant
  * @version 1.0
@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "MBB_USER")
-public class MbbUser {
+@Table(name = "MBBUSER")
+public class Mbbuser {
 
     @Column(name = "USER_ID", nullable = false, length = 255)
     @Id

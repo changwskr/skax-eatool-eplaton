@@ -1,0 +1,77 @@
+server:
+  port: 8087
+  servlet:
+    context-path: /redis-service
+
+spring:
+  application:
+    name: spring-redis-service
+  profiles:
+    active: local
+  
+  # Redis 설정
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 3000ms
+    database: 0
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 5
+        min-idle: 1
+        max-wait: 3000ms
+    # Embedded Redis 사용 시 추가 설정
+    connect-timeout: 2000ms
+    socket-timeout: 2000ms
+
+# 로깅 설정
+logging:
+  level:
+    com.skax.eatool.redis: DEBUG
+    org.springframework.data.redis: DEBUG
+    redis.embedded: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+---
+# 로컬 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: local
+  redis:
+    host: localhost
+    port: 6379
+
+---
+# 개발 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: dev
+  redis:
+    host: localhost
+    port: 6379
+
+---
+# 테스트 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: test
+  redis:
+    host: localhost
+    port: 6379
+
+---
+# 운영 환경 설정 (Embedded Redis 사용 안함)
+spring:
+  config:
+    activate:
+      on-profile: prod
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    ssl: ${REDIS_SSL:false} 

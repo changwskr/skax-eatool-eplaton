@@ -195,9 +195,9 @@ public class WorkflowAS {
         try {
             // 비즈니스 로직 검증
             if (domainDto.getServiceGeneration() == null || 
-                domainDto.getServiceGeneration().getEntityName() == null || 
-                domainDto.getServiceGeneration().getEntityName().trim().isEmpty()) {
-                throw new IllegalArgumentException("Entity명은 필수입니다.");
+                domainDto.getServiceGeneration().getServiceName() == null || 
+                domainDto.getServiceGeneration().getServiceName().trim().isEmpty()) {
+                throw new IllegalArgumentException("Service명은 필수입니다.");
             }
             
             // PC 호출하여 Service 생성
@@ -207,7 +207,49 @@ public class WorkflowAS {
         }
     }
 
-    // ==================== 7단계: Controller 자동 생성 ====================
+    // ==================== 7단계: Process 자동 생성 ====================
+    
+    /**
+     * Process 생성 (Domain DTO 사용)
+     */
+    public WorkflowDomainDto generateProcess(WorkflowDomainDto domainDto) {
+        try {
+            // 비즈니스 로직 검증
+            if (domainDto.getProcessGeneration() == null || 
+                domainDto.getProcessGeneration().getProcessName() == null || 
+                domainDto.getProcessGeneration().getProcessName().trim().isEmpty()) {
+                throw new IllegalArgumentException("Process명은 필수입니다.");
+            }
+            
+            // PC 호출하여 Process 생성
+            return workflowPC.generateProcess(domainDto);
+        } catch (Exception e) {
+            throw new RuntimeException("Process 생성 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    // ==================== 8단계: Domain Service 자동 생성 ====================
+    
+    /**
+     * Domain Service 생성 (Domain DTO 사용)
+     */
+    public WorkflowDomainDto generateDomainService(WorkflowDomainDto domainDto) {
+        try {
+            // 비즈니스 로직 검증
+            if (domainDto.getDomainServiceGeneration() == null || 
+                domainDto.getDomainServiceGeneration().getDomainServiceName() == null || 
+                domainDto.getDomainServiceGeneration().getDomainServiceName().trim().isEmpty()) {
+                throw new IllegalArgumentException("Domain Service명은 필수입니다.");
+            }
+            
+            // PC 호출하여 Domain Service 생성
+            return workflowPC.generateDomainService(domainDto);
+        } catch (Exception e) {
+            throw new RuntimeException("Domain Service 생성 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    // ==================== 9단계: Controller 자동 생성 ====================
     
     /**
      * Controller 생성 (Domain DTO 사용)
@@ -228,7 +270,7 @@ public class WorkflowAS {
         }
     }
 
-    // ==================== 8단계: HTML 템플릿 생성 ====================
+    // ==================== 10단계: HTML 템플릿 생성 ====================
     
     /**
      * HTML 템플릿 생성 (Domain DTO 사용)
@@ -249,7 +291,7 @@ public class WorkflowAS {
         }
     }
 
-    // ==================== 9단계: Swagger 자동 문서화 ====================
+    // ==================== 11단계: Swagger 자동 문서화 ====================
     
     /**
      * Swagger 문서 생성 (Domain DTO 사용)
@@ -270,7 +312,7 @@ public class WorkflowAS {
         }
     }
 
-    // ==================== 10단계: 초기 데이터 생성 ====================
+    // ==================== 12단계: 초기 데이터 생성 ====================
     
     /**
      * 초기 데이터 생성 (Domain DTO 사용)

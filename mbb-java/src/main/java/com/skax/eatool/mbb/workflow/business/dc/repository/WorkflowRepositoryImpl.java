@@ -474,11 +474,11 @@ public class WorkflowRepositoryImpl implements IWorkflowRepository {
      */
     private String generateRequestDtoCode(String entityName, String packageName, String className) {
         return "package " + packageName + ";\n\n" +
-               "import lombok.Data;\n" +
+                            "import lombok.Data;\n" +
                "import javax.validation.constraints.NotNull;\n" +
                "import javax.validation.constraints.Size;\n" +
                "import javax.validation.constraints.Email;\n\n" +
-               "@Data\n" +
+                            "@Data\n" +
                "public class " + className + " {\n" +
                "    private Long id;\n\n" +
                "    @NotNull(message = \"이름은 필수입니다\")\n" +
@@ -803,7 +803,101 @@ public class WorkflowRepositoryImpl implements IWorkflowRepository {
         }
     }
 
-    // ==================== 7단계: Controller 자동 생성 ====================
+    // ==================== 7단계: Process 자동 생성 ====================
+    
+    /**
+     * Process 생성 (Domain DTO 사용)
+     */
+    @Override
+    public WorkflowDomainDto generateProcess(WorkflowDomainDto domainDto) {
+        try {
+            // 실제 Process 생성 로직 구현
+            String processName = domainDto.getProcessGeneration().getProcessName();
+            String entityName = domainDto.getProcessGeneration().getEntityName();
+            String packageName = domainDto.getProcessGeneration().getPackageName();
+            String processType = domainDto.getProcessGeneration().getProcessType();
+            String baseProcessClass = domainDto.getProcessGeneration().getBaseProcessClass();
+            List<String> processMethods = domainDto.getProcessGeneration().getProcessMethods();
+            boolean useTransaction = domainDto.getProcessGeneration().isUseTransaction();
+            boolean useValidation = domainDto.getProcessGeneration().isUseValidation();
+            
+            // TODO: 실제 Process 생성 로직 구현
+            // 예: Process 클래스, 인터페이스, 구현체 생성
+            
+            String processCode = generateProcessCode(processName, entityName, packageName, processType, baseProcessClass, processMethods, useTransaction, useValidation);
+            
+            // 성공 시 Domain DTO 반환 (생성된 코드 포함)
+            WorkflowDomainDto resultDto = new WorkflowDomainDto();
+            resultDto.setProcessGeneration(domainDto.getProcessGeneration());
+            
+            // 생성된 코드 정보 설정
+            WorkflowDomainDto.GeneratedCodeDomain generatedCode = new WorkflowDomainDto.GeneratedCodeDomain();
+            generatedCode.setProcessCode(processCode);
+            resultDto.setGeneratedCode(generatedCode);
+            
+            // 워크플로우 상태 업데이트
+            WorkflowDomainDto.WorkflowStatusDomain status = new WorkflowDomainDto.WorkflowStatusDomain();
+            status.setCurrentStep(7);
+            status.setTotalSteps(12);
+            status.setStatus("COMPLETED");
+            status.setCurrentStepName("Process 생성 완료");
+            status.setMessage("Process가 성공적으로 생성되었습니다.");
+            resultDto.setWorkflowStatus(status);
+            
+            return resultDto;
+        } catch (Exception e) {
+            throw new RuntimeException("Process 생성 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    // ==================== 8단계: Domain Service 자동 생성 ====================
+    
+    /**
+     * Domain Service 생성 (Domain DTO 사용)
+     */
+    @Override
+    public WorkflowDomainDto generateDomainService(WorkflowDomainDto domainDto) {
+        try {
+            // 실제 Domain Service 생성 로직 구현
+            String domainServiceName = domainDto.getDomainServiceGeneration().getDomainServiceName();
+            String entityName = domainDto.getDomainServiceGeneration().getEntityName();
+            String packageName = domainDto.getDomainServiceGeneration().getPackageName();
+            String domainType = domainDto.getDomainServiceGeneration().getDomainType();
+            String baseDomainServiceClass = domainDto.getDomainServiceGeneration().getBaseDomainServiceClass();
+            List<String> domainMethods = domainDto.getDomainServiceGeneration().getDomainMethods();
+            boolean useTransaction = domainDto.getDomainServiceGeneration().isUseTransaction();
+            boolean useValidation = domainDto.getDomainServiceGeneration().isUseValidation();
+            
+            // TODO: 실제 Domain Service 생성 로직 구현
+            // 예: Domain Service 클래스, 인터페이스, 구현체 생성
+            
+            String domainServiceCode = generateDomainServiceCode(domainServiceName, entityName, packageName, domainType, baseDomainServiceClass, domainMethods, useTransaction, useValidation);
+            
+            // 성공 시 Domain DTO 반환 (생성된 코드 포함)
+            WorkflowDomainDto resultDto = new WorkflowDomainDto();
+            resultDto.setDomainServiceGeneration(domainDto.getDomainServiceGeneration());
+            
+            // 생성된 코드 정보 설정
+            WorkflowDomainDto.GeneratedCodeDomain generatedCode = new WorkflowDomainDto.GeneratedCodeDomain();
+            generatedCode.setDomainServiceCode(domainServiceCode);
+            resultDto.setGeneratedCode(generatedCode);
+            
+            // 워크플로우 상태 업데이트
+            WorkflowDomainDto.WorkflowStatusDomain status = new WorkflowDomainDto.WorkflowStatusDomain();
+            status.setCurrentStep(8);
+            status.setTotalSteps(12);
+            status.setStatus("COMPLETED");
+            status.setCurrentStepName("Domain Service 생성 완료");
+            status.setMessage("Domain Service가 성공적으로 생성되었습니다.");
+            resultDto.setWorkflowStatus(status);
+            
+            return resultDto;
+        } catch (Exception e) {
+            throw new RuntimeException("Domain Service 생성 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    // ==================== 9단계: Controller 자동 생성 ====================
     
     /**
      * Controller 생성 (Domain DTO 사용)
@@ -1027,4 +1121,95 @@ public class WorkflowRepositoryImpl implements IWorkflowRepository {
         }
     }
 
+    /**
+     * Process 코드 생성 헬퍼 메서드
+     */
+    private String generateProcessCode(String processName, String entityName, String packageName, String processType, String baseProcessClass, List<String> processMethods, boolean useTransaction, boolean useValidation) {
+        StringBuilder code = new StringBuilder();
+        code.append("package ").append(packageName).append(";\n\n");
+        
+        // Imports
+        code.append("import org.springframework.stereotype.Component;\n");
+        if (useTransaction) {
+            code.append("import org.springframework.transaction.annotation.Transactional;\n");
+        }
+        if (useValidation) {
+            code.append("import org.springframework.validation.annotation.Validated;\n");
+        }
+        code.append("import lombok.RequiredArgsConstructor;\n");
+        code.append("import lombok.extern.slf4j.Slf4j;\n\n");
+        
+        // Class definition
+        code.append("@Component\n");
+        code.append("@RequiredArgsConstructor\n");
+        code.append("@Slf4j\n");
+        if (useValidation) {
+            code.append("@Validated\n");
+        }
+        code.append("public class ").append(processName).append(" {\n\n");
+        
+        // Fields
+        code.append("    private final ").append(entityName).append("Service ").append(WorkflowHelper.toCamelCase(entityName)).append("Service;\n\n");
+        
+        // Methods
+        if (processMethods != null && !processMethods.isEmpty()) {
+            for (String method : processMethods) {
+                code.append("    ").append(useTransaction ? "@Transactional\n    " : "");
+                code.append("public void ").append(method).append("() {\n");
+                code.append("        log.info(\"[").append(processName).append("] ").append(method).append(" 실행 시작\");\n");
+                code.append("        // TODO: ").append(method).append(" 로직 구현\n");
+                code.append("        log.info(\"[").append(processName).append("] ").append(method).append(" 실행 완료\");\n");
+                code.append("    }\n\n");
+            }
+        }
+        
+        code.append("}\n");
+        return code.toString();
+    }
+
+    /**
+     * Domain Service 코드 생성 헬퍼 메서드
+     */
+    private String generateDomainServiceCode(String domainServiceName, String entityName, String packageName, String domainType, String baseDomainServiceClass, List<String> domainMethods, boolean useTransaction, boolean useValidation) {
+        StringBuilder code = new StringBuilder();
+        code.append("package ").append(packageName).append(";\n\n");
+        
+        // Imports
+        code.append("import org.springframework.stereotype.Service;\n");
+        if (useTransaction) {
+            code.append("import org.springframework.transaction.annotation.Transactional;\n");
+        }
+        if (useValidation) {
+            code.append("import org.springframework.validation.annotation.Validated;\n");
+        }
+        code.append("import lombok.RequiredArgsConstructor;\n");
+        code.append("import lombok.extern.slf4j.Slf4j;\n\n");
+        
+        // Class definition
+        code.append("@Service\n");
+        code.append("@RequiredArgsConstructor\n");
+        code.append("@Slf4j\n");
+        if (useValidation) {
+            code.append("@Validated\n");
+        }
+        code.append("public class ").append(domainServiceName).append(" {\n\n");
+        
+        // Fields
+        code.append("    private final ").append(entityName).append("Repository ").append(WorkflowHelper.toCamelCase(entityName)).append("Repository;\n\n");
+        
+        // Methods
+        if (domainMethods != null && !domainMethods.isEmpty()) {
+            for (String method : domainMethods) {
+                code.append("    ").append(useTransaction ? "@Transactional\n    " : "");
+                code.append("public void ").append(method).append("() {\n");
+                code.append("        log.info(\"[").append(domainServiceName).append("] ").append(method).append(" 실행 시작\");\n");
+                code.append("        // TODO: ").append(method).append(" 도메인 로직 구현\n");
+                code.append("        log.info(\"[").append(domainServiceName).append("] ").append(method).append(" 실행 완료\");\n");
+                code.append("    }\n\n");
+            }
+        }
+        
+        code.append("}\n");
+        return code.toString();
+    }
 } 

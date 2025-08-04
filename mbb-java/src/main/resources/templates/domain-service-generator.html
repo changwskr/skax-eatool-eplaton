@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domain Service 생성 - MBB</title>
+    <title>Domain Service 자동 생성</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,31 +11,51 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin: 0.25rem 0;
+        }
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+        }
         .main-content {
             background-color: #f8f9fa;
             min-height: 100vh;
         }
-        .form-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
         }
-        .btn-gradient {
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            color: white;
         }
-        .btn-gradient:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-            color: white;
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
         }
-        .result-card {
-            background: #f8f9fa;
-            border-left: 4px solid #28a745;
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
-        .error-card {
-            background: #f8f9fa;
-            border-left: 4px solid #dc3545;
+        .result-area {
+            background-color: #f8f9fa;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .file-info {
+            background-color: white;
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 0.25rem;
+            border-left: 4px solid #667eea;
         }
     </style>
 </head>
@@ -43,198 +63,209 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div th:replace="fragments/navigation :: sidebar"></div>
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h5 class="text-white">AI 워크플로우</h5>
+                        <small class="text-white-50">Domain Service 생성</small>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/table-definition">
+                                <i class="fas fa-table me-2"></i>1. 테이블 정의서 입력
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/ddl-generator">
+                                <i class="fas fa-database me-2"></i>2. DDL 자동 Export
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/entity-generator">
+                                <i class="fas fa-cube me-2"></i>3. Entity 자동 생성
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/repository-generator">
+                                <i class="fas fa-archive me-2"></i>4. Repository 자동 생성
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/dto-generator">
+                                <i class="fas fa-exchange-alt me-2"></i>5. DTO & Validator 생성
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/service-generator">
+                                <i class="fas fa-cogs me-2"></i>6. Service 생성
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/process-generator">
+                                <i class="fas fa-project-diagram me-2"></i>7. Process 생성
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/mbb/domain-service-generator">
+                                <i class="fas fa-layer-group me-2"></i>8. Domain Service 생성
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/controller-generator">
+                                <i class="fas fa-code me-2"></i>9. Controller 자동 생성
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/template-generator">
+                                <i class="fas fa-file-code me-2"></i>10. HTML 템플릿 생성
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/swagger-documentation">
+                                <i class="fas fa-book me-2"></i>11. Swagger 자동 문서화
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/data-generator">
+                                <i class="fas fa-database me-2"></i>12. 초기 데이터 생성
+                            </a>
+                        </li>
+                        <hr class="text-white-50">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/api-test">
+                                <i class="fas fa-vial me-2"></i>13. API 테스트
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/workflow-generator">
+                                <i class="fas fa-play-circle me-2"></i>14. 전체 워크플로우
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/h2-console-test">
+                                <i class="fas fa-terminal me-2"></i>15. H2 Console
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/entity/entity-generation">
+                                <i class="fas fa-cube me-2"></i>16. Entity 생성 (고급)
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/mbb/table-definition">
+                                <i class="fas fa-table me-2"></i>17. 테이블 정의
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Domain Service 생성</h1>
+                    <h1 class="h2">
+                        <i class="fas fa-layer-group text-primary me-2"></i>
+                        Domain Service 자동 생성
+                    </h1>
                     <a href="/mbb/" class="btn btn-outline-primary">
-                        <i class="fas fa-home"></i> 홈으로
+                        <i class="fas fa-home me-1"></i>홈으로
                     </a>
                 </div>
 
-                <!-- Domain Service 생성 폼 -->
                 <div class="row">
-                    <div class="col-lg-8">
-                        <div class="card form-card mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-layer-group"></i> Domain Service 생성 설정
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-cog me-2"></i>Domain Service 생성 설정
                                 </h5>
                             </div>
                             <div class="card-body">
                                 <form id="domainServiceForm">
                                     <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="entityName" class="form-label">Entity 클래스명</label>
-                                            <input type="text" class="form-control" id="entityName" name="entityName" 
-                                                   placeholder="예: User" required>
-                                            <div class="form-text">파스칼케이스로 입력 (예: User, Product)</div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="packageName" class="form-label">패키지명</label>
-                                            <input type="text" class="form-control" id="packageName" name="packageName" 
-                                                   value="com.skax.eatool.mbb.domain" required>
-                                            <div class="form-text">Domain Service가 생성될 패키지명</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="entityPackage" class="form-label">Entity 패키지명</label>
-                                            <input type="text" class="form-control" id="entityPackage" name="entityPackage" 
-                                                   value="com.skax.eatool.mbb.entity" required>
-                                            <div class="form-text">Entity가 위치한 패키지명</div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="repositoryPackage" class="form-label">Repository 패키지명</label>
-                                            <input type="text" class="form-control" id="repositoryPackage" name="repositoryPackage" 
-                                                   value="com.skax.eatool.mbb.repository" required>
-                                            <div class="form-text">Repository가 위치한 패키지명</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="domainType" class="form-label">도메인 타입</label>
-                                            <select class="form-control" id="domainType" name="domainType" required>
-                                                <option value="AGGREGATE">Aggregate Root</option>
-                                                <option value="ENTITY">Entity</option>
-                                                <option value="VALUE_OBJECT">Value Object</option>
-                                                <option value="SERVICE">Domain Service</option>
-                                            </select>
-                                            <div class="form-text">도메인 주도 설계(DDD) 타입</div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="businessLogic" class="form-label">비즈니스 로직 타입</label>
-                                            <select class="form-control" id="businessLogic" name="businessLogic" required>
-                                                <option value="SIMPLE">Simple Logic</option>
-                                                <option value="COMPLEX">Complex Logic</option>
-                                                <option value="RULES_ENGINE">Rules Engine</option>
-                                                <option value="WORKFLOW">Workflow</option>
-                                            </select>
-                                            <div class="form-text">비즈니스 로직의 복잡도</div>
-                                        </div>
-                                    </div>
-
-                                    <hr class="my-4">
-
-                                    <h6 class="text-primary mb-3">
-                                        <i class="fas fa-cogs"></i> 생성 옵션
-                                    </h6>
-                                    
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateInterface" name="generateInterface" checked>
-                                                <label class="form-check-label" for="generateInterface">
-                                                    Interface 생성
-                                                </label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="domainServiceName" class="form-label">Domain Service명 *</label>
+                                                <input type="text" class="form-control" id="domainServiceName" name="domainServiceName" required>
+                                                <div class="form-text">생성할 Domain Service의 이름을 입력하세요 (예: UserDomainService)</div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateImpl" name="generateImpl" checked>
-                                                <label class="form-check-label" for="generateImpl">
-                                                    Implementation 생성
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateValidation" name="generateValidation" checked>
-                                                <label class="form-check-label" for="generateValidation">
-                                                    Domain Validation
-                                                </label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="entityName" class="form-label">Entity명 *</label>
+                                                <input type="text" class="form-control" id="entityName" name="entityName" required>
+                                                <div class="form-text">연결할 Entity의 이름을 입력하세요</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateBusinessRules" name="generateBusinessRules" checked>
-                                                <label class="form-check-label" for="generateBusinessRules">
-                                                    비즈니스 규칙
-                                                </label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="packageName" class="form-label">패키지명 *</label>
+                                                <input type="text" class="form-control" id="packageName" name="packageName" value="com.skax.eatool.mbb.domain.service" required>
+                                                <div class="form-text">Domain Service가 생성될 패키지 경로</div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateDomainEvents" name="generateDomainEvents" checked>
-                                                <label class="form-check-label" for="generateDomainEvents">
-                                                    도메인 이벤트
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateSpecification" name="generateSpecification" checked>
-                                                <label class="form-check-label" for="generateSpecification">
-                                                    Specification 패턴
-                                                </label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="domainType" class="form-label">Domain 타입</label>
+                                                <select class="form-select" id="domainType" name="domainType">
+                                                    <option value="CORE">Core Domain</option>
+                                                    <option value="APPLICATION">Application Domain</option>
+                                                    <option value="INFRASTRUCTURE">Infrastructure Domain</option>
+                                                </select>
+                                                <div class="form-text">Domain Service의 타입을 선택하세요</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateFactory" name="generateFactory" checked>
-                                                <label class="form-check-label" for="generateFactory">
-                                                    Factory 패턴
-                                                </label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="baseDomainServiceClass" class="form-label">기본 클래스</label>
+                                                <input type="text" class="form-control" id="baseDomainServiceClass" name="baseDomainServiceClass" value="BaseDomainService">
+                                                <div class="form-text">상속받을 기본 Domain Service 클래스</div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateRepository" name="generateRepository" checked>
-                                                <label class="form-check-label" for="generateRepository">
-                                                    Repository 패턴
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateUnitOfWork" name="generateUnitOfWork">
-                                                <label class="form-check-label" for="generateUnitOfWork">
-                                                    Unit of Work
-                                                </label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="domainMethods" class="form-label">도메인 메서드</label>
+                                                <input type="text" class="form-control" id="domainMethods" name="domainMethods" placeholder="createUser,updateUser,deleteUser">
+                                                <div class="form-text">생성할 도메인 메서드들을 쉼표로 구분하여 입력</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateAudit" name="generateAudit" checked>
-                                                <label class="form-check-label" for="generateAudit">
-                                                    Audit 기능
-                                                </label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="useTransaction" name="useTransaction" checked>
+                                                    <label class="form-check-label" for="useTransaction">
+                                                        트랜잭션 사용
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateLogging" name="generateLogging" checked>
-                                                <label class="form-check-label" for="generateLogging">
-                                                    Logging 포함
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateException" name="generateException" checked>
-                                                <label class="form-check-label" for="generateException">
-                                                    Domain Exception
-                                                </label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="useValidation" name="useValidation" checked>
+                                                    <label class="form-check-label" for="useValidation">
+                                                        유효성 검증 사용
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="text-center mt-4">
-                                        <button type="submit" class="btn btn-gradient btn-lg">
-                                            <i class="fas fa-magic"></i> Domain Service 생성
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="button" class="btn btn-secondary me-md-2" onclick="resetForm()">
+                                            <i class="fas fa-undo me-1"></i>초기화
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-magic me-1"></i>Domain Service 생성
                                         </button>
                                     </div>
                                 </form>
@@ -242,30 +273,19 @@
                         </div>
                     </div>
 
-                    <!-- 결과 표시 영역 -->
-                    <div class="col-lg-4">
-                        <div id="resultArea" style="display: none;">
-                            <div class="card result-card mb-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-check-circle text-success"></i> 생성 결과
-                                    </h6>
-                                </div>
-                                <div class="card-body">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>생성 정보
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="resultArea" style="display: none;">
                                     <div id="resultContent"></div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div id="errorArea" style="display: none;">
-                            <div class="card error-card mb-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-exclamation-triangle text-danger"></i> 오류
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div id="errorContent"></div>
+                                <div id="errorArea" style="display: none;">
+                                    <div class="alert alert-danger" id="errorContent"></div>
                                 </div>
                             </div>
                         </div>
@@ -279,84 +299,84 @@
     <script>
         document.getElementById('domainServiceForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            generateDomainService();
+        });
+
+        function generateDomainService() {
+            const formData = new FormData(document.getElementById('domainServiceForm'));
+            const data = {};
             
-            // 폼 데이터 수집
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            
-            // 체크박스 값 처리
-            data.generateInterface = document.getElementById('generateInterface').checked;
-            data.generateImpl = document.getElementById('generateImpl').checked;
-            data.generateValidation = document.getElementById('generateValidation').checked;
-            data.generateBusinessRules = document.getElementById('generateBusinessRules').checked;
-            data.generateDomainEvents = document.getElementById('generateDomainEvents').checked;
-            data.generateSpecification = document.getElementById('generateSpecification').checked;
-            data.generateFactory = document.getElementById('generateFactory').checked;
-            data.generateRepository = document.getElementById('generateRepository').checked;
-            data.generateUnitOfWork = document.getElementById('generateUnitOfWork').checked;
-            data.generateAudit = document.getElementById('generateAudit').checked;
-            data.generateLogging = document.getElementById('generateLogging').checked;
-            data.generateException = document.getElementById('generateException').checked;
-            
-            // 로딩 표시
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 생성 중...';
-            submitBtn.disabled = true;
-            
-            // API 호출
-            fetch('/mbb/workflow/domain-service/generate', {
+            for (let [key, value] of formData.entries()) {
+                if (key === 'useTransaction' || key === 'useValidation') {
+                    data[key] = document.getElementById(key).checked;
+                } else {
+                    data[key] = value;
+                }
+            }
+
+            // Domain Methods를 배열로 변환
+            if (data.domainMethods) {
+                data.domainMethods = data.domainMethods.split(',').map(method => method.trim()).filter(method => method);
+            }
+
+            fetch('/mbb/domain-service-generator/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    domainServiceGeneration: data
+                })
             })
             .then(response => response.json())
             .then(result => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                
-                if (result.success) {
+                if (result.valid) {
                     showResult(result);
                 } else {
-                    showError(result.message || 'Domain Service 생성 중 오류가 발생했습니다.');
+                    showError(result.errorMessage || 'Domain Service 생성 중 오류가 발생했습니다.');
                 }
             })
             .catch(error => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                showError('네트워크 오류가 발생했습니다: ' + error.message);
+                showError('Domain Service 생성 중 오류가 발생했습니다: ' + error.message);
             });
-        });
+        }
 
         function showResult(result) {
             document.getElementById('resultArea').style.display = 'block';
             document.getElementById('errorArea').style.display = 'none';
-            
-            let content = '<div class="alert alert-success">';
-            content += '<h6><i class="fas fa-check-circle"></i> Domain Service 생성 완료!</h6>';
-            content += '<ul class="list-unstyled mb-0">';
-            
-            if (result.generatedFiles) {
-                result.generatedFiles.forEach(file => {
-                    content += `<li><i class="fas fa-file-code"></i> ${file}</li>`;
+
+            let content = '<div class="row">';
+            content += '<div class="col-12"><h6>생성된 파일:</h6>';
+
+            if (result.outputGenericDto && result.outputGenericDto.generatedFiles) {
+                result.outputGenericDto.generatedFiles.forEach(file => {
+                    content += `<div class="file-info"><i class="fas fa-file-code"></i> ${file}</div>`;
                 });
+            } else {
+                content += '<div class="file-info text-muted">생성된 파일이 없습니다.</div>';
             }
-            
-            content += '</ul></div>';
-            
-            if (result.message) {
-                content += `<div class="mt-3"><strong>메시지:</strong> ${result.message}</div>`;
-            }
-            
+
+            content += '</div>';
+            content += '<div class="col-12 mt-3"><h6>생성 정보:</h6>';
+            content += `<div class="file-info"><strong>Domain Service:</strong> ${result.outputGenericDto?.domainServiceName || 'N/A'}</div>`;
+            content += `<div class="file-info"><strong>Entity:</strong> ${result.outputGenericDto?.entityName || 'N/A'}</div>`;
+            content += `<div class="file-info"><strong>패키지:</strong> ${result.outputGenericDto?.packageName || 'N/A'}</div>`;
+            content += `<div class="file-info"><strong>Domain 타입:</strong> ${result.outputGenericDto?.domainType || 'N/A'}</div>`;
+            content += '</div></div>';
+
             document.getElementById('resultContent').innerHTML = content;
         }
 
         function showError(message) {
             document.getElementById('resultArea').style.display = 'none';
             document.getElementById('errorArea').style.display = 'block';
-            document.getElementById('errorContent').innerHTML = `<div class="alert alert-danger">${message}</div>`;
+            document.getElementById('errorContent').textContent = message;
+        }
+
+        function resetForm() {
+            document.getElementById('domainServiceForm').reset();
+            document.getElementById('resultArea').style.display = 'none';
+            document.getElementById('errorArea').style.display = 'none';
         }
     </script>
 </body>

@@ -65,7 +65,21 @@ public interface IWorkflowRepository {
      */
     WorkflowDomainDto generateService(WorkflowDomainDto domainDto);
 
-    // ==================== 7단계: Controller 자동 생성 ====================
+    // ==================== 7단계: Process 자동 생성 ====================
+    
+    /**
+     * Process 생성 (Domain DTO 사용)
+     */
+    WorkflowDomainDto generateProcess(WorkflowDomainDto domainDto);
+
+    // ==================== 8단계: Domain Service 자동 생성 ====================
+    
+    /**
+     * Domain Service 생성 (Domain DTO 사용)
+     */
+    WorkflowDomainDto generateDomainService(WorkflowDomainDto domainDto);
+
+    // ==================== 9단계: Controller 자동 생성 ====================
     
     /**
      * Controller 생성 (Domain DTO 사용)

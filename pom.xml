@@ -23,6 +23,7 @@
         <module>mba-java</module>
         <module>mbb-java</module>
         <module>spring-cloud-apigateway-service</module>
+        <module>spring-redis-service</module>
     </modules>
 
     <properties>
@@ -107,6 +108,12 @@
             <dependency>
                 <groupId>com.skax.eatool</groupId>
                 <artifactId>mbb-java</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.skax.eatool</groupId>
+                <artifactId>spring-redis-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

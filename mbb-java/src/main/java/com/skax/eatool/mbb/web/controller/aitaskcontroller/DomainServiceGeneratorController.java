@@ -8,38 +8,38 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Service 생성기 컨트롤러 (Sample)
+ * Domain Service 생성기 컨트롤러
  *
  * @author AI Assistant
  * @version 1.0
  * @since 2024-01-01
  */
 @Controller
-@RequestMapping("/service-generator")
-public class ServiceGeneratorController {
+@RequestMapping("/domain-service-generator")
+public class DomainServiceGeneratorController {
     
     private final NewIKesaLogger logger = NewKesaLogHelper.getLogger(this.getClass());
     
     /**
-     * Service 생성기 페이지를 표시합니다. (Sample)
+     * Domain Service 생성기 페이지를 표시합니다.
      *
      * @param model 모델
      * @return 뷰 이름
      */
     @GetMapping
-    public String showServiceGeneratorPage(Model model) {
+    public String showDomainServiceGeneratorPage(Model model) {
         String className = this.getClass().getSimpleName();
-        logger.info(className, "[ServiceGeneratorController] showServiceGeneratorPage START");
+        logger.info(className, "[DomainServiceGeneratorController] showDomainServiceGeneratorPage START");
         
         try {
-            logger.info(className, "Service 생성기 페이지 요청 (Sample)");
+            logger.info(className, "Domain Service 생성기 페이지 요청");
             
-            model.addAttribute("title", "Service 생성기 (Sample)");
+            model.addAttribute("title", "Domain Service 생성기");
             
-            logger.info(className, "[ServiceGeneratorController] showServiceGeneratorPage END");
-            return "service-generator";
+            logger.info(className, "[DomainServiceGeneratorController] showDomainServiceGeneratorPage END");
+            return "domain-service-generator";
         } catch (Exception e) {
-            logger.error(className, "[ServiceGeneratorController] showServiceGeneratorPage ERROR: " + e.getMessage());
+            logger.error(className, "[DomainServiceGeneratorController] showDomainServiceGeneratorPage ERROR: " + e.getMessage());
             throw e;
         }
     }

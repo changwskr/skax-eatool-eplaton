@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repository 생성 - MBB</title>
+    <title>Repository 생성</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -15,27 +15,44 @@
             background-color: #f8f9fa;
             min-height: 100vh;
         }
-        .form-card {
-            background: white;
+        .card {
+            border: none;
             border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         }
-        .btn-gradient {
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
+            border-radius: 10px;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            margin: 2px 0;
+        }
+        .nav-link:hover, .nav-link.active {
             color: white;
+            background-color: rgba(255, 255, 255, 0.1);
         }
-        .btn-gradient:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-            color: white;
+        .result-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
         }
-        .result-card {
-            background: #f8f9fa;
-            border-left: 4px solid #28a745;
-        }
-        .error-card {
-            background: #f8f9fa;
-            border-left: 4px solid #dc3545;
+        .file-info {
+            background-color: #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -43,161 +60,233 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div th:replace="fragments/navigation :: sidebar"></div>
-
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Repository 생성</h1>
-                    <a href="/mbb/" class="btn btn-outline-primary">
-                        <i class="fas fa-home"></i> 홈으로
-                    </a>
+            <div class="col-md-3 col-lg-2 sidebar p-3">
+                <div class="d-flex flex-column">
+                    <h4 class="text-white mb-4">
+                        <i class="fas fa-cogs"></i> AI 워크플로우
+                    </h4>
+                    
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="/mbb/home">
+                            <i class="fas fa-home"></i> 홈
+                        </a>
+                        <a class="nav-link" href="/mbb/table-definition">
+                            <i class="fas fa-table"></i> 1. 테이블 정의서 입력
+                        </a>
+                        <a class="nav-link" href="/mbb/ddl-generator">
+                            <i class="fas fa-database"></i> 2. DDL 자동 Export
+                        </a>
+                        <a class="nav-link" href="/mbb/entity-generation">
+                            <i class="fas fa-cube"></i> 3. Entity 자동 생성
+                        </a>
+                        <a class="nav-link" href="/mbb/dto-generator">
+                            <i class="fas fa-exchange-alt"></i> 4. DTO & Validator 생성
+                        </a>
+                        <a class="nav-link active" href="/mbb/repository-generator">
+                            <i class="fas fa-archive"></i> 5. Repository 자동 생성
+                        </a>
+                        <a class="nav-link" href="/mbb/service-generator">
+                            <i class="fas fa-cogs"></i> 6. Service 자동 생성
+                        </a>
+                        <a class="nav-link" href="/mbb/process-generator">
+                            <i class="fas fa-project-diagram"></i> 7. Process 자동 생성
+                        </a>
+                        <a class="nav-link" href="/mbb/domain-service-generator">
+                            <i class="fas fa-layer-group"></i> 8. Domain Service 생성
+                        </a>
+                        <a class="nav-link" href="/mbb/controller-generator">
+                            <i class="fas fa-globe"></i> 9. Controller 자동 생성
+                        </a>
+                        <a class="nav-link" href="/mbb/template-generator">
+                            <i class="fas fa-file-code"></i> 10. HTML 템플릿 생성
+                        </a>
+                        <a class="nav-link" href="/mbb/swagger-generator">
+                            <i class="fas fa-book"></i> 11. Swagger 자동 문서화
+                        </a>
+                        <a class="nav-link" href="/mbb/data-generator">
+                            <i class="fas fa-database"></i> 12. 초기 데이터 생성
+                        </a>
+                    </nav>
+                    
+                    <hr class="text-white">
+                    
+                    <h6 class="text-white mb-3">추가 도구</h6>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="/mbb/api-test">
+                            <i class="fas fa-flask"></i> API 테스트
+                        </a>
+                        <a class="nav-link" href="/mbb/full-workflow">
+                            <i class="fas fa-rocket"></i> 전체 워크플로우
+                        </a>
+                        <a class="nav-link" href="/mbb/h2-console">
+                            <i class="fas fa-terminal"></i> H2 Console
+                        </a>
+                        <a class="nav-link" href="/mbb/advanced-entity">
+                            <i class="fas fa-cube"></i> Entity 생성 (고급)
+                        </a>
+                        <a class="nav-link" href="/mbb/table-definition">
+                            <i class="fas fa-table"></i> 테이블 정의
+                        </a>
+                        <a class="nav-link" href="/mbb/swagger-ui">
+                            <i class="fas fa-book-open"></i> Swagger UI
+                        </a>
+                    </nav>
                 </div>
+            </div>
 
-                <!-- Repository 생성 폼 -->
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content p-4">
                 <div class="row">
-                    <div class="col-lg-8">
-                        <div class="card form-card mb-4">
-                            <div class="card-header">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-database"></i> Repository 생성 설정
-                                </h5>
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-archive"></i> Repository 자동 생성
+                                </h4>
                             </div>
                             <div class="card-body">
                                 <form id="repositoryForm">
                                     <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="entityName" class="form-label">Entity 클래스명</label>
-                                            <input type="text" class="form-control" id="entityName" name="entityName" 
-                                                   placeholder="예: User" required>
-                                            <div class="form-text">파스칼케이스로 입력 (예: User, Product)</div>
+                                        <div class="col-md-6">
+                                            <h5 class="mb-3">기본 정보</h5>
+                                            
+                                            <div class="mb-3">
+                                                <label for="entityName" class="form-label">Entity 클래스명 *</label>
+                                                <input type="text" class="form-control" id="entityName" name="entityName" 
+                                                       placeholder="예: Mbbuser" required>
+                                                <div class="form-text">생성할 Repository의 대상 Entity 클래스명을 입력하세요.</div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="basePackage" class="form-label">기본 패키지 *</label>
+                                                <input type="text" class="form-control" id="basePackage" name="basePackage" 
+                                                       value="com.skax.eatool.mbb.workflow" required>
+                                                <div class="form-text">Repository가 생성될 기본 패키지 경로입니다.</div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="repositoryPackage" class="form-label">Repository 패키지</label>
+                                                <input type="text" class="form-control" id="repositoryPackage" name="repositoryPackage" 
+                                                       value="business.dc.repository">
+                                                <div class="form-text">Repository 클래스가 생성될 패키지입니다.</div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="domainPackage" class="form-label">Domain DTO 패키지</label>
+                                                <input type="text" class="form-control" id="domainPackage" name="domainPackage" 
+                                                       value="business.dc.dto">
+                                                <div class="form-text">Domain DTO 클래스가 위치한 패키지입니다.</div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="packageName" class="form-label">패키지명</label>
-                                            <input type="text" class="form-control" id="packageName" name="packageName" 
-                                                   value="com.skax.eatool.mbb.repository" required>
-                                            <div class="form-text">Repository가 생성될 패키지명</div>
+                                        
+                                        <div class="col-md-6">
+                                            <h5 class="mb-3">생성 옵션</h5>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">Repository 타입</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="repositoryType" 
+                                                           id="jpa" value="JPA" checked>
+                                                    <label class="form-check-label" for="jpa">
+                                                        JPA Repository (Spring Data JPA)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="repositoryType" 
+                                                           id="mybatis" value="MyBatis">
+                                                    <label class="form-check-label" for="mybatis">
+                                                        MyBatis Repository
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="repositoryType" 
+                                                           id="jdbc" value="JDBC">
+                                                    <label class="form-check-label" for="jdbc">
+                                                        JDBC Repository
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">생성 옵션</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="generateInterface" 
+                                                           name="generateInterface" checked>
+                                                    <label class="form-check-label" for="generateInterface">
+                                                        Interface 생성
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="generateImpl" 
+                                                           name="generateImpl" checked>
+                                                    <label class="form-check-label" for="generateImpl">
+                                                        Implementation 생성
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="generateCustomMethods" 
+                                                           name="generateCustomMethods" checked>
+                                                    <label class="form-check-label" for="generateCustomMethods">
+                                                        커스텀 메서드 생성
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="generatePagination" 
+                                                           name="generatePagination" checked>
+                                                    <label class="form-check-label" for="generatePagination">
+                                                        페이징 지원
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="generateSearch" 
+                                                           name="generateSearch" checked>
+                                                    <label class="form-check-label" for="generateSearch">
+                                                        검색 기능
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="generateAudit" 
+                                                           name="generateAudit">
+                                                    <label class="form-check-label" for="generateAudit">
+                                                        감사 로그
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="entityPackage" class="form-label">Entity 패키지명</label>
-                                            <input type="text" class="form-control" id="entityPackage" name="entityPackage" 
-                                                   value="com.skax.eatool.mbb.entity" required>
-                                            <div class="form-text">Entity가 위치한 패키지명</div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="repositoryType" class="form-label">Repository 타입</label>
-                                            <select class="form-control" id="repositoryType" name="repositoryType" required>
-                                                <option value="JPA">Spring Data JPA</option>
-                                                <option value="MYBATIS">MyBatis</option>
-                                                <option value="JDBC">JDBC Template</option>
-                                            </select>
-                                            <div class="form-text">사용할 데이터 접근 기술</div>
-                                        </div>
-                                    </div>
-
-                                    <hr class="my-4">
-
-                                    <h6 class="text-primary mb-3">
-                                        <i class="fas fa-cogs"></i> 생성 옵션
-                                    </h6>
                                     
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateInterface" name="generateInterface" checked>
-                                                <label class="form-check-label" for="generateInterface">
-                                                    Interface 생성
-                                                </label>
-                                            </div>
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fas fa-magic"></i> Repository 생성
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="clearForm()">
+                                                <i class="fas fa-eraser"></i> 초기화
+                                            </button>
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateImpl" name="generateImpl" checked>
-                                                <label class="form-check-label" for="generateImpl">
-                                                    Implementation 생성
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateCustomMethods" name="generateCustomMethods" checked>
-                                                <label class="form-check-label" for="generateCustomMethods">
-                                                    커스텀 메서드 포함
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generatePagination" name="generatePagination" checked>
-                                                <label class="form-check-label" for="generatePagination">
-                                                    페이징 메서드 포함
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateSearch" name="generateSearch" checked>
-                                                <label class="form-check-label" for="generateSearch">
-                                                    검색 메서드 포함
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="generateAudit" name="generateAudit" checked>
-                                                <label class="form-check-label" for="generateAudit">
-                                                    Audit 메서드 포함
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-center mt-4">
-                                        <button type="submit" class="btn btn-gradient btn-lg">
-                                            <i class="fas fa-magic"></i> Repository 생성
-                                        </button>
                                     </div>
                                 </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 결과 표시 영역 -->
-                    <div class="col-lg-4">
-                        <div id="resultArea" style="display: none;">
-                            <div class="card result-card mb-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-check-circle text-success"></i> 생성 결과
-                                    </h6>
+                                
+                                <!-- 결과 표시 영역 -->
+                                <div id="resultArea" class="mt-4" style="display: none;">
+                                    <div class="result-box">
+                                        <h5><i class="fas fa-check-circle text-success"></i> Repository 생성 완료</h5>
+                                        <div id="resultContent"></div>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <div id="resultContent"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="errorArea" style="display: none;">
-                            <div class="card error-card mb-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-exclamation-triangle text-danger"></i> 오류
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div id="errorContent"></div>
+                                
+                                <!-- 오류 표시 영역 -->
+                                <div id="errorArea" class="mt-4" style="display: none;">
+                                    <div class="alert alert-danger">
+                                        <h5><i class="fas fa-exclamation-triangle"></i> 오류 발생</h5>
+                                        <div id="errorContent"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
 
@@ -205,27 +294,33 @@
     <script>
         document.getElementById('repositoryForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            generateRepository();
+        });
+
+        function generateRepository() {
+            const formData = new FormData(document.getElementById('repositoryForm'));
+            const data = {};
             
-            // 폼 데이터 수집
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (!Array.isArray(data[key])) {
+                        data[key] = [data[key]];
+                    }
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            }
             
-            // 체크박스 값 처리
+            // 체크박스 값들 처리
             data.generateInterface = document.getElementById('generateInterface').checked;
             data.generateImpl = document.getElementById('generateImpl').checked;
             data.generateCustomMethods = document.getElementById('generateCustomMethods').checked;
             data.generatePagination = document.getElementById('generatePagination').checked;
             data.generateSearch = document.getElementById('generateSearch').checked;
             data.generateAudit = document.getElementById('generateAudit').checked;
-            
-            // 로딩 표시
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 생성 중...';
-            submitBtn.disabled = true;
-            
-            // API 호출
-            fetch('/mbb/workflow/repository/generate', {
+
+            fetch('/mbb/repository-generator/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -234,68 +329,67 @@
             })
             .then(response => response.json())
             .then(result => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                
-                if (result.success) {
+                if (result.valid) {
                     showResult(result);
                 } else {
-                    showError(result.message || 'Repository 생성 중 오류가 발생했습니다.');
+                    showError(result.errorMessage || result.message || 'Repository 생성 중 오류가 발생했습니다.');
                 }
             })
             .catch(error => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                showError('네트워크 오류가 발생했습니다: ' + error.message);
+                console.error('Error:', error);
+                showError('Repository 생성 중 오류가 발생했습니다: ' + error.message);
             });
-        });
+        }
 
         function showResult(result) {
             document.getElementById('resultArea').style.display = 'block';
             document.getElementById('errorArea').style.display = 'none';
             
-            let content = '<div class="alert alert-success">';
-            content += '<h6><i class="fas fa-check-circle"></i> Repository 생성 완료!</h6>';
-            content += '<ul class="list-unstyled mb-0">';
+            let content = '<div class="row">';
+            content += '<div class="col-md-6"><h6>생성된 파일:</h6>';
             
-            if (result.generatedFiles) {
+            if (result.generatedFiles && result.generatedFiles.length > 0) {
                 result.generatedFiles.forEach(file => {
-                    content += `<li><i class="fas fa-file-code"></i> ${file}</li>`;
+                    content += `<div class="file-info"><i class="fas fa-file-code"></i> ${file}</div>`;
                 });
+            } else {
+                content += '<div class="file-info text-muted">생성된 파일이 없습니다.</div>';
             }
             
-            content += '</ul></div>';
+            content += '</div>';
+            content += '<div class="col-md-6"><h6>생성 정보:</h6>';
+            content += `<div class="file-info"><strong>Entity:</strong> ${result.entityName || 'N/A'}</div>`;
+            content += `<div class="file-info"><strong>기본 패키지:</strong> ${result.basePackage || 'N/A'}</div>`;
+            content += `<div class="file-info"><strong>Repository 패키지:</strong> ${result.repositoryPackage || 'N/A'}</div>`;
+            content += `<div class="file-info"><strong>Domain 패키지:</strong> ${result.domainPackage || 'N/A'}</div>`;
+            content += `<div class="file-info"><strong>Repository 타입:</strong> ${result.repositoryType || 'N/A'}</div>`;
+            content += `<div class="file-info"><strong>필드 개수:</strong> ${result.fieldCount || 'N/A'}</div>`;
+            content += '</div></div>';
             
-            if (result.message) {
-                content += `<div class="mt-3"><strong>메시지:</strong> ${result.message}</div>`;
-            }
+            content += '<div class="row mt-3">';
+            content += '<div class="col-12"><h6>생성 옵션:</h6>';
+            content += `<div class="file-info"><strong>Interface 생성:</strong> ${result.generateInterface ? '예' : '아니오'}</div>`;
+            content += `<div class="file-info"><strong>Implementation 생성:</strong> ${result.generateImpl ? '예' : '아니오'}</div>`;
+            content += `<div class="file-info"><strong>커스텀 메서드:</strong> ${result.generateCustomMethods ? '예' : '아니오'}</div>`;
+            content += `<div class="file-info"><strong>페이징 지원:</strong> ${result.generatePagination ? '예' : '아니오'}</div>`;
+            content += `<div class="file-info"><strong>검색 기능:</strong> ${result.generateSearch ? '예' : '아니오'}</div>`;
+            content += `<div class="file-info"><strong>감사 로그:</strong> ${result.generateAudit ? '예' : '아니오'}</div>`;
+            content += '</div></div>';
             
             document.getElementById('resultContent').innerHTML = content;
         }
 
         function showError(message) {
-            document.getElementById('resultArea').style.display = 'none';
             document.getElementById('errorArea').style.display = 'block';
-            document.getElementById('errorContent').innerHTML = `<div class="alert alert-danger">${message}</div>`;
+            document.getElementById('resultArea').style.display = 'none';
+            document.getElementById('errorContent').innerHTML = message;
         }
 
-        // Repository 타입 변경 시 패키지명 자동 업데이트
-        document.getElementById('repositoryType').addEventListener('change', function() {
-            const repositoryType = this.value;
-            const packageName = document.getElementById('packageName');
-            
-            switch(repositoryType) {
-                case 'JPA':
-                    packageName.value = 'com.skax.eatool.mbb.repository';
-                    break;
-                case 'MYBATIS':
-                    packageName.value = 'com.skax.eatool.mbb.repository.mybatis';
-                    break;
-                case 'JDBC':
-                    packageName.value = 'com.skax.eatool.mbb.repository.jdbc';
-                    break;
-            }
-        });
+        function clearForm() {
+            document.getElementById('repositoryForm').reset();
+            document.getElementById('resultArea').style.display = 'none';
+            document.getElementById('errorArea').style.display = 'none';
+        }
     </script>
 </body>
 </html> 

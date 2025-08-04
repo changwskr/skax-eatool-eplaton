@@ -38,7 +38,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @version 1.0
  * @since 2024-01-01
  */
-@SpringBootApplication(scanBasePackages = "com.skax.eatool.mbb")
+@SpringBootApplication(scanBasePackages = {"com.skax.eatool.mbb", "com.skax.eatool.mbb.workflow"})
 @EntityScan("com.skax.eatool.mbb.dc.entity")
 @EnableJpaRepositories("com.skax.eatool.mbb.dc.repository")
 @EnableAsync
