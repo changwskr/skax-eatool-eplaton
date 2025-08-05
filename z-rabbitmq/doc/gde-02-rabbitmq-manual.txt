@@ -1,0 +1,53 @@
+RabbitMQ가 정상적으로 시작되고 있습니다. 이제 설정 정보를 요약해드리겠습니다.
+
+✅ RabbitMQ Docker 설치 완료!
+
+📋 설치된 구성 요소:
+    항목	                값
+    Web UI	            http://localhost:15672
+    로그인	            admin / admin123
+    Docker Container	rabbitmq 이름으로 실행됨
+    Docker Volume	    z-rabbitmq_rabbitmq_data
+
+🔧 설정된 포트:
+    포트	    용도
+    5672	AMQP 프로토콜 (메시징)
+    15672	Management UI (웹 인터페이스)
+
+�� 생성된 파일:
+    z-rabbitmq/
+    └── docker-compose.yml
+
+🚀 사용 방법:
+    1. Management UI 접속:
+        브라우저에서 http://localhost:15672 접속
+        사용자명: admin
+        비밀번호: admin123
+    2. 컨테이너 관리:
+        # 컨테이너 시작
+        docker-compose up -d
+        # 컨테이너 중지
+        docker-compose down
+        # 로그 확인
+        docker logs rabbitmq
+        # 컨테이너 상태 확인
+        docker ps
+    3. Spring Boot 애플리케이션 연결:
+        spring:
+          rabbitmq:
+            host: localhost
+            port: 5672
+            username: admin
+            password: admin123
+
+�� Task 요건 충족:
+    ✅ Docker 설치 확인 - Docker 27.0.3 사용 중
+    ✅ docker-compose.yml 생성 - RabbitMQ 3.13-management 이미지
+    ✅ 컨테이너 시작 - 백그라운드에서 실행 중
+    ✅ 포트 매핑 - 5672, 15672 포트 설정
+    ✅ 환경 변수 - admin/admin123 계정 설정
+    ✅ 볼륨 마운트 - 데이터 영속성 보장
+    ✅ Management UI - 웹 브라우저에서 접근 가능
+
+
+RabbitMQ가 성공적으로 설치되고 실행되었습니다! 🎉

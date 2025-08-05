@@ -1,0 +1,55 @@
+Step 1: Redis 이미지 다운로드
+    docker pull redis:7.2
+
+Step 2: Redis 기본 컨테이너 실행
+    docker run -d --name redis-local -p 6379:6379 redis:7.2
+
+Step 3: Redis 영속성 볼륨 적용 실행 (옵션)
+    docker run -d --name redis-vol -p 6380:6379 -v redis-data:/data redis:7.2 --appendonly yes
+
+Step 4: 비밀번호 설정 실행 (옵션)
+   docker run -d --name redis-auth -p 6381:6379 redis:7.2 redis-server --requirepass skcc-redis123
+
+Step 5: 실행 상태 확인
+    docker ps
+    doker ps -a
+
+
+step 6. docker-compose.yml 생성
+#------------------------------
+version: '3.8'
+
+services:
+  redis-local:
+    image: redis:7.2
+    container_name: redis-local
+    ports:
+      - "6379:6379"
+    restart: always
+
+  redis-vol:
+    image: redis:7.2
+    container_name: redis-vol
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    restart: always
+
+  redis-auth:
+    image: redis:7.2
+    container_name: redis-auth
+    ports:
+      - "6381:6379"
+    command: redis-server --requirepass skcc-redis123
+    restart: always
+
+volumes:
+  redis-data:
+#------------------------------
+
+step 7. Redis CLI로 접속 테스트
+    docker exec -it redis-local redis-cli ping
+    docker exec -it redis-local redis-cli ping
+    docker exec -it redis-auth redis-cli -a skcc-redis123 ping

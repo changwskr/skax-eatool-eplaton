@@ -1,35 +1,55 @@
+✅ Redis Docker 설치 완료!
+📋 설치된 Redis 인스턴스:
+인스턴스	    포트	    특징	                    상태
+redis-local	6379	기본 Redis (인증 없음)	✅ 실행 중
+redis-vol	6380	영속성 볼륨 + AOF	        ✅ 실행 중
+redis-auth	6381	비밀번호 인증	            ✅ 실행 중
 
-1. docker-compose.yml 생성
+🔧 설정된 환경 변수:
+항목	                값
+REDIS_PORT	        6379 (기본), 6380 (볼륨), 6381 (인증)
+REDIS_PASSWORD	    skcc-redis123 (redis-auth용)
+REDIS_VOLUME	    redis-data
 
-#------------------------------
-version: '3.8'
+�� 생성된 파일:
+z-redis/
+└── docker-compose.yml
+🚀 사용 방법:
+    1. Redis CLI 접속:
+        # 기본 Redis (포트 6379)
+        docker exec -it redis-local redis-cli
+        # 영속성 Redis (포트 6380)
+        docker exec -it redis-vol redis-cli
+        # 인증 Redis (포트 6381)
+        docker exec -it redis-auth redis-cli -a skcc-redis123
+    2. Spring Boot 애플리케이션 연결:
+        spring:
+          redis:
+            host: localhost
+            port: 6379  # 또는 6380, 6381
+            password: skcc-redis123  # redis-auth 사용 시
+    3. 컨테이너 관리:
+        # 모든 Redis 컨테이너 시작
+        docker-compose up -d
+        # 특정 컨테이너만 시작
+        docker-compose up -d redis-local
+        # 컨테이너 중지
+        docker-compose down
+        # 로그 확인
+        docker logs redis-local
 
-services:
-  redis-local:
-    image: redis:7.2
-    container_name: redis-local
-    ports:
-      - "6379:6379"
-    restart: always
+�� Task 요건 충족:
+    ✅ Redis 이미지 다운로드 - redis:7.2 이미지 사용
+    ✅ 기본 컨테이너 실행 - redis-local (포트 6379)
+    ✅ 영속성 볼륨 적용 - redis-vol (포트 6380, AOF 설정)
+    ✅ 비밀번호 설정 - redis-auth (포트 6381, 비밀번호: skcc-redis123)
+    ✅ 실행 상태 확인 - 모든 컨테이너 정상 실행 중
+    ✅ Redis CLI 접속 테스트 - PING/PONG 응답 확인
 
-  redis-vol:
-    image: redis:7.2
-    container_name: redis-vol
-    ports:
-      - "6380:6379"
-    volumes:
-      - redis-data:/data
-    command: redis-server --appendonly yes
-    restart: always
+📊 현재 실행 상태:
+CONTAINER ID   IMAGE     COMMAND                  CREATED        STATUS        PORTS                    NAMES
+217b2c834684   redis:7.2 "docker-entrypoint.s…"   3 minutes ago  Up 3 minutes  0.0.0.0:6379->6379/tcp   redis-local
+70ad2b97528c   redis:7.2 "docker-entrypoint.s…"   2 minutes ago  Up 2 minutes  0.0.0.0:6380->6379/tcp   redis-vol
+7465d895ee62   redis:7.2 "docker-entrypoint.s…"   1 minute ago   Up 1 minute   0.0.0.0:6381->6379/tcp   redis-auth
 
-  redis-auth:
-    image: redis:7.2
-    container_name: redis-auth
-    ports:
-      - "6381:6379"
-    command: redis-server --requirepass skcc-redis123
-    restart: always
-
-volumes:
-  redis-data:
-#------------------------------
+Redis가 성공적으로 설치되고 3개의 인스턴스가 모두 실행 중입니다! 🎉

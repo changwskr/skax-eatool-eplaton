@@ -1,0 +1,44 @@
+1) 도커설치확인
+    docker --version
+
+2) 도커컴포즈파일 생성
+    docker-compose.yml
+    #----------------------------------------------------------------------------------
+		version: '3.8'
+
+		services:
+		  rabbitmq:
+			image: rabbitmq:3.13-management
+			container_name: rabbitmq
+			ports:
+			  - "5672:5672"
+			  - "15672:15672"
+			environment:
+			  RABBITMQ_DEFAULT_USER: admin
+			  RABBITMQ_DEFAULT_PASS: admin123
+			volumes:
+			  - rabbitmq_data:/var/lib/rabbitmq
+			restart: always
+
+		volumes:
+		  rabbitmq_data:
+	#----------------------------------------------------------------------------------
+
+3) Docker Desktop 실행
+    윈도에서 도커를 실행한다.
+4) 도커 실행확인
+    dockr info
+4) rabbitmq 컨테이너 시작
+    docker-compose up -d
+5) 실행중인 컨테이너 확인
+    docker ps
+    #----------------------------------------------------------------------------------
+    CONTAINER ID   IMAGE                       COMMAND                   CREATED              STATUS              PORTS
+                                            NAMES
+    ff5e613eafcb   rabbitmq:3.13-management    "docker-entrypoint.s…"   About a minute ago   Up About a minute   4369/tcp, 5671/tcp, 0.0.0.0:5672->5672/tcp, 15671/tcp, 15691-15692/tcp, 25672/tcp, 0.0.0.0:15672->15672/tcp   rabbitmq
+
+6) rabbit 브라우저에서 확인
+    start http://localhost:15672
+
+7) 도커에서 rabbitmq에 대한 로그 확인
+    docker logs rabbitmq

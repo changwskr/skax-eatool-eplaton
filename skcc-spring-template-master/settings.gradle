@@ -1,11 +1,9 @@
-// 폐쇄망
-//pluginManagement {
-//    repositories {
-//        maven {
-//            url '사내 Nexus URL'
-//        }
-//    }
-//}
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
 
 rootProject.name = 'skcc-spring-template'
 
