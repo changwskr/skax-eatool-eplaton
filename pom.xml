@@ -24,6 +24,7 @@
         <module>mbb-java</module>
         <module>spring-cloud-apigateway-service</module>
         <module>spring-redis-service</module>
+        <module>skcc-spring-template-master</module>
     </modules>
 
     <properties>
@@ -114,6 +115,12 @@
             <dependency>
                 <groupId>com.skax.eatool</groupId>
                 <artifactId>spring-redis-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.skax.eatool</groupId>
+                <artifactId>skcc-spring-template</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
